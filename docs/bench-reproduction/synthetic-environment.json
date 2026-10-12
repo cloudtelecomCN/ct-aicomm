@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0.0",
+  "hardware": {
+    "cpu_model": "synthetic-cpu-not-a-real-device",
+    "cpu_arch": "x86_64",
+    "logical_cores": 16,
+    "memory_bytes": 68719476736,
+    "accelerators": []
+  },
+  "kernel": { "os": "synthetic-linux", "release": "0.0-demo" },
+  "drivers": [{ "name": "synthetic-network", "version": "0.1.0" }],
+  "protocol_stack": [{
+    "name": "grpc-demo",
+    "version": "0.1.0",
+    "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  }],
+  "network": {
+    "topology": "synthetic-loopback-model",
+    "mtu": 1500,
+    "address_family": "ipv4",
+    "declared_rtt_ms": 20,
+    "declared_bandwidth_mbps": 1000
+  }
+}

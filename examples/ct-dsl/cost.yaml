@@ -1,0 +1,29 @@
+version: 1
+policy:
+  name: cost-aware-batch-transfer
+  objective: cost
+  constraints:
+    max_latency_ms: 150
+    max_cost_per_gb: 0.08
+    data_regions: [cn-east, cn-north]
+    require_encryption: true
+    failure_mode: fail_closed
+routes:
+  - id: grpc-east
+    protocol: gRPC
+    region: cn-east
+    latency_ms: 78
+    cost_per_gb: 0.07
+    encrypted: true
+  - id: http3-north
+    protocol: HTTP/3
+    region: cn-north
+    latency_ms: 92
+    cost_per_gb: 0.05
+    encrypted: true
+  - id: tcp-east
+    protocol: TCP
+    region: cn-east
+    latency_ms: 64
+    cost_per_gb: 0.04
+    encrypted: false

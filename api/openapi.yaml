@@ -1,0 +1,2571 @@
+openapi: 3.1.0
+info:
+  title: CT-AIComm Portal API
+  version: 0.1.0
+  summary: API contract for Sprint 1 subscription and readiness endpoints.
+  description: Public read endpoints support cross-origin requests, return X-Request-ID, X-API-Version, and X-RateLimit-* headers, and use ETag with If-None-Match for conditional requests. Exceeding the published quota returns rate_limit_exceeded with HTTP 429.
+servers:
+  - url: https://cloudtelecom.cn
+paths:
+  /api/v1/bench/scenarios:
+    get:
+      operationId: listBenchScenarios
+      summary: List published CT-Bench scenario definitions.
+      responses:
+        "200": { description: Published benchmark scenarios. }
+        "503": { description: Bench storage is not configured. }
+  /api/v1/bench/scenarios/{slug}:
+    get:
+      operationId: getBenchScenario
+      summary: Read a CT-Bench scenario methodology, metric schema, candidate protocols, and published runs with explicit data origins.
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: Published benchmark scenario detail. }
+        "404": { description: Benchmark scenario was not found. }
+        "503": { description: Bench storage is not configured. }
+  /api/v1/bench/runs:
+    post:
+      operationId: createBenchRun
+      summary: Submit a measured Bench run with a server-generated environment fingerprint.
+      description: Raw samples are required for publication eligibility. Aggregate-only submissions may enter review but cannot be published.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateBenchRunRequest" }
+      responses:
+        "201": { description: Run entered the protected review queue. }
+        "400": { description: Environment or required measurements are invalid. }
+        "401": { description: Contributor login is required. }
+        "404": { description: Protocol or scenario was not found. }
+    get:
+      operationId: listBenchRuns
+      summary: List protected Bench review queue entries.
+      security: [{ registryAdmin: [] }]
+      responses:
+        "200": { description: Bench runs matching the requested status. }
+        "401": { description: Registry admin credentials are required. }
+  /api/v1/bench/runs/{id}:
+    get:
+      operationId: getBenchRun
+      summary: Read one published Bench run with provenance and measurements.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: Published Bench run detail without contributor identity. }
+        "404": { description: Published Bench run was not found. }
+    patch:
+      operationId: reviewBenchRun
+      summary: Publish or invalidate a Bench run and append an audit event.
+      security: [{ registryAdmin: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: Bench run review completed. }
+        "400": { description: Review status, reviewer, or note is invalid. }
+        "401": { description: Registry admin credentials are required. }
+        "404": { description: Bench run was not found. }
+        "409": { description: A measured run cannot be published without downloadable raw samples. }
+  /api/v1/bench/runs/{id}/raw.csv:
+    get:
+      operationId: downloadBenchRunRawSamples
+      summary: Download checksum-verified raw samples for one published Bench run.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Stable raw sample CSV with explicit origin and SHA-256 response headers.
+          content:
+            text/csv:
+              schema: { type: string }
+        "404": { description: Run is unpublished or has no raw sample artifact. }
+        "503": { description: Stored sample count or checksum does not match the published report. }
+  /api/v1/protocols:
+    get:
+      operationId: listProtocols
+      summary: Browse published protocol registry entries.
+      parameters:
+        - in: query
+          name: q
+          schema: { type: string, maxLength: 80 }
+        - in: query
+          name: category
+          schema: { type: string, enum: [rpc, transport, rdma, interconnect] }
+        - in: query
+          name: maturity
+          schema: { type: string, enum: [emerging, established, mature] }
+        - in: query
+          name: trust
+          schema: { type: string, enum: [community, vendor, lab] }
+      responses:
+        "200":
+          description: Published registry entries.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [protocols, count]
+                properties:
+                  protocols:
+                    type: array
+                    items: { $ref: "#/components/schemas/ProtocolSummary" }
+                  count: { type: integer, minimum: 0 }
+        "400":
+          description: Unsupported filter value.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+  /api/v1/protocols/{slug}:
+    get:
+      operationId: getProtocol
+      summary: Read one published protocol with versions and scenarios.
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema: { type: string, pattern: "^[a-z0-9-]+$" }
+      responses:
+        "200":
+          description: Published protocol detail.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [protocol]
+                properties:
+                  protocol: { $ref: "#/components/schemas/ProtocolDetail" }
+        "404":
+          description: Protocol is absent or not published.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+    patch:
+      operationId: updateProtocol
+      summary: Update a protocol entry and append an audit event.
+      security: [{ registryAdmin: [] }]
+      parameters:
+        - in: path
+          name: slug
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: Protocol entry updated. }
+        "400": { description: Protocol fields are invalid. }
+        "401": { description: Registry admin credentials are required. }
+        "404": { description: Protocol was not found. }
+  /api/v1/protocols/{slug}/versions:
+    post:
+      operationId: createProtocolVersion
+      summary: Add a version record and audit event to a protocol.
+      security: [{ registryAdmin: [] }]
+      responses:
+        "201": { description: Version record created. }
+        "400": { description: Version fields are invalid. }
+        "401": { description: Registry admin credentials are required. }
+  /api/v1/protocols/{slug}/versions/{version}:
+    delete:
+      operationId: deleteProtocolVersion
+      summary: Remove a version record and append an audit event.
+      security: [{ registryAdmin: [] }]
+      responses:
+        "200": { description: Version record removed. }
+        "401": { description: Registry admin credentials are required. }
+        "404": { description: Version was not found. }
+  /api/v1/protocols/{slug}/scenarios/{scenarioSlug}:
+    put:
+      operationId: upsertProtocolScenario
+      summary: Create or update a protocol scenario association.
+      security: [{ registryAdmin: [] }]
+      responses:
+        "200": { description: Scenario association saved. }
+        "400": { description: Scenario fields are invalid. }
+        "401": { description: Registry admin credentials are required. }
+    delete:
+      operationId: deleteProtocolScenario
+      summary: Remove a protocol scenario association.
+      security: [{ registryAdmin: [] }]
+      responses:
+        "200": { description: Scenario association removed. }
+        "401": { description: Registry admin credentials are required. }
+  /api/v1/audit:
+    get:
+      operationId: listRegistryAuditEvents
+      summary: List protected Registry audit events.
+      security: [{ registryAdmin: [] }]
+      parameters:
+        - in: query
+          name: entity_type
+          schema: { type: string, enum: [protocol, submission, orchestrator_resource, orchestrator_decision, orchestrator_policy_bundle, orchestrator_distribution, orchestrator_rollback] }
+        - in: query
+          name: entity_id
+          schema: { type: string }
+        - in: query
+          name: limit
+          schema: { type: integer, minimum: 1, maximum: 100, default: 25 }
+      responses:
+        "200": { description: Registry audit events ordered newest first. }
+        "400": { description: Filter value is invalid. }
+        "401": { description: Registry admin credentials are required. }
+  /api/v1/operations/route-modules:
+    get:
+      operationId: getRouteModuleSummary
+      summary: Read a protected 24-hour aggregate of route module load failures and retry requests.
+      security: [{ registryAdmin: [] }]
+      responses:
+        "200":
+          description: Aggregate module recovery telemetry without identifiers or contact data.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [summary]
+                properties:
+                  summary:
+                    type: object
+                    required: [window_hours, failures, retry_requests, affected_sessions, routes, generated_at]
+                    properties:
+                      window_hours: { type: integer, const: 24 }
+                      failures: { type: integer, minimum: 0 }
+                      retry_requests: { type: integer, minimum: 0 }
+                      affected_sessions: { type: integer, minimum: 0 }
+                      routes:
+                        type: array
+                        maxItems: 10
+                        items:
+                          type: object
+                          required: [path, failures]
+                          properties:
+                            path: { type: string }
+                            failures: { type: integer, minimum: 0 }
+                      generated_at: { type: string, format: date-time }
+        "401": { description: Registry admin credentials are required. }
+        "503": { description: Analytics storage or admin access is not configured. }
+  /api/csp-reports:
+    post:
+      operationId: createCspViolationReport
+      summary: Accept a bounded browser CSP violation report after removing query strings and identifying data.
+      requestBody:
+        required: true
+        content:
+          application/csp-report:
+            schema: { type: object }
+          application/reports+json:
+            schema: { type: array, maxItems: 10, items: { type: object } }
+      responses:
+        "204": { description: Sanitized report aggregated into the current hourly bucket. }
+        "400": { description: Report shape is invalid. }
+        "413": { description: Report exceeds 16 KiB. }
+        "415": { description: CSP report media type is required. }
+        "503": { description: Report storage is unavailable. }
+  /api/v1/operations/csp-reports:
+    get:
+      operationId: getCspViolationSummary
+      summary: Read a protected 24-hour aggregate of sanitized CSP violations.
+      security: [{ registryAdmin: [] }]
+      responses:
+        "200":
+          description: Aggregate counts by effective directive without raw reports or client identifiers.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [summary]
+                properties:
+                  summary:
+                    type: object
+                    required: [window_hours, retention_days, total, directives, privacy, generated_at]
+                    properties:
+                      window_hours: { type: integer, const: 24 }
+                      retention_days: { type: integer, const: 30 }
+                      total: { type: integer, minimum: 0 }
+                      directives:
+                        type: array
+                        maxItems: 20
+                        items:
+                          type: object
+                          required: [directive, count]
+                          properties:
+                            directive: { type: string }
+                            count: { type: integer, minimum: 0 }
+                      privacy: { type: string }
+                      generated_at: { type: string, format: date-time }
+        "401": { description: Registry admin credentials are required. }
+        "503": { description: CSP report storage or admin access is not configured. }
+  /api/v1/workspaces:
+    post:
+      operationId: createWorkspace
+      summary: Create an isolated organization workspace and return its bootstrap token once.
+      security: [{ registryAdmin: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, slug, owner_name, owner_email]
+              additionalProperties: false
+              properties:
+                name: { type: string, maxLength: 120 }
+                slug: { type: string, pattern: "^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$" }
+                owner_name: { type: string, maxLength: 80 }
+                owner_email: { type: string, format: email, maxLength: 254 }
+                validity_days: { type: integer, minimum: 1, maximum: 365, default: 90 }
+      responses:
+        "201": { description: Workspace created; plaintext bootstrap token is returned once. }
+        "400": { description: Workspace fields are invalid. }
+        "401": { description: Registry admin credentials are required. }
+        "409": { description: Workspace slug already exists. }
+  /api/v1/workspace:
+    get:
+      operationId: getWorkspaceSummary
+      summary: Read the workspace bound to the bearer token; client-selected organization identifiers are ignored.
+      security: [{ workspaceToken: [] }]
+      responses:
+        "200": { description: Organization-scoped profile, member aggregates, and recent audit activity. }
+        "401": { description: A valid active workspace token is required. }
+        "503": { description: Workspace storage is not configured. }
+  /api/v1/workspace/sso:
+    get:
+      operationId: getWorkspaceSso
+      summary: Read SAML metadata readiness for the organization bound to the bearer token.
+      security: [{ workspaceToken: [] }]
+      responses:
+        "200": { description: SAML configuration and explicit production-login readiness flags. }
+        "401": { description: A valid active workspace token is required. }
+    put:
+      operationId: putWorkspaceSso
+      summary: Configure organization SAML metadata without enabling assertion login.
+      security: [{ workspaceToken: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [idp_entity_id, idp_sso_url, certificate_fingerprint]
+              additionalProperties: false
+              properties:
+                idp_entity_id: { type: string, maxLength: 500 }
+                idp_sso_url: { type: string, format: uri, maxLength: 500 }
+                certificate_fingerprint: { type: string, maxLength: 160, description: Colon-delimited SHA-256 certificate fingerprint. }
+                enforce_for_members: { type: boolean, default: false }
+      responses:
+        "200": { description: SAML metadata stored and marked ready for review; login remains disabled. }
+        "400": { description: SAML metadata is invalid. }
+        "401": { description: A valid active workspace token is required. }
+        "403": { description: Workspace owner or admin role is required. }
+  /api/v1/workspace/billing:
+    get:
+      operationId: getWorkspaceBilling
+      summary: Read the organization billing profile and latest draft statements.
+      security: [{ workspaceToken: [] }]
+      responses:
+        "200": { description: Organization-scoped billing configuration and draft statements. }
+        "401": { description: A valid active workspace token is required. }
+    put:
+      operationId: putWorkspaceBilling
+      summary: Configure integer-denominated CNY fees and an SLA availability target.
+      security: [{ workspaceToken: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [base_fee_minor, rate_per_million_minor, target_availability_bps]
+              properties:
+                base_fee_minor: { type: integer, minimum: 0 }
+                rate_per_million_minor: { type: integer, minimum: 0 }
+                target_availability_bps: { type: integer, minimum: 9000, maximum: 10000 }
+      responses:
+        "200": { description: Billing profile configured; payment collection remains disabled. }
+        "403": { description: Workspace owner or admin role is required. }
+  /api/v1/workspace/sla-periods:
+    get:
+      operationId: listWorkspaceSlaPeriods
+      summary: List measured SLA periods for the authenticated organization.
+      security: [{ workspaceToken: [] }]
+      responses:
+        "200": { description: Organization-scoped SLA periods. }
+    post:
+      operationId: createWorkspaceSlaPeriod
+      summary: Calculate one evidence-backed SLA period and create a non-charging draft statement.
+      security: [{ workspaceToken: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [period_start, period_end, total_requests, failed_requests, evidence_ref]
+              properties:
+                period_start: { type: string, format: date-time }
+                period_end: { type: string, format: date-time }
+                total_requests: { type: integer, minimum: 1 }
+                failed_requests: { type: integer, minimum: 0 }
+                evidence_ref: { type: string, maxLength: 500 }
+      responses:
+        "201": { description: Evidence-backed SLA period and draft statement created; no charge is executed. }
+        "400": { description: Measured period data is invalid. }
+        "409": { description: An active billing profile is required. }
+  /api/v1/workspace/compliance/declarations:
+    get:
+      operationId: listWorkspaceComplianceDeclarations
+      summary: List compliance declarations scoped to the authenticated organization.
+      security: [{ workspaceToken: [] }]
+      responses:
+        "200": { description: Up to 50 organization-scoped declaration summaries. }
+        "401": { description: A valid active workspace token is required. }
+    post:
+      operationId: createWorkspaceComplianceDeclaration
+      summary: Audit and persist the first immutable version of a compliance declaration.
+      description: The service recomputes the deterministic CT-Auditor report. Persistence does not authorize transfer, provide external assessment, or issue certification.
+      security: [{ workspaceToken: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ComplianceDeclarationInput" }
+      responses:
+        "201": { description: Declaration and immutable version created with server-computed fingerprints. }
+        "400": { description: Declaration fields or evidence references are invalid. }
+        "401": { description: A valid active workspace token is required. }
+        "403": { description: Workspace owner, admin, or operator role is required. }
+  /api/v1/workspace/compliance/declarations/{id}:
+    get:
+      operationId: getWorkspaceComplianceDeclaration
+      summary: Read one organization-scoped declaration and its immutable version history.
+      security: [{ workspaceToken: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: Declaration metadata, version history, and explicit assurance boundaries. }
+        "401": { description: A valid active workspace token is required. }
+        "404": { description: Declaration is absent from the authenticated organization. }
+  /api/v1/workspace/compliance/declarations/{id}/versions:
+    post:
+      operationId: createWorkspaceComplianceDeclarationVersion
+      summary: Audit and append one immutable declaration version.
+      description: Existing versions are never overwritten. Identical content fingerprints are rejected.
+      security: [{ workspaceToken: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ComplianceDeclarationInput" }
+      responses:
+        "201": { description: New immutable version appended and organization audit event recorded. }
+        "400": { description: Declaration fields or evidence references are invalid. }
+        "401": { description: A valid active workspace token is required. }
+        "403": { description: Workspace owner, admin, or operator role is required. }
+        "404": { description: Declaration is absent from the authenticated organization. }
+        "409": { description: The latest version already has the same content fingerprint. }
+  /api/v1/workspace/compliance/declarations/{id}/versions/{version}/review:
+    get:
+      operationId: getWorkspaceComplianceDeclarationReview
+      summary: Read the immutable internal review decision for one declaration version.
+      security: [{ workspaceToken: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+        - in: path
+          name: version
+          required: true
+          schema: { type: integer, minimum: 1 }
+      responses:
+        "200": { description: Version metadata, optional review, and explicit assurance boundaries. }
+        "401": { description: A valid active workspace token is required. }
+        "404": { description: Declaration version is absent from the authenticated organization. }
+    post:
+      operationId: reviewWorkspaceComplianceDeclarationVersion
+      summary: Record one immutable, independently submitted internal review decision.
+      description: The reviewing owner or admin token must differ from the token that created the review-ready version. Approval is internal only and never authorizes transfer, provides external assessment, or issues certification.
+      security: [{ workspaceToken: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+        - in: path
+          name: version
+          required: true
+          schema: { type: integer, minimum: 1 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ComplianceDeclarationReviewInput" }
+      responses:
+        "201": { description: Immutable internal review recorded and bound to the version content fingerprint. }
+        "400": { description: Review decision, rationale, or evidence reference is invalid. }
+        "401": { description: A valid active workspace token is required. }
+        "403": { description: Workspace owner or admin role is required. }
+        "404": { description: Declaration version is absent from the authenticated organization. }
+        "409": { description: Reviewer separation failed, version is not review-ready, or a decision already exists. }
+  /api/v1/workspace/compliance/declarations/{id}/versions/{version}/assessment-handoff:
+    get:
+      operationId: getWorkspaceComplianceAssessmentHandoff
+      summary: Read the external-assessment handoff prepared for one immutable declaration version.
+      description: Readiness metadata distinguishes a prepared handoff from an external assessment, certification, or transfer authorization.
+      security: [{ workspaceToken: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+        - in: path
+          name: version
+          required: true
+          schema: { type: integer, minimum: 1 }
+      responses:
+        "200": { description: Optional prepared handoff and explicit external-assurance boundaries. }
+        "401": { description: A valid active workspace token is required. }
+        "404": { description: Declaration version is absent from the authenticated organization. }
+    post:
+      operationId: createWorkspaceComplianceAssessmentHandoff
+      summary: Prepare an immutable handoff for an external assessor after internal approval.
+      description: The handoff binds the declaration and internal-review fingerprints to a target assessor, scope, and date. It does not record an external assessment, issue certification, or authorize data transfer.
+      security: [{ workspaceToken: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+        - in: path
+          name: version
+          required: true
+          schema: { type: integer, minimum: 1 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ComplianceAssessmentHandoffInput" }
+      responses:
+        "201": { description: Immutable assessment handoff prepared and audit event recorded. }
+        "400": { description: Assessor organization, assessment scope, or target date is invalid. }
+        "401": { description: A valid active workspace token is required. }
+        "403": { description: Workspace owner or admin role is required. }
+        "404": { description: Declaration version is absent from the authenticated organization. }
+        "409": { description: Approved internal review is absent or a handoff already exists. }
+  /api/v1/workspace/compliance/declarations/{id}/versions/{version}/assessment-handoff/external-assessment:
+    get:
+      operationId: getWorkspaceComplianceExternalAssessment
+      summary: Read an imported external assessment report and its independent verification state.
+      description: An imported report remains unverified until a separate workspace token records an immutable verification decision.
+      security: [{ workspaceToken: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+        - in: path
+          name: version
+          required: true
+          schema: { type: integer, minimum: 1 }
+      responses:
+        "200": { description: Optional imported report, optional verification, and explicit assurance boundaries. }
+        "401": { description: A valid active workspace token is required. }
+        "404": { description: Declaration version is absent from the authenticated organization. }
+    post:
+      operationId: importWorkspaceComplianceExternalAssessment
+      summary: Import a digest-bound report attributed to the assessor named by the prepared handoff.
+      description: Importing a report records a reported outcome only. It does not authenticate the assessor, independently verify the report, issue certification, or authorize transfer.
+      security: [{ workspaceToken: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+        - in: path
+          name: version
+          required: true
+          schema: { type: integer, minimum: 1 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ComplianceExternalAssessmentInput" }
+      responses:
+        "201": { description: External report imported pending independent verification. }
+        "400": { description: Report outcome, summary, reference, digest, or timestamp is invalid. }
+        "401": { description: A valid active workspace token is required. }
+        "403": { description: Workspace owner or admin role is required. }
+        "404": { description: Declaration version is absent from the authenticated organization. }
+        "409": { description: Prepared handoff is absent or an imported report already exists. }
+  /api/v1/workspace/compliance/declarations/{id}/versions/{version}/assessment-handoff/invitations:
+    get:
+      operationId: listWorkspaceComplianceAssessorInvitations
+      summary: List assessor invitation lifecycle metadata without exposing token digests or plaintext credentials.
+      security: [{ workspaceToken: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+        - in: path
+          name: version
+          required: true
+          schema: { type: integer, minimum: 1 }
+      responses:
+        "200": { description: Organization-scoped invitation metadata and explicit non-certification boundaries. }
+        "401": { description: A valid active workspace token is required. }
+        "409": { description: A prepared assessment handoff is required. }
+    post:
+      operationId: issueWorkspaceComplianceAssessorInvitation
+      summary: Issue a display-once, expiring, read-only assessor invitation for one immutable handoff.
+      description: The token grants no workspace access, report submission, certification, or transfer authority. Only one non-expired active invitation may exist for the handoff.
+      security: [{ workspaceToken: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+        - in: path
+          name: version
+          required: true
+          schema: { type: integer, minimum: 1 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [label]
+              properties:
+                label: { type: string, minLength: 2, maxLength: 120 }
+                validity_days: { type: integer, minimum: 1, maximum: 30, default: 14 }
+      responses:
+        "201": { description: Invitation metadata and the only plaintext copy of its scoped token. }
+        "400": { description: Label or validity period is invalid. }
+        "401": { description: A valid active workspace token is required. }
+        "403": { description: Workspace owner or admin role is required. }
+        "409": { description: Handoff is absent or another active invitation exists. }
+  /api/v1/workspace/compliance/declarations/{id}/versions/{version}/assessment-handoff/invitations/{invitationId}/revoke:
+    post:
+      operationId: revokeWorkspaceComplianceAssessorInvitation
+      summary: Revoke one assessor invitation without changing the immutable handoff.
+      security: [{ workspaceToken: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+        - in: path
+          name: version
+          required: true
+          schema: { type: integer, minimum: 1 }
+        - in: path
+          name: invitationId
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: Revoked invitation lifecycle metadata. }
+        "401": { description: A valid active workspace token is required. }
+        "403": { description: Workspace owner or admin role is required. }
+        "404": { description: Invitation is absent from the authenticated organization and version. }
+  /api/v1/workspace/compliance/declarations/{id}/versions/{version}/assessment-handoff/invitations/{invitationId}/delivery-receipts:
+    get:
+      operationId: listWorkspaceComplianceAssessorDeliveryReceipts
+      summary: List non-secret delivery receipts for one assessor invitation.
+      description: Receipts contain adapter type, recipient label, timestamp, and a non-secret fingerprint. Tokens, secure URLs, and delivery message bodies are never stored.
+      security: [{ workspaceToken: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+        - in: path
+          name: version
+          required: true
+          schema: { type: integer, minimum: 1 }
+        - in: path
+          name: invitationId
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: Organization-scoped delivery receipt metadata with an explicit no-secret-storage flag. }
+        "401": { description: A valid active workspace token is required. }
+        "404": { description: Invitation is absent from the authenticated organization and version. }
+    post:
+      operationId: recordWorkspaceComplianceAssessorDeliveryReceipt
+      summary: Record that an invitation was copied to an approved delivery adapter without persisting secret material.
+      security: [{ workspaceToken: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+        - in: path
+          name: version
+          required: true
+          schema: { type: integer, minimum: 1 }
+        - in: path
+          name: invitationId
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [adapter_type, recipient_label]
+              properties:
+                adapter_type: { type: string, enum: [clipboard_link, clipboard_message, manual_secure_channel] }
+                recipient_label: { type: string, minLength: 2, maxLength: 160 }
+      responses:
+        "201": { description: Digest-bound non-secret delivery receipt recorded. }
+        "400": { description: Receipt metadata is invalid or contains forbidden secret material. }
+        "401": { description: A valid active workspace token is required. }
+        "403": { description: Workspace owner or admin role is required. }
+        "404": { description: Invitation is absent from the authenticated organization and version. }
+  /api/v1/compliance/assessor/handoff:
+    get:
+      operationId: getInvitedComplianceAssessmentHandoff
+      summary: Read the single immutable handoff bound to an active assessor invitation.
+      description: The credential is read-only and cannot access the workspace, submit a report, issue certification, or authorize transfer.
+      security: [{ complianceAssessorToken: [] }]
+      responses:
+        "200": { description: Invitation scope, immutable handoff evidence, and explicit assurance boundaries. }
+        "401": { description: A valid active, unexpired assessor invitation token is required. }
+        "410": { description: The bound handoff is no longer available. }
+  /api/v1/compliance/assessor/delivery-acknowledgement:
+    get:
+      operationId: getInvitedComplianceAssessorDeliveryAcknowledgement
+      summary: Read whether the invitation holder has explicitly acknowledged access.
+      description: This acknowledgement proves only that the invitation credential holder confirmed access. It does not verify identity, delivery channel ownership, report content, certification, or transfer authority.
+      security: [{ complianceAssessorToken: [] }]
+      responses:
+        "200": { description: Optional immutable access acknowledgement and explicit evidence boundary. }
+        "401": { description: A valid active, unexpired assessor invitation token is required. }
+    post:
+      operationId: acknowledgeInvitedComplianceAssessorDelivery
+      summary: Record one immutable access acknowledgement from the invitation credential holder.
+      security: [{ complianceAssessorToken: [] }]
+      responses:
+        "201": { description: First acknowledgement recorded with a SHA-256 fingerprint. }
+        "200": { description: Existing acknowledgement returned idempotently. }
+        "401": { description: A valid active, unexpired assessor invitation token is required. }
+  /api/v1/workspace/compliance/declarations/{id}/versions/{version}/assessment-handoff/invitations/{invitationId}/delivery-acknowledgement:
+    get:
+      operationId: getWorkspaceComplianceAssessorDeliveryAcknowledgement
+      summary: Read the invitation holder's access acknowledgement from the owning workspace.
+      security: [{ workspaceToken: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+        - in: path
+          name: version
+          required: true
+          schema: { type: integer, minimum: 1 }
+        - in: path
+          name: invitationId
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: Optional acknowledgement with an explicit report-not-verified boundary. }
+        "401": { description: A valid active workspace token is required. }
+        "404": { description: Invitation is absent from the authenticated organization and version. }
+  /api/v1/workspace/compliance/declarations/{id}/versions/{version}/assessment-handoff/invitation-exceptions:
+    get:
+      operationId: listWorkspaceComplianceAssessorInvitationExceptions
+      summary: List active invitation exceptions derived from acknowledgement and expiry facts.
+      description: Returns unacknowledged, unacknowledged-expiring, and expired invitations with operator suggestions. It does not send outreach or revoke credentials automatically.
+      security: [{ workspaceToken: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+        - in: path
+          name: version
+          required: true
+          schema: { type: integer, minimum: 1 }
+      responses:
+        "200": { description: Organization-scoped exception queue with explicit non-automation flags. }
+        "401": { description: A valid active workspace token is required. }
+  /api/v1/compliance/assessor/report:
+    get:
+      operationId: getInvitedComplianceAssessorReportSubmission
+      summary: Read the immutable report claim submitted for the invitation-bound handoff.
+      security: [{ complianceAssessorToken: [] }]
+      responses:
+        "200": { description: Optional assessor report submission with explicit unverified boundaries. }
+        "401": { description: A valid active, unexpired assessor invitation token is required. }
+        "410": { description: The bound handoff is no longer available. }
+    post:
+      operationId: submitInvitedComplianceAssessorReport
+      summary: Submit one digest-bound report claim for the invitation-bound handoff.
+      description: Submission records the assessor organization's claim and provenance. It does not import or verify the report, issue certification, authorize transfer, or grant workspace access.
+      security: [{ complianceAssessorToken: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ComplianceExternalAssessmentInput" }
+      responses:
+        "201": { description: Immutable assessor report claim stored pending workspace import. }
+        "400": { description: Report outcome, summary, reference, digest, or timestamp is invalid. }
+        "401": { description: A valid active, unexpired assessor invitation token is required. }
+        "409": { description: The handoff already has an assessor report submission. }
+        "410": { description: The bound handoff is no longer available. }
+  /api/v1/workspace/compliance/declarations/{id}/versions/{version}/assessment-handoff/assessor-submission:
+    get:
+      operationId: getWorkspaceComplianceAssessorReportSubmission
+      summary: Read the assessor-submitted report claim and workspace decision state.
+      security: [{ workspaceToken: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+        - in: path
+          name: version
+          required: true
+          schema: { type: integer, minimum: 1 }
+      responses:
+        "200": { description: Optional assessor submission with explicit unverified boundaries. }
+        "401": { description: A valid active workspace token is required. }
+    post:
+      operationId: decideWorkspaceComplianceAssessorReportSubmission
+      summary: Import or reject one immutable assessor report submission.
+      description: Import binds the assessor submission fingerprint to a new external-assessment record. A different owner/admin token must still independently verify that imported record.
+      security: [{ workspaceToken: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+        - in: path
+          name: version
+          required: true
+          schema: { type: integer, minimum: 1 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [decision, note]
+              properties:
+                decision: { type: string, enum: [import, reject] }
+                note: { type: string, minLength: 10, maxLength: 1000 }
+      responses:
+        "200": { description: Submission rejected with an audited workspace decision. }
+        "201": { description: Submission imported pending independent verification. }
+        "400": { description: Decision or note is invalid. }
+        "401": { description: A valid active workspace token is required. }
+        "403": { description: Workspace owner or admin role is required. }
+        "404": { description: Declaration version is absent from the authenticated organization. }
+        "409": { description: Submission is absent, already decided, or an assessment already exists. }
+  /api/v1/workspace/compliance/declarations/{id}/versions/{version}/assessment-handoff/external-assessment/verification:
+    get:
+      operationId: getWorkspaceComplianceExternalAssessmentVerification
+      summary: Read the independent verification decision for an imported external assessment report.
+      security: [{ workspaceToken: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+        - in: path
+          name: version
+          required: true
+          schema: { type: integer, minimum: 1 }
+      responses:
+        "200": { description: Optional immutable verification decision and assurance boundaries. }
+        "401": { description: A valid active workspace token is required. }
+        "404": { description: Declaration version is absent from the authenticated organization. }
+        "409": { description: No external assessment report has been imported. }
+    post:
+      operationId: verifyWorkspaceComplianceExternalAssessment
+      summary: Record one immutable independent verification decision for an imported report.
+      description: The verifying owner or admin token must differ from the importing token. Verification confirms the imported record inside the workspace; it does not issue certification or authorize transfer.
+      security: [{ workspaceToken: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+        - in: path
+          name: version
+          required: true
+          schema: { type: integer, minimum: 1 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ComplianceExternalAssessmentVerificationInput" }
+      responses:
+        "201": { description: Independent verification decision recorded and fingerprint-bound to the imported report. }
+        "400": { description: Verification decision, rationale, or evidence reference is invalid. }
+        "401": { description: A valid active workspace token is required. }
+        "403": { description: Workspace owner or admin role is required. }
+        "404": { description: Declaration version is absent from the authenticated organization. }
+        "409": { description: Report is absent, verifier separation failed, or a verification already exists. }
+  /api/v1/marketplace/artifacts:
+    get:
+      operationId: listMarketplaceArtifacts
+      summary: List digest-pinned OCI artifacts published after an administrator records an external verification decision.
+      responses:
+        "200":
+          description: Public digest-pinned Marketplace catalog. The platform records external evidence review and does not execute cosign.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MarketplaceCatalogResponse" }
+  /api/v1/workspace/marketplace/artifacts:
+    get:
+      operationId: listWorkspaceMarketplaceArtifacts
+      summary: List Marketplace submissions for the organization bound to the workspace token.
+      security: [{ workspaceToken: [] }]
+      responses:
+        "200":
+          description: Organization-scoped submission queue including non-public review states.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/WorkspaceMarketplaceArtifactsResponse" }
+    post:
+      operationId: createWorkspaceMarketplaceArtifact
+      summary: Submit an immutable OCI digest and external signing metadata for administrator review.
+      security: [{ workspaceToken: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateMarketplaceArtifactRequest" }
+      responses:
+        "201":
+          description: Artifact submitted as unverified and not publicly visible.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CreateMarketplaceArtifactResponse" }
+        "400": { description: OCI or signing metadata is invalid. }
+  /api/v1/marketplace/artifacts/{id}/review:
+    patch:
+      operationId: reviewMarketplaceArtifact
+      summary: Record an administrator decision that references external verification evidence, then publish or reject the artifact.
+      description: This operation does not execute cosign or inspect the referenced evidence.
+      security: [{ registryAdmin: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ReviewMarketplaceArtifactRequest" }
+      responses:
+        "200":
+          description: Administrator outcome recorded and publication gate applied without platform cosign execution.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MarketplaceReviewResponse" }
+        "400": { description: Review decision, evidence reference, actor, or note is invalid. }
+        "401": { description: Registry admin credentials are required. }
+        "404": { description: Marketplace artifact was not found. }
+  /api/v1/orchestrator/agents:
+    get:
+      operationId: listOrchestratorAgents
+      summary: List scoped Agent credential status without returning token hashes or secrets.
+      security: [{ registryAdmin: [] }]
+      responses:
+        "200": { description: Agent credential metadata without secret material. }
+        "401": { description: Registry admin credentials are required. }
+    post:
+      operationId: createOrchestratorAgent
+      summary: Issue one scoped Agent bearer token; the plaintext token is returned once and only its SHA-256 digest is retained.
+      security: [{ registryAdmin: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [agent_id, display_name, actor, rationale]
+              additionalProperties: false
+              properties:
+                agent_id: { type: string, pattern: "^[a-z0-9][a-z0-9-]{2,79}$" }
+                display_name: { type: string, minLength: 2, maxLength: 120 }
+                actor: { type: string, minLength: 1, maxLength: 80 }
+                rationale: { type: string, minLength: 10, maxLength: 1000 }
+                validity_days: { type: integer, minimum: 1, maximum: 365, default: 90 }
+      responses:
+        "201": { description: Scoped credential issued with a one-time plaintext token and no-store caching. }
+        "400": { description: Credential request is invalid. }
+        "401": { description: Registry admin credentials are required. }
+        "409": { description: Agent ID already has an immutable credential record. }
+  /api/v1/orchestrator/agents/{id}/revoke:
+    post:
+      operationId: revokeOrchestratorAgent
+      summary: Revoke one scoped Agent credential immediately and append an audit event.
+      security: [{ registryAdmin: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, pattern: "^[a-z0-9][a-z0-9-]{2,79}$" }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [actor, rationale]
+              additionalProperties: false
+              properties:
+                actor: { type: string, minLength: 1, maxLength: 80 }
+                rationale: { type: string, minLength: 10, maxLength: 1000 }
+      responses:
+        "200": { description: Credential revoked. }
+        "400": { description: Revocation request is invalid. }
+        "401": { description: Registry admin credentials are required. }
+        "404": { description: Agent credential was not found. }
+        "409": { description: Agent credential was already revoked. }
+  /api/v1/orchestrator/agents/{id}/rotate:
+    post:
+      operationId: rotateOrchestratorAgent
+      summary: Replace an active Agent bearer token while preserving its stable Agent identity.
+      security: [{ registryAdmin: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, pattern: "^[a-z0-9][a-z0-9-]{2,79}$" }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [actor, rationale]
+              additionalProperties: false
+              properties:
+                actor: { type: string, minLength: 1, maxLength: 80 }
+                rationale: { type: string, minLength: 10, maxLength: 1000 }
+                validity_days: { type: integer, minimum: 1, maximum: 365, default: 90 }
+      responses:
+        "200": { description: New plaintext token returned once with no-store caching; the previous token is invalid immediately. }
+        "400": { description: Rotation request is invalid. }
+        "401": { description: Registry admin credentials are required. }
+        "404": { description: Agent credential was not found. }
+        "409": { description: Agent credential is not active. }
+  /api/v1/orchestrator/agents/{id}/resource-grants:
+    get:
+      operationId: listOrchestratorAgentResourceGrants
+      summary: List the explicit resource scope assigned to one Agent identity.
+      security: [{ registryAdmin: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, pattern: "^[a-z0-9][a-z0-9-]{2,79}$" }
+      responses:
+        "200": { description: Resource grant metadata without credential material. }
+        "401": { description: Registry admin credentials are required. }
+  /api/v1/orchestrator/agents/{id}/resource-grants/{resourceId}:
+    put:
+      operationId: putOrchestratorAgentResourceGrant
+      summary: Grant or restore one Agent's authority over a registered resource.
+      security: [{ registryAdmin: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, pattern: "^[a-z0-9][a-z0-9-]{2,79}$" }
+        - in: path
+          name: resourceId
+          required: true
+          schema: { type: string, pattern: "^[a-z0-9][a-z0-9-]{2,79}$" }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [actor, rationale]
+              additionalProperties: false
+              properties:
+                actor: { type: string, minLength: 1, maxLength: 80 }
+                rationale: { type: string, minLength: 10, maxLength: 1000 }
+      responses:
+        "200": { description: A previously revoked grant was restored. }
+        "201": { description: Resource grant was created. }
+        "400": { description: Grant request is invalid. }
+        "401": { description: Registry admin credentials are required. }
+        "404": { description: Agent credential or resource was not found. }
+        "409": { description: Agent is inactive, the grant is already active, or another Agent already has the resource's single active grant. }
+    delete:
+      operationId: deleteOrchestratorAgentResourceGrant
+      summary: Revoke one Agent resource grant immediately.
+      security: [{ registryAdmin: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, pattern: "^[a-z0-9][a-z0-9-]{2,79}$" }
+        - in: path
+          name: resourceId
+          required: true
+          schema: { type: string, pattern: "^[a-z0-9][a-z0-9-]{2,79}$" }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [actor, rationale]
+              additionalProperties: false
+              properties:
+                actor: { type: string, minLength: 1, maxLength: 80 }
+                rationale: { type: string, minLength: 10, maxLength: 1000 }
+      responses:
+        "200": { description: Resource grant was revoked and existing observations cease to be current. }
+        "400": { description: Revocation request is invalid. }
+        "401": { description: Registry admin credentials are required. }
+        "404": { description: Agent credential, resource, or grant was not found. }
+        "409": { description: Agent is inactive or the grant is already revoked. }
+  /api/v1/orchestrator/resources/{id}/agent-handoff:
+    get:
+      operationId: listOrchestratorAgentHandoffs
+      summary: List recent audited Agent grant handoffs for one resource.
+      security: [{ registryAdmin: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, pattern: "^[a-z0-9][a-z0-9-]{2,79}$" }
+        - in: query
+          name: limit
+          schema: { type: integer, minimum: 1, maximum: 100, default: 25 }
+        - in: query
+          name: cursor
+          schema: { type: string }
+      responses:
+        "200": { description: Recent handoffs ordered newest first with a tamper-evident record fingerprint and verified or pending_observation status derived from current target-Agent evidence. }
+        "400": { description: Resource ID or limit is invalid. }
+        "401": { description: Registry admin credentials are required. }
+        "404": { description: Resource was not found. }
+    post:
+      operationId: createOrchestratorAgentHandoff
+      summary: Atomically transfer a resource's single active grant between Agent identities.
+      security: [{ registryAdmin: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, pattern: "^[a-z0-9][a-z0-9-]{2,79}$" }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [request_id, from_agent_id, to_agent_id, actor, rationale]
+              additionalProperties: false
+              properties:
+                request_id: { type: string, pattern: "^[A-Za-z0-9][A-Za-z0-9._:-]{7,79}$" }
+                from_agent_id: { type: string, pattern: "^[a-z0-9][a-z0-9-]{2,79}$" }
+                to_agent_id: { type: string, pattern: "^[a-z0-9][a-z0-9-]{2,79}$" }
+                actor: { type: string, minLength: 1, maxLength: 80 }
+                rationale: { type: string, minLength: 10, maxLength: 1000 }
+      responses:
+        "200": { description: Source revocation, target activation, audit, and fingerprinted idempotency record committed atomically, or a matching receipt replayed. }
+        "400": { description: Handoff request is invalid. }
+        "401": { description: Registry admin credentials are required. }
+        "404": { description: Resource or Agent credential was not found. }
+        "409": { description: Source grant does not match, the target Agent is inactive, or the request ID is bound to different parameters. }
+        "503": { description: Atomic storage batching is unavailable. }
+  /api/v1/orchestrator/agent-handoffs:
+    get:
+      operationId: listAllOrchestratorAgentHandoffs
+      summary: Search audited Agent grant handoffs across resources with cursor pagination.
+      security: [{ registryAdmin: [] }]
+      parameters:
+        - in: query
+          name: resource_id
+          schema: { type: string, pattern: "^[a-z0-9][a-z0-9-]{2,79}$" }
+        - in: query
+          name: agent_id
+          schema: { type: string, pattern: "^[a-z0-9][a-z0-9-]{2,79}$" }
+        - in: query
+          name: verification_status
+          schema: { type: string, enum: [verified, pending_observation] }
+        - in: query
+          name: limit
+          schema: { type: integer, minimum: 1, maximum: 100, default: 25 }
+        - in: query
+          name: cursor
+          schema: { type: string }
+      responses:
+        "200": { description: Filtered fingerprinted handoff history and an opaque next_cursor when another page may exist. }
+        "400": { description: Filter or cursor is invalid. }
+        "401": { description: Registry admin credentials are required. }
+        "503": { description: Orchestrator storage is unavailable. }
+  /api/v1/orchestrator/agent-handoffs/{requestId}/receipt:
+    get:
+      operationId: verifyOrchestratorAgentHandoffReceipt
+      summary: Independently recompute and verify one Agent handoff receipt fingerprint.
+      security: [{ registryAdmin: [] }]
+      parameters:
+        - in: path
+          name: requestId
+          required: true
+          schema: { type: string, pattern: "^[A-Za-z0-9][A-Za-z0-9._:-]{7,79}$" }
+      responses:
+        "200": { description: Stored and independently computed fingerprints with verified, mismatch, or unavailable integrity status. }
+        "400": { description: Request ID is invalid. }
+        "401": { description: Registry admin credentials are required. }
+        "404": { description: Handoff receipt was not found. }
+        "503": { description: Orchestrator storage is unavailable. }
+  /api/v1/orchestrator/agent-handoffs/integrity:
+    get:
+      operationId: scanOrchestratorAgentHandoffIntegrity
+      summary: Recompute recent Agent handoff fingerprints and aggregate integrity findings.
+      security: [{ registryAdmin: [] }]
+      parameters:
+        - in: query
+          name: limit
+          schema: { type: integer, minimum: 1, maximum: 500, default: 100 }
+        - in: query
+          name: cursor
+          schema: { type: string }
+      responses:
+        "200": { description: Nominal or critical page summary with minimal anomalies and an opaque next_cursor for continued coverage. }
+        "400": { description: Scan limit or cursor is invalid. }
+        "401": { description: Registry admin credentials are required. }
+        "503": { description: Orchestrator storage is unavailable. }
+  /api/v1/orchestrator/agent-handoffs/integrity/runs:
+    get:
+      operationId: listOrchestratorAgentHandoffIntegrityRuns
+      summary: List persisted Agent handoff integrity scan runs without exposing finding bodies.
+      security: [{ registryAdmin: [] }]
+      parameters:
+        - in: query
+          name: status
+          schema: { type: string, enum: [nominal, critical] }
+        - in: query
+          name: limit
+          schema: { type: integer, minimum: 1, maximum: 100, default: 25 }
+        - in: query
+          name: cursor
+          schema: { type: string }
+      responses:
+        "200": { description: Newest-first scan run summaries with cycle, page, trigger, and duration metadata plus an opaque next_cursor when another page exists. }
+        "400": { description: Filter, limit, or cursor is invalid. }
+        "401": { description: Registry admin credentials are required. }
+        "503": { description: Orchestrator storage is unavailable. }
+  /api/v1/orchestrator/agent-handoffs/integrity/continuation:
+    get:
+      operationId: getOrchestratorAgentHandoffIntegrityContinuation
+      summary: Inspect sanitized progress and freshness for the current scheduled integrity scan cycle.
+      security: [{ registryAdmin: [] }]
+      responses:
+        "200": { description: Idle, active, or stalled continuation state without opaque cursor components. }
+        "401": { description: Registry admin credentials are required. }
+        "503": { description: Orchestrator storage is unavailable. }
+  /api/v1/orchestrator/agent-handoffs/integrity/continuation/recovery:
+    post:
+      operationId: recoverOrchestratorAgentHandoffIntegrityContinuation
+      summary: Audit and clear one matching stalled continuation so the next scheduled scan starts a new cycle.
+      security: [{ registryAdmin: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [cycle_id, actor, reason_code, rationale]
+              properties:
+                cycle_id: { type: string, pattern: "^[A-Za-z0-9][A-Za-z0-9._:-]{7,79}$" }
+                actor: { type: string, minLength: 1, maxLength: 80 }
+                reason_code: { type: string, enum: [scheduler_unavailable, dependency_unavailable, cursor_invalid, operator_intervention] }
+                rationale: { type: string, minLength: 10, maxLength: 1000 }
+      responses:
+        "200": { description: Stalled continuation was audited and cleared; the next schedule starts a new cycle. }
+        "400": { description: Recovery request is invalid. }
+        "401": { description: Registry admin credentials are required. }
+        "404": { description: No continuation is awaiting recovery. }
+        "409": { description: Cycle changed or is not stalled. }
+        "503": { description: Orchestrator storage is unavailable. }
+  /api/v1/orchestrator/agent-handoffs/integrity/continuation/recoveries:
+    get:
+      operationId: listOrchestratorAgentHandoffIntegrityRecoveries
+      summary: List audited stalled-cycle recoveries without exposing continuation cursor components.
+      security: [{ registryAdmin: [] }]
+      parameters:
+        - in: query
+          name: limit
+          schema: { type: integer, minimum: 1, maximum: 100, default: 25 }
+        - in: query
+          name: cursor
+          schema: { type: string }
+      responses:
+        "200": { description: Newest-first sanitized recovery events, follow-up scan verification status, and an opaque next_cursor when another page exists. }
+        "400": { description: Limit or cursor is invalid. }
+        "401": { description: Registry admin credentials are required. }
+        "503": { description: Orchestrator storage is unavailable. }
+  /api/v1/orchestrator/agent-handoffs/integrity/continuation/recoveries/summary:
+    get:
+      operationId: summarizeOrchestratorAgentHandoffIntegrityRecoveryTrend
+      summary: Aggregate recovery causes, normalize aggregate and per-reason rates by completed scan cycles, compare the preceding window, and detect surges or persistent cause streaks.
+      security: [{ registryAdmin: [] }]
+      parameters:
+        - in: query
+          name: window_hours
+          schema: { type: integer, minimum: 1, maximum: 720, default: 168 }
+        - in: query
+          name: bucket_hours
+          schema: { type: integer, enum: [1, 6, 24], default: 24 }
+      responses:
+        "200": { description: Recovery totals, aggregate recovery budget and budget trend, aggregate and per-reason rates per distinct scan cycle, rate regressions against the preceding window, ordered time buckets, concentration, and per-cause streaks. }
+        "400": { description: Window or bucket is invalid. }
+        "401": { description: Registry admin credentials are required. }
+        "503": { description: Orchestrator storage is unavailable. }
+  /api/v1/orchestrator/agent-handoffs/integrity/runs/{runId}:
+    get:
+      operationId: getOrchestratorAgentHandoffIntegrityRun
+      summary: Read one persisted integrity scan run with minimal anomaly identifiers for investigation.
+      security: [{ registryAdmin: [] }]
+      parameters:
+        - in: path
+          name: runId
+          required: true
+          schema: { type: string, pattern: "^[A-Za-z0-9][A-Za-z0-9._:-]{7,79}$" }
+      responses:
+        "200": { description: Scan run counts, cycle and page position, scheduled trigger and duration metadata, and sanitized findings. }
+        "400": { description: Run ID is invalid. }
+        "401": { description: Registry admin credentials are required. }
+        "404": { description: Scan run was not found. }
+        "503": { description: Orchestrator storage is unavailable. }
+  /api/v1/orchestrator/agent-handoffs/integrity/cycles:
+    get:
+      operationId: listOrchestratorAgentHandoffIntegrityCycles
+      summary: List cross-page integrity scan cycles with aggregate outcomes and completion state.
+      security: [{ registryAdmin: [] }]
+      parameters:
+        - in: query
+          name: status
+          schema: { type: string, enum: [nominal, critical] }
+        - in: query
+          name: limit
+          schema: { type: integer, minimum: 1, maximum: 100, default: 25 }
+        - in: query
+          name: cursor
+          schema: { type: string }
+      responses:
+        "200": { description: Newest-first cycle totals and an opaque next_cursor without page finding bodies. }
+        "400": { description: Filter, limit, or cursor is invalid. }
+        "401": { description: Registry admin credentials are required. }
+        "503": { description: Orchestrator storage is unavailable. }
+  /api/v1/orchestrator/agent-handoffs/integrity/cycles/{cycleId}:
+    get:
+      operationId: getOrchestratorAgentHandoffIntegrityCycle
+      summary: Read one integrity scan cycle and page through its run metadata without finding bodies.
+      security: [{ registryAdmin: [] }]
+      parameters:
+        - in: path
+          name: cycleId
+          required: true
+          schema: { type: string, pattern: "^[A-Za-z0-9][A-Za-z0-9._:-]{7,79}$" }
+        - in: query
+          name: limit
+          schema: { type: integer, minimum: 1, maximum: 100, default: 25 }
+        - in: query
+          name: cursor
+          schema: { type: string }
+      responses:
+        "200": { description: Cycle totals and page-ordered run metadata with an opaque next_cursor. }
+        "400": { description: Cycle ID, limit, or cursor is invalid. }
+        "401": { description: Registry admin credentials are required. }
+        "404": { description: Integrity scan cycle was not found. }
+        "503": { description: Orchestrator storage is unavailable. }
+  /api/v1/orchestrator/agent-handoffs/integrity/summary:
+    get:
+      operationId: summarizeOrchestratorAgentHandoffIntegrityRuns
+      summary: Aggregate real integrity scan outcomes, schedule gaps, runtime health, telemetry coverage, and scan capacity over a bounded operational window.
+      security: [{ registryAdmin: [] }]
+      parameters:
+        - in: query
+          name: window_hours
+          schema: { type: integer, minimum: 1, maximum: 720, default: 24 }
+      responses:
+        "200": { description: Protected aggregate recovery trends, escalation status, acknowledgement state, verification state, and non-executing automation-routing metadata. }
+        "400": { description: Window is invalid. }
+        "401": { description: Registry admin credentials are required. }
+        "503": { description: Orchestrator storage is unavailable. }
+  /api/v1/orchestrator/resources:
+    get:
+      operationId: listOrchestratorResources
+      summary: List protected Orchestrator control-plane resources.
+      security: [{ registryAdmin: [] }]
+      parameters:
+        - in: query
+          name: resource_type
+          schema: { type: string, enum: [network_link, edge_node, gpu_cluster, protocol_endpoint] }
+        - in: query
+          name: status
+          schema: { type: string, enum: [active, degraded, disabled] }
+        - in: query
+          name: region
+          schema: { type: string, maxLength: 80 }
+      responses:
+        "200": { description: Protected resource inventory without credentials or customer data. }
+        "401": { description: Registry admin credentials are required. }
+  /api/v1/orchestrator/telemetry:
+    get:
+      operationId: getOrchestratorTelemetry
+      summary: Read bounded time-window aggregates from the current D1 compatibility backend without claiming streaming delivery.
+      security: [{ registryAdmin: [] }]
+      parameters:
+        - in: query
+          name: resource_id
+          schema: { type: string, pattern: "^[a-z0-9][a-z0-9-]{2,79}$" }
+        - in: query
+          name: window_minutes
+          schema: { type: integer, minimum: 5, maximum: 1440, default: 15 }
+      responses:
+        "200": { description: Metric aggregates with explicit backend and streaming capability metadata. }
+        "400": { description: Query window or resource ID is invalid. }
+        "401": { description: Registry admin credentials are required. }
+    post:
+      operationId: createOrchestratorTelemetry
+      summary: Ingest 1-100 allowlisted OpenTelemetry-style communication metric samples from an Agent authorized for the resource.
+      security: [{ orchestratorAgent: [] }]
+      responses:
+        "202": { description: Valid samples accepted idempotently by the compatibility backend. }
+        "400": { description: Metric, unit, timestamp, value, or bounded attributes are invalid. }
+        "401": { description: Orchestrator Agent credentials are required. }
+        "403": { description: Agent is not authorized for the resource. }
+  /api/v1/orchestrator/summary:
+    get:
+      operationId: getOrchestratorSummary
+      summary: Read aggregate control-plane lifecycle counts, integrity-scan health, cycle-normalized recovery-rate alerts, persistent recovery causes, and fail-static state.
+      security: [{ registryAdmin: [] }]
+      responses:
+        "200":
+          description: Aggregate Orchestrator lifecycle and alert summary, including six-hour recovery-cause persistence over the latest 24 hours.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [summary]
+                properties:
+                  summary:
+                    type: object
+                    required: [status, resources, resource_observations, agent_credentials, resource_grants, agent_handoffs, handoff_integrity, decisions_24h, policy_bundles, approvals, distributions, acknowledgements, rollbacks, rollback_verifications, fail_static, alerts, generated_at]
+        "401": { description: Registry admin credentials are required. }
+        "503": { description: Orchestrator storage or admin access is not configured. }
+  /api/v1/orchestrator/resources/{id}:
+    get:
+      operationId: getOrchestratorResource
+      summary: Read one protected Orchestrator resource declaration.
+      security: [{ registryAdmin: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, pattern: "^[a-z0-9][a-z0-9-]{2,79}$" }
+      responses:
+        "200": { description: One resource declaration. }
+        "401": { description: Registry admin credentials are required. }
+        "404": { description: Resource was not found. }
+    put:
+      operationId: putOrchestratorResource
+      summary: Register or replace a versioned Orchestrator resource declaration and append an audit event.
+      security: [{ registryAdmin: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, pattern: "^[a-z0-9][a-z0-9-]{2,79}$" }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, resource_type, region, capabilities, actor]
+              additionalProperties: false
+              properties:
+                name: { type: string, minLength: 2, maxLength: 120 }
+                resource_type: { type: string, enum: [network_link, edge_node, gpu_cluster, protocol_endpoint] }
+                region: { type: string, minLength: 2, maxLength: 80 }
+                provider: { type: string, maxLength: 120 }
+                capabilities: { type: object, maxProperties: 40 }
+                status: { type: string, enum: [active, degraded, disabled], default: active }
+                actor: { type: string, minLength: 1, maxLength: 80 }
+      responses:
+        "200": { description: Existing resource declaration replaced with a new version. }
+        "201": { description: Resource declaration registered. }
+        "400": { description: Resource declaration is invalid. }
+        "401": { description: Registry admin credentials are required. }
+  /api/v1/orchestrator/resources/{id}/observation:
+    get:
+      operationId: getOrchestratorResourceObservation
+      summary: Read the latest authenticated Agent observation and computed lease freshness for one resource.
+      security: [{ registryAdmin: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, pattern: "^[a-z0-9][a-z0-9-]{2,79}$" }
+      responses:
+        "200": { description: Latest observation with current or expired freshness. }
+        "401": { description: Registry admin credentials are required. }
+        "404": { description: No Agent observation exists for the resource. }
+    post:
+      operationId: createOrchestratorResourceObservation
+      summary: Create or renew an authenticated Agent observation lease bound to the registered resource version and capability digest.
+      security: [{ orchestratorAgent: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, pattern: "^[a-z0-9][a-z0-9-]{2,79}$" }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [resource_version, capabilities_digest, observed_status, evidence_reference]
+              additionalProperties: false
+              properties:
+                agent_id: { type: string, minLength: 1, maxLength: 120, deprecated: true, description: Optional compatibility claim; when present it must equal the identity derived from the bearer token. }
+                resource_version: { type: integer, minimum: 1 }
+                capabilities_digest: { type: string, pattern: "^sha256:[a-f0-9]{64}$" }
+                observed_status: { type: string, enum: [active, degraded] }
+                evidence_reference: { type: string, minLength: 1, maxLength: 500 }
+                lease_seconds: { type: integer, minimum: 30, maximum: 300, default: 120 }
+      responses:
+        "200": { description: Existing observation lease renewed. }
+        "201": { description: First observation lease recorded. }
+        "400": { description: Observation payload is invalid. }
+        "401": { description: Orchestrator Agent credentials are required. }
+        "404": { description: Registered resource was not found. }
+        "409": { description: An active prior Agent lease still owns the resource, or a version, capability digest, or resource-state constraint failed. }
+        "503": { description: Orchestrator Agent authentication is not configured. }
+  /api/v1/orchestrator/decisions:
+    post:
+      operationId: createOrchestratorDecision
+      summary: Evaluate only active network links with a current matching Agent observation, using hard constraints and deterministic latency/cost weights without executing a route.
+      security: [{ registryAdmin: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [source_region, destination_region, actor]
+              additionalProperties: false
+              properties:
+                source_region: { type: string, minLength: 2, maxLength: 80 }
+                destination_region: { type: string, minLength: 2, maxLength: 80 }
+                protocol: { type: string, maxLength: 40 }
+                actor: { type: string, minLength: 1, maxLength: 80 }
+                constraints:
+                  type: object
+                  additionalProperties: false
+                  properties:
+                    max_latency_ms: { type: number, minimum: 0 }
+                    max_cost_units: { type: number, minimum: 0 }
+                    require_encryption: { type: boolean, default: false }
+                weights:
+                  type: object
+                  additionalProperties: false
+                  properties:
+                    latency: { type: number, minimum: 0, default: 1 }
+                    cost: { type: number, minimum: 0, default: 1 }
+      responses:
+        "200": { description: An explainable route recommendation was recorded; execution is always none. }
+        "400": { description: Decision request is invalid. }
+        "401": { description: Registry admin credentials are required. }
+        "422": { description: No currently observed registered route satisfies every hard constraint; no route was executed. }
+  /api/v1/orchestrator/policy-bundles:
+    get:
+      operationId: listOrchestratorPolicyBundles
+      summary: List staged, non-executing policy bundles in the protected control plane.
+      security: [{ registryAdmin: [] }]
+      responses:
+        "200": { description: Staged policy bundle metadata; policy source is not returned. }
+        "401": { description: Registry admin credentials are required. }
+    post:
+      operationId: createOrchestratorPolicyBundle
+      summary: Validate and stage a CT-DSL v1 policy against a recorded recommendation and exact resource version without applying it.
+      security: [{ registryAdmin: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [decision_id, resource_id, resource_version, policy_source, actor]
+              additionalProperties: false
+              properties:
+                decision_id: { type: string, minLength: 1, maxLength: 80 }
+                resource_id: { type: string, minLength: 3, maxLength: 80 }
+                resource_version: { type: integer, minimum: 1 }
+                policy_source: { type: string, minLength: 1, maxLength: 20000 }
+                actor: { type: string, minLength: 1, maxLength: 80 }
+      responses:
+        "201": { description: Policy bundle validated and staged; execution is always none. }
+        "400": { description: Bundle metadata or CT-DSL source is invalid. }
+        "401": { description: Registry admin credentials are required. }
+        "409": { description: Decision, selected resource, resource version, or current Agent observation is not eligible for staging. }
+  /api/v1/orchestrator/policy-bundles/{id}/approval:
+    get:
+      operationId: getOrchestratorPolicyApproval
+      summary: Read the immutable named approval decision for a staged policy bundle.
+      security: [{ registryAdmin: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, minLength: 1, maxLength: 80 }
+      responses:
+        "200": { description: Approval metadata with execution fixed to none. }
+        "401": { description: Registry admin credentials are required. }
+        "404": { description: No approval exists for the policy bundle. }
+    post:
+      operationId: createOrchestratorPolicyApproval
+      summary: Record one immutable named approval or rejection for distribution preparation without applying the policy.
+      security: [{ registryAdmin: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, minLength: 1, maxLength: 80 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [outcome, reviewer, rationale]
+              additionalProperties: false
+              properties:
+                outcome: { type: string, enum: [approved, rejected] }
+                reviewer: { type: string, minLength: 1, maxLength: 80 }
+                rationale: { type: string, minLength: 10, maxLength: 1000 }
+                evidence_reference: { type: string, maxLength: 500 }
+      responses:
+        "201": { description: Immutable approval decision recorded; execution is always none. }
+        "400": { description: Approval payload is invalid. }
+        "401": { description: Registry admin credentials are required. }
+        "404": { description: Policy bundle was not found. }
+        "409": { description: Reviewer separation, staged state, or immutability rule failed. }
+  /api/v1/orchestrator/policy-bundles/{id}/distributions:
+    post:
+      operationId: createOrchestratorPolicyDistribution
+      summary: Prepare an approved policy bundle for agent distribution without sending or applying it.
+      security: [{ registryAdmin: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, minLength: 1, maxLength: 80 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [actor]
+              additionalProperties: false
+              properties:
+                actor: { type: string, minLength: 1, maxLength: 80 }
+      responses:
+        "201": { description: Distribution record prepared; execution is none. }
+        "400": { description: Preparation payload is invalid. }
+        "401": { description: Registry admin credentials are required. }
+        "404": { description: Policy bundle was not found. }
+        "409": { description: Bundle approval, current Agent observation, or immutability rule failed. }
+  /api/v1/orchestrator/distributions/{id}/acknowledgement:
+    post:
+      operationId: createOrchestratorPolicyAcknowledgement
+      summary: Record one authenticated acknowledgement only when policy fingerprint, resource version, and current resource-lease Agent identity match.
+      security: [{ orchestratorAgent: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, minLength: 1, maxLength: 80 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [fingerprint, resource_version, outcome, evidence_reference]
+              additionalProperties: false
+              properties:
+                agent_id: { type: string, minLength: 1, maxLength: 120, deprecated: true, description: Optional compatibility claim; when present it must equal the identity derived from the bearer token. }
+                fingerprint: { type: string, pattern: "^sha256:[a-f0-9]{64}$" }
+                resource_version: { type: integer, minimum: 1 }
+                outcome: { type: string, enum: [accepted, rejected] }
+                evidence_reference: { type: string, minLength: 1, maxLength: 500 }
+      responses:
+        "201": { description: Authenticated agent evidence recorded; traffic change remains none. }
+        "400": { description: Acknowledgement payload is invalid. }
+        "401": { description: Orchestrator agent credentials are required. }
+        "404": { description: Distribution was not found. }
+        "409": { description: Distribution state, evidence, current observation, or resource-lease Agent identity does not match. }
+        "503": { description: Orchestrator agent authentication is not configured. }
+  /api/v1/orchestrator/distributions/{id}/rollbacks:
+    post:
+      operationId: createOrchestratorRollback
+      summary: Prepare an immutable rollback from one acknowledged distribution to an older acknowledged policy on the same active resource version.
+      security: [{ registryAdmin: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, minLength: 1, maxLength: 80 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [target_distribution_id, actor, rationale]
+              additionalProperties: false
+              properties:
+                target_distribution_id: { type: string, minLength: 1, maxLength: 80 }
+                actor: { type: string, minLength: 1, maxLength: 80 }
+                rationale: { type: string, minLength: 10, maxLength: 1000 }
+      responses:
+        "201": { description: Rollback intent prepared; execution is none until authenticated agent evidence arrives. }
+        "400": { description: Rollback request is invalid. }
+        "401": { description: Registry admin credentials are required. }
+        "404": { description: Source or target distribution was not found. }
+        "409": { description: Acknowledgement, ordering, resource, version, current Agent observation, or immutability constraint failed. }
+  /api/v1/orchestrator/rollbacks/{id}/acknowledgement:
+    post:
+      operationId: createOrchestratorRollbackAcknowledgement
+      summary: Record one authenticated rollback report when source, target, resource version, and current resource-lease Agent identity match exactly.
+      security: [{ orchestratorAgent: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, minLength: 1, maxLength: 80 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [from_fingerprint, target_fingerprint, resource_version, outcome, evidence_reference]
+              additionalProperties: false
+              properties:
+                agent_id: { type: string, minLength: 1, maxLength: 120, deprecated: true, description: Optional compatibility claim; when present it must equal the identity derived from the bearer token. }
+                from_fingerprint: { type: string, pattern: "^sha256:[a-f0-9]{64}$" }
+                target_fingerprint: { type: string, pattern: "^sha256:[a-f0-9]{64}$" }
+                resource_version: { type: integer, minimum: 1 }
+                outcome: { type: string, enum: [accepted, rejected] }
+                evidence_reference: { type: string, minLength: 1, maxLength: 500 }
+      responses:
+        "201": { description: Agent-reported rollback evidence stored with independent verification pending. }
+        "400": { description: Rollback acknowledgement is invalid. }
+        "401": { description: Orchestrator agent credentials are required. }
+        "404": { description: Rollback record was not found. }
+        "409": { description: Rollback state, evidence, current observation, or resource-lease Agent identity does not match; fail-static remains in effect. }
+        "503": { description: Orchestrator agent authentication is not configured. }
+  /api/v1/orchestrator/rollbacks/{id}/verification:
+    post:
+      operationId: createOrchestratorRollbackVerification
+      summary: Record one immutable independent verification after an authenticated agent reports a rollback.
+      security: [{ registryAdmin: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, minLength: 1, maxLength: 80 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [verifier_id, observed_fingerprint, resource_version, outcome, evidence_reference, rationale]
+              additionalProperties: false
+              properties:
+                verifier_id: { type: string, minLength: 1, maxLength: 120 }
+                observed_fingerprint: { type: string, pattern: "^sha256:[a-f0-9]{64}$" }
+                resource_version: { type: integer, minimum: 1 }
+                outcome: { type: string, enum: [verified, failed] }
+                evidence_reference: { type: string, minLength: 1, maxLength: 500 }
+                rationale: { type: string, minLength: 10, maxLength: 1000 }
+      responses:
+        "201": { description: Immutable independent verification recorded without modifying the original agent evidence. }
+        "400": { description: Verification payload is invalid. }
+        "401": { description: Registry admin credentials are required. }
+        "404": { description: Rollback record was not found. }
+        "409": { description: Independence, evidence, resource-version, state, or immutability constraint failed. }
+  /api/v1/session:
+    get:
+      operationId: getRegistrySession
+      summary: Read the current invited contributor session.
+      responses:
+        "200": { description: An active contributor session. }
+        "401": { description: No valid contributor session. }
+    post:
+      operationId: createRegistrySession
+      summary: Create a 12-hour invited contributor session.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, invite_code]
+              properties:
+                email: { type: string, format: email }
+                invite_code: { type: string, minLength: 1, maxLength: 160 }
+      responses:
+        "200": { description: Contributor session created in an HttpOnly cookie. }
+        "401": { description: Email or invitation code is invalid. }
+        "503": { description: Contributor login is not configured. }
+    delete:
+      operationId: deleteRegistrySession
+      summary: Clear the current invited contributor session.
+      responses:
+        "200": { description: Contributor session cleared. }
+  /api/v1/submissions:
+    post:
+      operationId: createProtocolSubmission
+      summary: Submit public protocol evidence for TSC review.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateProtocolSubmissionRequest" }
+      responses:
+        "201":
+          description: Submission entered the review queue.
+        "400":
+          description: Submission fields are invalid.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+        "401": { description: A valid contributor session is required. }
+        "403": { description: Submission email does not match the contributor session. }
+    get:
+      operationId: listProtocolSubmissions
+      summary: List TSC review queue entries.
+      security: [{ registryAdmin: [] }]
+      responses:
+        "200": { description: Protected review queue. }
+        "401": { description: Registry admin credentials are required. }
+  /api/v1/submissions/{id}:
+    patch:
+      operationId: reviewProtocolSubmission
+      summary: Change submission review status, publish approved evidence, and append an audit event.
+      security: [{ registryAdmin: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200": { description: Review state updated; approved submissions are linked to a published protocol entry. }
+        "401": { description: Registry admin credentials are required. }
+        "404": { description: Submission was not found. }
+  /api/health:
+    get:
+      operationId: getHealth
+      summary: Liveness probe.
+      responses:
+        "200":
+          description: Service is alive.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+  /api/ready:
+    get:
+      operationId: getReady
+      summary: Readiness probe with DB dependency check.
+      responses:
+        "200":
+          description: Dependencies are ready.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReadyResponse"
+        "503":
+          description: A dependency is missing or unready.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReadyResponse"
+  /api/subscriptions:
+    post:
+      operationId: createSubscription
+      summary: Create or reactivate a newsletter subscription.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSubscriptionRequest"
+      responses:
+        "201":
+          description: Subscription accepted and written.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateSubscriptionResponse"
+        "400":
+          description: Invalid or missing email.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "415":
+          description: Unsupported media type.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "503":
+          description: Storage is not configured.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/downloads:
+    post:
+      operationId: createDownloadEvent
+      summary: Track a resource download and optional lead capture.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDownloadRequest"
+      responses:
+        "201":
+          description: Download event accepted and written.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateDownloadResponse"
+        "400":
+          description: Invalid asset, status, or email.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "415":
+          description: Unsupported media type.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "503":
+          description: Storage is not configured.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/events:
+    post:
+      operationId: createAnalyticsEvent
+      summary: Track a non-PII product analytics event for funnel reporting.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAnalyticsEventRequest"
+      responses:
+        "201":
+          description: Analytics event accepted and written.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateAnalyticsEventResponse"
+        "400":
+          description: Invalid event name or payload.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "415":
+          description: Unsupported media type.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "503":
+          description: Storage is not configured.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/v1/analytics/funnel:
+    get:
+      operationId: getAnalyticsFunnel
+      summary: Read privacy-bounded product funnel aggregates.
+      security:
+        - registryAdmin: []
+      parameters:
+        - in: query
+          name: window_days
+          schema: { type: integer, enum: [1, 7, 30, 90], default: 30 }
+        - in: query
+          name: locale
+          schema: { type: string, enum: [all, zh-CN, en], default: all }
+      responses:
+        "200":
+          description: Aggregate event and anonymous-session counts by funnel stage and locale.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [funnel]
+                properties:
+                  funnel:
+                    type: object
+                    required: [window_days, locale, stages, locales, generated_at, privacy]
+                    properties:
+                      window_days: { type: integer }
+                      locale: { type: string }
+                      stages: { type: array, items: { type: object } }
+                      locales: { type: object }
+                      completion_percent: { type: [number, "null"] }
+                      generated_at: { type: string, format: date-time }
+                      privacy: { type: string }
+        "400":
+          description: Invalid window or locale.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+        "401":
+          description: Administrator credentials are missing or invalid.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+        "503":
+          description: Storage or administrator access is not configured.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+components:
+  headers:
+    RequestId:
+      description: Request trace identifier. A valid caller-supplied X-Request-ID is preserved.
+      schema: { type: string }
+    ApiVersion:
+      description: Stable major API version.
+      schema: { type: string, example: "1" }
+    ETag:
+      description: Entity tag for conditional public GET requests using If-None-Match.
+      schema: { type: string }
+    RateLimitLimit:
+      description: Maximum public API requests allowed in the current fixed window.
+      schema: { type: integer, example: 120 }
+    RateLimitRemaining:
+      description: Requests remaining in the current window.
+      schema: { type: integer, minimum: 0 }
+    RateLimitReset:
+      description: Unix timestamp when the current window resets.
+      schema: { type: integer }
+  securitySchemes:
+    registryAdmin:
+      type: http
+      scheme: bearer
+    orchestratorAgent:
+      type: http
+      scheme: bearer
+      description: Scoped per-Agent credential. The server derives Agent identity from the stored token digest; shared environment tokens are not accepted.
+    workspaceToken:
+      type: http
+      scheme: bearer
+      description: Organization-scoped credential. The server derives org_id from the stored token digest and does not accept caller-selected organization scope.
+    complianceAssessorToken:
+      type: http
+      scheme: bearer
+      description: Display-once, expiring, revocable credential bound to one immutable assessment handoff. It does not grant workspace access.
+  schemas:
+    ComplianceDeclarationInput:
+      type: object
+      additionalProperties: false
+      required: [systemId, owner, sourceRegion, destinationRegion, dataClasses, transportEncryption, storageEncryption, legalBasis, retentionDays]
+      properties:
+        systemId: { type: string, minLength: 3 }
+        owner: { type: string, minLength: 1 }
+        sourceRegion: { type: string, pattern: "^[a-z]{2}(?:-[a-z0-9]+){1,3}$" }
+        destinationRegion: { type: string, pattern: "^[a-z]{2}(?:-[a-z0-9]+){1,3}$" }
+        dataClasses:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items: { type: string, minLength: 1 }
+        transportEncryption: { type: string, enum: [mtls, tls1.3] }
+        storageEncryption: { type: string, enum: [aes-256] }
+        legalBasis: { type: string, minLength: 1 }
+        retentionDays: { type: integer, minimum: 1, maximum: 3650 }
+        evidenceRefs:
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required: [id, uri, digest]
+            properties:
+              id: { type: string, minLength: 1 }
+              uri: { type: string, minLength: 1 }
+              digest: { type: string, pattern: "^sha256:[a-f0-9]{64}$" }
+    ComplianceDeclarationReviewInput:
+      type: object
+      additionalProperties: false
+      required: [decision, rationale, evidence_ref]
+      properties:
+        decision: { type: string, enum: [approved, changes_requested] }
+        rationale: { type: string, minLength: 10, maxLength: 1000 }
+        evidence_ref: { type: string, minLength: 3, maxLength: 500 }
+    ComplianceAssessmentHandoffInput:
+      type: object
+      additionalProperties: false
+      required: [assessor_organization, assessment_scope, target_date]
+      properties:
+        assessor_organization: { type: string, minLength: 2, maxLength: 160 }
+        assessment_scope: { type: string, minLength: 10, maxLength: 1200 }
+        target_date: { type: string, format: date }
+    ComplianceExternalAssessmentInput:
+      type: object
+      additionalProperties: false
+      required: [reported_outcome, summary, report_ref, report_sha256, assessed_at]
+      properties:
+        reported_outcome: { type: string, enum: [passed, findings, failed] }
+        summary: { type: string, minLength: 10, maxLength: 1600 }
+        report_ref: { type: string, minLength: 3, maxLength: 500 }
+        report_sha256: { type: string, pattern: "^sha256:[a-f0-9]{64}$" }
+        assessed_at: { type: string, format: date-time }
+    ComplianceExternalAssessmentVerificationInput:
+      type: object
+      additionalProperties: false
+      required: [decision, rationale, evidence_ref]
+      properties:
+        decision: { type: string, enum: [verified, rejected] }
+        rationale: { type: string, minLength: 10, maxLength: 1200 }
+        evidence_ref: { type: string, minLength: 3, maxLength: 500 }
+    BenchRawSample:
+      type: object
+      additionalProperties: false
+      required: [ttft_ms, connection_setup_ms, success, failure_code]
+      properties:
+        ttft_ms: { type: [number, "null"], minimum: 0 }
+        connection_setup_ms: { type: [number, "null"], minimum: 0 }
+        success: { type: boolean }
+        failure_code: { type: string, maxLength: 80, description: Required for failed samples and empty for successful samples. }
+    CreateBenchRunRequest:
+      type: object
+      required: [protocol_slug, scenario_slug, environment]
+      properties:
+        protocol_slug: { type: string, maxLength: 80 }
+        scenario_slug: { type: string, maxLength: 80 }
+        source_url: { type: [string, "null"], format: uri, maxLength: 500 }
+        notes: { type: string, maxLength: 1200 }
+        environment:
+          type: object
+          required: [hardware, network, software]
+          properties:
+            hardware: { type: object }
+            network: { type: object }
+            software: { type: object }
+        raw_samples:
+          type: array
+          minItems: 1
+          maxItems: 1000
+          items: { $ref: "#/components/schemas/BenchRawSample" }
+          description: Required before a measured run can be published. Server-derived metrics replace caller-provided aggregates when present.
+    MarketplaceArtifact:
+      type: object
+      required: [slug, name, version, summary, artifact_ref, manifest_digest, media_type, signer_identity, oidc_issuer, verified_at, updated_at]
+      properties:
+        slug: { type: string }
+        name: { type: string }
+        version: { type: string }
+        summary: { type: string }
+        artifact_ref: { type: string, description: Immutable repository reference ending in the manifest digest. }
+        manifest_digest: { type: string, pattern: "^sha256:[a-f0-9]{64}$" }
+        media_type: { type: string }
+        signer_identity: { type: string }
+        oidc_issuer: { type: string, format: uri }
+        verified_at: { type: string, format: date-time, description: Time the administrator recorded the external verification decision. }
+        updated_at: { type: string, format: date-time }
+    MarketplaceTrustPolicy:
+      type: object
+      required: [digest_pinned, signature_verification_required, external_verification_evidence_required, platform_cosign_execution, unverified_publication_allowed]
+      properties:
+        digest_pinned: { type: boolean, const: true }
+        signature_verification_required: { type: boolean, const: true, description: Compatibility field indicating that publication requires a recorded verification decision. }
+        external_verification_evidence_required: { type: boolean, const: true }
+        platform_cosign_execution: { type: boolean, const: false, description: The platform does not execute cosign. }
+        unverified_publication_allowed: { type: boolean, const: false }
+    MarketplaceCatalogResponse:
+      type: object
+      required: [artifacts, count, trust_policy]
+      properties:
+        artifacts:
+          type: array
+          items: { $ref: "#/components/schemas/MarketplaceArtifact" }
+        count: { type: integer, minimum: 0 }
+        trust_policy: { $ref: "#/components/schemas/MarketplaceTrustPolicy" }
+    WorkspaceMarketplaceArtifact:
+      type: object
+      required: [id, slug, name, version, artifact_ref, manifest_digest, verification_status, publication_status, created_at, updated_at]
+      properties:
+        id: { type: string }
+        slug: { type: string }
+        name: { type: string }
+        version: { type: string }
+        artifact_ref: { type: string, description: Immutable repository reference ending in the manifest digest. }
+        manifest_digest: { type: string, pattern: "^sha256:[a-f0-9]{64}$" }
+        verification_status: { type: string, enum: [unverified, verified, failed] }
+        publication_status: { type: string, enum: [submitted, published, rejected] }
+        created_at: { type: string, format: date-time }
+        updated_at: { type: string, format: date-time }
+    WorkspaceMarketplaceArtifactsResponse:
+      type: object
+      required: [artifacts, count]
+      properties:
+        artifacts:
+          type: array
+          items: { $ref: "#/components/schemas/WorkspaceMarketplaceArtifact" }
+        count: { type: integer, minimum: 0 }
+    SubmittedMarketplaceArtifact:
+      type: object
+      required: [id, slug, name, version, artifact_ref, manifest_digest, verification_status, publication_status]
+      properties:
+        id: { type: string }
+        slug: { type: string }
+        name: { type: string }
+        version: { type: string }
+        artifact_ref: { type: string }
+        manifest_digest: { type: string, pattern: "^sha256:[a-f0-9]{64}$" }
+        verification_status: { type: string, const: unverified }
+        publication_status: { type: string, const: submitted }
+    CreateMarketplaceArtifactResponse:
+      type: object
+      required: [artifact, notice]
+      properties:
+        artifact: { $ref: "#/components/schemas/SubmittedMarketplaceArtifact" }
+        notice: { type: string, description: States that submission is not verification and independent evidence review is required. }
+    CreateMarketplaceArtifactRequest:
+      type: object
+      required: [slug, name, version, summary, artifact_ref, manifest_digest, media_type, signer_identity, oidc_issuer]
+      additionalProperties: false
+      properties:
+        slug: { type: string, pattern: "^[a-z0-9](?:[a-z0-9-]{0,78}[a-z0-9])?$" }
+        name: { type: string, maxLength: 120 }
+        version: { type: string, maxLength: 64 }
+        summary: { type: string, maxLength: 800 }
+        artifact_ref: { type: string, maxLength: 500 }
+        manifest_digest: { type: string, pattern: "^sha256:[a-f0-9]{64}$" }
+        media_type: { type: string, maxLength: 160 }
+        signer_identity: { type: string, maxLength: 254 }
+        oidc_issuer: { type: string, format: uri, maxLength: 500 }
+        signature_bundle_ref: { type: [string, "null"], maxLength: 500, description: Reference to an external signature bundle; submission does not verify it. }
+    ReviewMarketplaceArtifactRequest:
+      type: object
+      required: [outcome, verification_evidence_ref, actor, note]
+      additionalProperties: false
+      properties:
+        outcome: { type: string, enum: [verified, failed], description: Administrator-recorded review outcome, not a platform-executed cosign result. }
+        verification_evidence_ref: { type: string, maxLength: 500 }
+        actor: { type: string, maxLength: 120 }
+        note: { type: string, minLength: 4, maxLength: 800 }
+    MarketplaceReviewResponse:
+      type: object
+      required: [artifact, notice]
+      properties:
+        artifact:
+          type: object
+          required: [id, verification_status, publication_status, verified_at]
+          properties:
+            id: { type: string }
+            verification_status: { type: string, enum: [verified, failed], description: External evidence review outcome recorded by an administrator. }
+            publication_status: { type: string, enum: [published, rejected], description: Verified outcomes map to published; failed outcomes map to rejected and remain absent from the public catalog. }
+            verified_at: { type: [string, "null"], format: date-time, description: Set only for verified outcomes; null for failed reviews. }
+        notice:
+          type: string
+          description: States whether publication followed an administrator-recorded external decision and that the platform did not execute cosign.
+    CreateProtocolSubmissionRequest:
+      type: object
+      required: [submitter_name, submitter_email, protocol_name, category, evidence_url, summary]
+      additionalProperties: false
+      properties:
+        submitter_name: { type: string, maxLength: 80 }
+        submitter_email: { type: string, format: email, maxLength: 254 }
+        organization: { type: string, maxLength: 120 }
+        protocol_name: { type: string, maxLength: 120 }
+        category: { type: string, enum: [rpc, transport, rdma, interconnect] }
+        scenario: { type: string, maxLength: 80 }
+        evidence_url: { type: string, format: uri, maxLength: 500 }
+        summary: { type: string, minLength: 40, maxLength: 1200 }
+    ProtocolSummary:
+      type: object
+      required: [slug, name, summary, category, maturity, trust_level, updated_at]
+      properties:
+        slug: { type: string }
+        name: { type: string }
+        summary: { type: string }
+        category: { type: string }
+        maturity: { type: string, enum: [emerging, established, mature] }
+        trust_level: { type: string, enum: [community, vendor, lab] }
+        updated_at: { type: string, format: date-time }
+    ProtocolDetail:
+      allOf:
+        - $ref: "#/components/schemas/ProtocolSummary"
+        - type: object
+          required: [versions, scenarios]
+          properties:
+            homepage_url: { type: [string, "null"], format: uri }
+            specification_url: { type: [string, "null"], format: uri }
+            versions:
+              type: array
+              items:
+                type: object
+                properties:
+                  version: { type: string }
+                  release_date: { type: [string, "null"], format: date }
+                  status: { type: string, enum: [current, legacy, draft] }
+                  source_url: { type: [string, "null"], format: uri }
+                  notes: { type: string }
+            scenarios:
+              type: array
+              items:
+                type: object
+                required: [slug, name, description, suitability, evidence_note]
+                properties:
+                  slug: { type: string }
+                  name: { type: string }
+                  description: { type: string }
+                  suitability: { type: string, enum: [candidate, common, specialized] }
+                  evidence_note: { type: string }
+    HealthResponse:
+      type: object
+      required: [ok, service, version, environment]
+      properties:
+        ok:
+          type: boolean
+        service:
+          type: string
+        version:
+          type: string
+        environment:
+          type: string
+          enum: [production, staging, local, unknown]
+    ReadyResponse:
+      type: object
+      required: [ok, dependency, status]
+      properties:
+        ok:
+          type: boolean
+        dependency:
+          type: string
+        status:
+          type: string
+          enum: [ready, missing, unready]
+    CreateSubscriptionRequest:
+      type: object
+      required: [email]
+      additionalProperties: false
+      properties:
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        source:
+          type: string
+          maxLength: 80
+          default: homepage_footer
+    CreateSubscriptionResponse:
+      type: object
+      required: [ok, subscription]
+      properties:
+        ok:
+          type: boolean
+        subscription:
+          type: object
+          required: [id, email, source, status]
+          properties:
+            id:
+              type: string
+              format: uuid
+            email:
+              type: string
+              format: email
+            source:
+              type: string
+            status:
+              type: string
+              enum: [active]
+    CreateDownloadRequest:
+      type: object
+      required: [asset]
+      additionalProperties: false
+      properties:
+        asset:
+          type: string
+          enum: [whitepaper_pdf, whitepaper_docx, architecture_matrix, media_pack]
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        source:
+          type: string
+          maxLength: 80
+          default: resources
+        status:
+          type: string
+          enum: [requested, delivered]
+          default: requested
+        request_id:
+          type: string
+          maxLength: 80
+    CreateDownloadResponse:
+      type: object
+      required: [ok, download]
+      properties:
+        ok:
+          type: boolean
+        download:
+          type: object
+          required: [id, asset, asset_url, source, status]
+          properties:
+            id:
+              type: string
+              format: uuid
+            request_id:
+              type: string
+            asset:
+              type: string
+              enum: [whitepaper_pdf, whitepaper_docx, architecture_matrix, media_pack]
+            asset_url:
+              type: string
+            source:
+              type: string
+            status:
+              type: string
+              enum: [requested, delivered]
+            email:
+              type: [string, "null"]
+              format: email
+            lead_id:
+              type: [string, "null"]
+              format: uuid
+    CreateAnalyticsEventRequest:
+      type: object
+      required: [event_name]
+      additionalProperties: false
+      properties:
+        event_name:
+          type: string
+          enum:
+            - architecture_layer_selected
+            - nav_cta_clicked
+            - placeholder_notify_failed
+            - placeholder_notify_submitted
+            - placeholder_notify_succeeded
+            - resource_download_delivered
+            - resource_download_failed
+            - resource_download_requested
+            - route_module_load_failed
+            - route_module_retry_requested
+            - subscription_failed
+            - subscription_submitted
+            - subscription_succeeded
+            - whitepaper_cta_clicked
+        source:
+          type: string
+          maxLength: 80
+          default: unknown
+        path:
+          type: string
+          maxLength: 160
+        session_id:
+          type: string
+          maxLength: 80
+        metadata:
+          type: object
+          maxProperties: 24
+          additionalProperties:
+            oneOf:
+              - type: string
+              - type: number
+              - type: boolean
+              - type: array
+                maxItems: 10
+                items:
+                  oneOf:
+                    - type: string
+                    - type: number
+                    - type: boolean
+    CreateAnalyticsEventResponse:
+      type: object
+      required: [ok, event]
+      properties:
+        ok:
+          type: boolean
+        event:
+          type: object
+          required: [id, event_name, source, path, session_id]
+          properties:
+            id:
+              type: string
+              format: uuid
+            event_name:
+              type: string
+            source:
+              type: string
+            path:
+              type: string
+            session_id:
+              type: [string, "null"]
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+

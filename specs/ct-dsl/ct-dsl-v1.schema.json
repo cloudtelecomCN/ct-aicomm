@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/docs/ct-dsl-v1.schema.json",
+  "title": "CT-DSL Policy v1",
+  "description": "Minimum policy contract for deterministic local path simulation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "policy", "routes"],
+  "properties": {
+    "version": { "const": 1 },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "objective", "constraints"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "objective": { "enum": ["latency", "cost", "balanced"] },
+        "constraints": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["max_latency_ms", "max_cost_per_gb", "data_regions", "require_encryption", "failure_mode"],
+          "properties": {
+            "max_latency_ms": { "type": "number", "exclusiveMinimum": 0 },
+            "max_cost_per_gb": { "type": "number", "exclusiveMinimum": 0 },
+            "data_regions": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+            "require_encryption": { "type": "boolean" },
+            "failure_mode": { "enum": ["fail_static", "fail_closed"] }
+          }
+        }
+      }
+    },
+    "routes": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "protocol", "region", "latency_ms", "cost_per_gb", "encrypted"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "protocol": { "type": "string", "minLength": 1 },
+          "region": { "type": "string", "minLength": 1 },
+          "latency_ms": { "type": "number", "exclusiveMinimum": 0 },
+          "cost_per_gb": { "type": "number", "exclusiveMinimum": 0 },
+          "encrypted": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}

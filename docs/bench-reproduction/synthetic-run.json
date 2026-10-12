@@ -1,0 +1,9 @@
+{
+  "schema_version": "1.0.0",
+  "methodology_version": "0.1.0",
+  "data_origin": "synthetic",
+  "scenario_slug": "inference-ttft",
+  "protocol_slug": "grpc",
+  "environment_file": "synthetic-environment.json",
+  "raw_samples_file": "synthetic-raw-samples.csv"
+}

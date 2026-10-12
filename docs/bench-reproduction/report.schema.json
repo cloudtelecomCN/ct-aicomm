@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/bench/report.v1.json",
+  "title": "CT-Bench report v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "methodology_version", "data_origin", "scenario_slug", "protocol_slug", "environment_fingerprint", "environment", "sample_policy", "metrics", "artifacts"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "methodology_version": { "type": "string", "minLength": 1 },
+    "data_origin": { "enum": ["synthetic", "measured"] },
+    "scenario_slug": { "type": "string", "minLength": 1 },
+    "protocol_slug": { "type": "string", "minLength": 1 },
+    "environment_fingerprint": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "environment": { "$ref": "environment-fingerprint.schema.json" },
+    "sample_policy": {
+      "type": "object",
+      "required": ["total", "successful", "failed", "failure_handling"],
+      "properties": {
+        "total": { "type": "integer", "minimum": 1 },
+        "successful": { "type": "integer", "minimum": 0 },
+        "failed": { "type": "integer", "minimum": 0 },
+        "failure_handling": { "const": "retain-and-report" }
+      }
+    },
+    "metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "value", "unit", "sample_count", "percentile"],
+        "properties": {
+          "name": { "enum": ["ttft_ms", "request_success_rate", "connection_setup_ms"] },
+          "value": { "type": "number", "minimum": 0 },
+          "unit": { "enum": ["ms", "percent"] },
+          "sample_count": { "type": "integer", "minimum": 1 },
+          "percentile": { "enum": ["", "p50", "p95", "p99"] }
+        }
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "required": ["raw_csv", "report_json"],
+      "properties": {
+        "raw_csv": { "const": "raw-samples.csv" },
+        "report_json": { "const": "report.json" }
+      }
+    }
+  }
+}
