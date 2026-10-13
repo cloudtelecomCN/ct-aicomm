@@ -1,0 +1,27 @@
+name: Node tests
+
+on:
+  push:
+    paths:
+      - "packages/**"
+      - "tests/**"
+      - ".github/workflows/node-tests.yml"
+  pull_request:
+    paths:
+      - "packages/**"
+      - "tests/**"
+      - ".github/workflows/node-tests.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - name: Run complete test suite
+        run: node --test "tests/*.test.mjs"
