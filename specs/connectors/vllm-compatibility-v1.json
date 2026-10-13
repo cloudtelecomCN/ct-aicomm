@@ -1,0 +1,91 @@
+{
+  "schema_version": "1.0.0",
+  "connector": "vllm-openai",
+  "matrix_revision": "2026-10-13",
+  "support_policy": {
+    "primary": "0.31.x",
+    "compatible": ["0.30.x"],
+    "probe_only": ["0.29.x"],
+    "unsupported": "<0.29.0 or >0.31.x",
+    "unknown_version_effect": "preserve_original_route_and_mark_metrics_unavailable"
+  },
+  "interfaces": {
+    "required": [
+      { "method": "GET", "path": "/metrics", "purpose": "aggregate runtime evidence" },
+      { "method": "POST", "path": "/v1/chat/completions", "purpose": "streaming chat inference" }
+    ],
+    "optional": [
+      { "method": "POST", "path": "/v1/completions", "purpose": "streaming text completion" },
+      { "method": "GET", "path": "/v1/models", "purpose": "served model discovery" }
+    ]
+  },
+  "request_measurement": {
+    "ttft_source": "client_monotonic_stream_timestamps",
+    "start_event": "request_bytes_committed",
+    "first_token_event": "first_non_empty_stream_content_delta",
+    "required_request_mode": { "stream": true },
+    "prometheus_histograms_are_per_request": false,
+    "missing_first_token_effect": "retain_failed_sample"
+  },
+  "metrics": [
+    {
+      "canonical_name": "vllm_ttft_seconds",
+      "prometheus_name": "vllm:time_to_first_token_seconds",
+      "type": "histogram",
+      "requirement": "required",
+      "use": "aggregate_cross_check",
+      "missing_effect": "degraded_no_aggregate_ttft"
+    },
+    {
+      "canonical_name": "vllm_queue_seconds",
+      "prometheus_name": "vllm:request_queue_time_seconds",
+      "type": "histogram",
+      "requirement": "required",
+      "use": "aggregate_queue_evidence",
+      "missing_effect": "degraded_no_queue_breakdown"
+    },
+    {
+      "canonical_name": "vllm_inference_seconds",
+      "prometheus_name": "vllm:request_inference_time_seconds",
+      "type": "histogram",
+      "requirement": "required",
+      "use": "aggregate_execution_evidence",
+      "missing_effect": "degraded_no_execution_breakdown"
+    },
+    {
+      "canonical_name": "vllm_prefill_seconds",
+      "prometheus_name": "vllm:request_prefill_time_seconds",
+      "type": "histogram",
+      "requirement": "optional",
+      "use": "aggregate_prefill_evidence",
+      "missing_effect": "omit_prefill_breakdown"
+    },
+    {
+      "canonical_name": "vllm_decode_seconds",
+      "prometheus_name": "vllm:request_decode_time_seconds",
+      "type": "histogram",
+      "requirement": "optional",
+      "use": "aggregate_decode_evidence",
+      "missing_effect": "omit_decode_breakdown"
+    },
+    {
+      "canonical_name": "vllm_prompt_tokens",
+      "prometheus_name": "vllm:request_prompt_tokens",
+      "type": "histogram",
+      "requirement": "optional",
+      "use": "workload_characterization",
+      "missing_effect": "use_client_token_count_if_available"
+    }
+  ],
+  "readiness": {
+    "ready": "supported version, streaming endpoint healthy, and all required metrics present",
+    "degraded": "streaming endpoint healthy but version is probe-only or one or more required metrics are missing",
+    "incompatible": "streaming unsupported, response framing invalid, or version outside support policy",
+    "execution_rule": "degraded and incompatible targets never receive automatic route changes"
+  },
+  "sources": [
+    "https://docs.vllm.ai/en/latest/usage/metrics/",
+    "https://github.com/vllm-project/vllm/releases",
+    "https://github.com/vllm-project/vllm/blob/main/RELEASE.md"
+  ]
+}
