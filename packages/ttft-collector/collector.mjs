@@ -44,6 +44,7 @@ export async function collectTtft(options) {
     requestId = randomBytes(12).toString("hex"),
     traceId = randomBytes(16).toString("hex")
   } = options;
+  const onEvent = typeof options.onEvent === "function" ? options.onEvent : () => {};
 
   if (!endpoint || !model || !prompt || !environmentFingerprint) {
     throw new Error("endpoint, model, prompt, and environmentFingerprint are required");
@@ -55,6 +56,9 @@ export async function collectTtft(options) {
   encoder.encode(body);
   const prepareFinished = now();
   const requestStarted = now();
+  const instance = new URL(endpoint).host;
+  const emit = (type, fields = {}) => onEvent({ type, request_id: requestId, trace_id: traceId, inference_instance: instance, monotonic_ms: now(), ...fields });
+  emit("request_started");
 
   let response;
   let firstTokenAt;
@@ -70,9 +74,12 @@ export async function collectTtft(options) {
       body
     });
     const headersAt = now();
+    emit("response_headers", { http_status: response.status });
     if (!response.ok) throw new Error(`http_${response.status}`);
     await firstContentDelta(response);
     firstTokenAt = now();
+    emit("first_token");
+    emit("completed", { http_status: response.status });
 
     const sample = {
       schema_version: "1.0.0",
@@ -88,7 +95,7 @@ export async function collectTtft(options) {
         protocol: "http",
         source_region: "collector-local",
         target_region: "declared-by-operator",
-        inference_instance: new URL(endpoint).host
+        inference_instance: instance
       },
       segments: {
         client_request_preparation_ms: prepareFinished - prepareStarted,
@@ -124,6 +131,7 @@ export async function collectTtft(options) {
   } catch (error) {
     failureCode = String(error?.message || "collector_error").toLowerCase().replace(/[^a-z0-9._-]+/g, "_").slice(0, 80);
     const failedAt = now();
+    emit("failed", { http_status: response?.status ?? 599, failure_code: failureCode });
     const sample = {
       schema_version: "1.0.0",
       sample_id: sampleId,
@@ -138,7 +146,7 @@ export async function collectTtft(options) {
         protocol: "http",
         source_region: "collector-local",
         target_region: "declared-by-operator",
-        inference_instance: new URL(endpoint).host
+        inference_instance: instance
       },
       segments: {
         client_request_preparation_ms: prepareFinished - prepareStarted,
