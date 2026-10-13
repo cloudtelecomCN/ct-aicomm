@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.0.0",
+  "component": "ct-dataplane-agent",
+  "deployment": {
+    "run_as_root": false,
+    "privilege_escalation": false,
+    "read_only_root_filesystem": true,
+    "required_linux_capabilities": ["CAP_BPF", "CAP_NET_ADMIN", "CAP_PERFMON"],
+    "forbidden_linux_capabilities": ["CAP_SYS_ADMIN", "CAP_SYS_MODULE", "CAP_SYS_PTRACE", "CAP_DAC_OVERRIDE"],
+    "seccomp_profile_required": true,
+    "selinux_or_apparmor_profile_required": true
+  },
+  "artifacts": {
+    "signature_required": true,
+    "digest_algorithm": "sha256",
+    "sbom_required": true,
+    "provenance_required": true,
+    "unsigned_artifact_effect": "reject_startup",
+    "signature_mismatch_effect": "reject_startup_and_alert"
+  },
+  "configuration": {
+    "allowed_sources": ["local_root_owned_bootstrap", "mutually_authenticated_control_plane"],
+    "local_owner_uid": 0,
+    "local_mode_max": "0640",
+    "remote_transport": "mTLS1.3",
+    "remote_identity_required": true,
+    "monotonic_revision_required": true,
+    "rollback_target_must_be_previously_applied": true,
+    "unknown_source_effect": "reject"
+  },
+  "network": {
+    "default_egress": "deny",
+    "allowed_egress_purposes": ["control_plane", "telemetry_sink", "declared_health_probe"],
+    "listen_addresses": ["unix_domain_socket", "loopback_health_endpoint"],
+    "public_listener_allowed": false
+  },
+  "data": {
+    "payload_capture_allowed": false,
+    "prompt_or_token_logging_allowed": false,
+    "credential_logging_allowed": false,
+    "permitted_identifiers": ["hashed_workload_id", "request_id", "trace_id", "policy_revision", "route_id"],
+    "log_redaction_required": true
+  },
+  "execution": {
+    "default_mode": "observe_only",
+    "route_target_allowlist_required": true,
+    "prepare_apply_protocol_required": true,
+    "local_kill_switch_required": true,
+    "control_plane_kill_switch_required": true,
+    "last_known_good_route_required": true,
+    "fail_closed_effect": "preserve_or_restore_last_known_good_route"
+  },
+  "threats": [
+    { "id": "T01", "threat": "forged_control_plane", "control": "mTLS identity and pinned trust roots", "failure_effect": "reject" },
+    { "id": "T02", "threat": "replayed_policy", "control": "monotonic revision and nonce", "failure_effect": "reject_and_alert" },
+    { "id": "T03", "threat": "malicious_route_target", "control": "destination allowlist and policy approval", "failure_effect": "reject" },
+    { "id": "T04", "threat": "agent_binary_tampering", "control": "signature, digest, provenance, and read-only filesystem", "failure_effect": "reject_startup" },
+    { "id": "T05", "threat": "privilege_escape", "control": "no root, capability allowlist, seccomp, and LSM profile", "failure_effect": "terminate_and_alert" },
+    { "id": "T06", "threat": "sensitive_payload_collection", "control": "metadata-only telemetry and log redaction", "failure_effect": "drop_field_and_alert" },
+    { "id": "T07", "threat": "control_plane_partition", "control": "lease expiry and last-known-good route", "failure_effect": "preserve_last_known_good_route" },
+    { "id": "T08", "threat": "unsafe_update", "control": "signed staged update and automatic rollback", "failure_effect": "restore_previous_signed_version" }
+  ]
+}

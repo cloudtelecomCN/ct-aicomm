@@ -1,0 +1,23 @@
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+
+const boundary = JSON.parse(await readFile(new URL("../specs/agent/security-boundary-v1.json", import.meta.url), "utf8"));
+assert.equal(boundary.schema_version, "1.0.0");
+assert.equal(boundary.deployment.run_as_root, false);
+assert.equal(boundary.deployment.privilege_escalation, false);
+assert.ok(boundary.deployment.required_linux_capabilities.includes("CAP_BPF"));
+assert.ok(boundary.deployment.required_linux_capabilities.includes("CAP_NET_ADMIN"));
+assert.ok(boundary.deployment.forbidden_linux_capabilities.includes("CAP_SYS_ADMIN"));
+assert.equal(boundary.artifacts.signature_required, true);
+assert.equal(boundary.artifacts.sbom_required, true);
+assert.equal(boundary.configuration.remote_transport, "mTLS1.3");
+assert.equal(boundary.network.default_egress, "deny");
+assert.equal(boundary.network.public_listener_allowed, false);
+assert.equal(boundary.data.payload_capture_allowed, false);
+assert.equal(boundary.data.credential_logging_allowed, false);
+assert.equal(boundary.execution.default_mode, "observe_only");
+assert.equal(boundary.execution.local_kill_switch_required, true);
+assert.equal(boundary.execution.control_plane_kill_switch_required, true);
+assert.ok(boundary.threats.length >= 8);
+assert.equal(new Set(boundary.threats.map(({ id }) => id)).size, boundary.threats.length);
+console.log("Agent security boundary v1 is valid.");

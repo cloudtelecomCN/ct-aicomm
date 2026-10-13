@@ -6,6 +6,7 @@
 
 - [公开工作白皮书](whitepaper/README.zh-CN.md)
 - [CT-Bench 复现与证据规范](bench-reproduction/README.zh-CN.md)
+- [CT-DataPlane Agent 威胁模型](security/agent-threat-model.zh-CN.md)
 - [CT-DSL v1 JSON Schema](../specs/ct-dsl/ct-dsl-v1.schema.json)
 - [CT-DSL 示例](../examples/ct-dsl/)
 - [OpenAPI 3.1 合约](../api/openapi.yaml)
