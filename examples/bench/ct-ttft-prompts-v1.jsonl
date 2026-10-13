@@ -1,0 +1,6 @@
+{"id":"short-001","class":"short","prompt":"Summarize why deterministic measurements need a fixed environment in one sentence."}
+{"id":"short-002","class":"short","prompt":"Name three signals that can affect time to first token."}
+{"id":"medium-001","class":"medium","prompt":"Explain how queue delay, network delay, and model prefill contribute to time to first token. Keep the answer under 120 words."}
+{"id":"medium-002","class":"medium","prompt":"Compare a baseline route with an optimized route and list the evidence required before claiming an improvement. Keep the answer under 120 words."}
+{"id":"long-001","class":"long","prompt":"A distributed inference service spans two regions and several accelerator pools. Describe a reproducible experiment that separates instance-selection effects from network-path effects, retains failures, and prevents synthetic observations from being presented as measured production evidence."}
+{"id":"long-002","class":"long","prompt":"Draft a concise technical review checklist for a time-to-first-token benchmark. Cover workload controls, environment fingerprinting, warmup, repetitions, percentiles, confidence intervals, failure accounting, raw-data publication, and negative-result reporting."}

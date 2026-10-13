@@ -8,6 +8,8 @@ CT-Bench defines a stable evidence package for communication measurements. A pac
 
 For inference TTFT, [`ttft-sample.schema.json`](ttft-sample.schema.json) defines the canonical per-request record. It separates ingress, connector, routing, network, inference queue, and model execution time while binding every observation to a route, environment fingerprint, methodology, and collector version. Successful observations require `ttft_ms`; failed observations retain a machine-readable stage and code.
 
+The frozen experiment design and prompt dataset are documented in [TTFT methodology v1](ttft-methodology.md).
+
 [`synthetic-ttft-sample.json`](synthetic-ttft-sample.json) is contract test data only. Validate the published contract without installing dependencies:
 
 ```sh

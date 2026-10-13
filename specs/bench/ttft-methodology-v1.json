@@ -1,0 +1,83 @@
+{
+  "schema_version": "1.0.0",
+  "methodology_version": "1.0.0",
+  "scenario_slug": "inference-ttft",
+  "purpose": "Compare routing strategies without changing model, prompt mix, generation parameters, or infrastructure during a run set.",
+  "dataset": {
+    "id": "ct-ttft-prompts-v1",
+    "file": "../../examples/bench/ct-ttft-prompts-v1.jsonl",
+    "sha256_required": true,
+    "prompt_classes": ["short", "medium", "long"],
+    "selection": "deterministic_round_robin",
+    "shuffle_seed_required": true
+  },
+  "groups": [
+    {
+      "id": "baseline",
+      "route_policy": "existing_route_unchanged",
+      "description": "Observe the current route without Connector or Agent intervention."
+    },
+    {
+      "id": "connector_only",
+      "route_policy": "instance_selection_only",
+      "description": "Allow vLLM instance selection while preserving the network path."
+    },
+    {
+      "id": "network_only",
+      "route_policy": "network_path_only",
+      "description": "Allow the approved network path change while preserving instance selection."
+    },
+    {
+      "id": "joint",
+      "route_policy": "instance_and_network_selection",
+      "description": "Allow both approved instance and network path selection."
+    }
+  ],
+  "execution": {
+    "warmup_requests_per_target": 20,
+    "measured_requests_per_group_minimum": 200,
+    "repetitions_minimum": 3,
+    "request_concurrency_levels": [1, 8, 32],
+    "randomized_group_order": true,
+    "cooldown_seconds_between_groups": 60,
+    "stream": true,
+    "temperature": 0,
+    "max_tokens": 64
+  },
+  "controlled_variables": [
+    "model_identifier",
+    "model_artifact_hash",
+    "prompt_dataset_hash",
+    "generation_parameters",
+    "vllm_version",
+    "accelerator_type_and_count",
+    "driver_and_runtime_versions",
+    "request_concurrency",
+    "test_window"
+  ],
+  "sample_policy": {
+    "retain_all_attempts": true,
+    "failed_samples_excluded_from_latency_percentiles": true,
+    "failed_samples_included_in_success_rate": true,
+    "failure_code_required": true,
+    "allowed_exclusions": ["operator_aborted_before_request_commit", "invalid_prompt_record"],
+    "exclusion_reason_required": true,
+    "post_hoc_outlier_removal": false
+  },
+  "statistics": {
+    "primary_metric": "ttft_ms",
+    "reported_percentiles": [50, 95, 99],
+    "secondary_metrics": ["request_success_rate", "connection_setup_ms"],
+    "comparison": "paired_by_prompt_class_concurrency_and_repetition",
+    "confidence_interval": { "method": "bootstrap", "level": 0.95, "resamples": 10000 },
+    "minimum_claim_rule": "Report effect size and confidence interval; do not claim improvement when the interval includes zero.",
+    "negative_result_rule": "Publish no-improvement and regression outcomes with the same evidence package."
+  },
+  "provenance": {
+    "data_origin_required": true,
+    "environment_fingerprint_required": true,
+    "raw_samples_required": true,
+    "checksums_required": true,
+    "synthetic_and_measured_must_not_be_aggregated": true
+  }
+}

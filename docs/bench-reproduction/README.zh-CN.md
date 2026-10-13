@@ -8,6 +8,8 @@ CT-Bench 为通信测量定义稳定的证据包。证据包包含：
 
 针对推理 TTFT，[`ttft-sample.schema.json`](ttft-sample.schema.json) 定义规范的逐请求记录。它分别记录入口、Connector、路由、网络、推理排队和模型执行耗时，并将每条观测绑定到路由、环境指纹、方法版本和采集器版本。成功样本必须包含 `ttft_ms`；失败样本必须保留机器可读的失败阶段和代码。
 
+冻结的实验设计和 Prompt 数据集见 [TTFT 实验方法 v1](ttft-methodology.zh-CN.md)。
+
 [`synthetic-ttft-sample.json`](synthetic-ttft-sample.json) 仅用于契约测试，不代表真实性能。无需安装依赖即可校验：
 
 ```sh
