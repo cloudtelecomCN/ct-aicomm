@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/poc/environment-freeze-v1.json",
+  "title": "CT-AIComm POC environment freeze v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "freeze_id", "status", "evidence_origin", "frozen_at", "experiment_window_start", "experiment_window_end", "model", "compute", "software", "network", "prompt_dataset", "load_profile", "artifacts", "approval"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "freeze_id": { "type": "string", "minLength": 1 },
+    "status": { "const": "frozen" },
+    "evidence_origin": { "enum": ["measured", "synthetic"] },
+    "frozen_at": { "type": "string", "format": "date-time" },
+    "experiment_window_start": { "type": "string", "format": "date-time" },
+    "experiment_window_end": { "type": "string", "format": "date-time" },
+    "model": { "$ref": "#/$defs/model" },
+    "compute": { "$ref": "#/$defs/compute" },
+    "software": { "$ref": "#/$defs/software" },
+    "network": { "$ref": "#/$defs/network" },
+    "prompt_dataset": { "$ref": "#/$defs/versionedArtifact" },
+    "load_profile": { "$ref": "#/$defs/loadProfile" },
+    "artifacts": { "$ref": "#/$defs/artifacts" },
+    "approval": { "$ref": "#/$defs/approval" }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "model": { "type": "object", "additionalProperties": false, "required": ["identifier", "revision", "artifact_sha256"], "properties": { "identifier": { "type": "string", "minLength": 1 }, "revision": { "type": "string", "minLength": 1 }, "artifact_sha256": { "$ref": "#/$defs/sha256" } } },
+    "compute": { "type": "object", "additionalProperties": false, "required": ["accelerator_model", "accelerator_count"], "properties": { "accelerator_model": { "type": "string", "minLength": 1 }, "accelerator_count": { "type": "integer", "minimum": 1 } } },
+    "software": { "type": "object", "additionalProperties": false, "required": ["kernel", "driver", "runtime", "vllm"], "properties": { "kernel": { "type": "string", "minLength": 1 }, "driver": { "type": "string", "minLength": 1 }, "runtime": { "type": "string", "minLength": 1 }, "vllm": { "type": "string", "minLength": 1 } } },
+    "network": { "type": "object", "additionalProperties": false, "required": ["topology", "baseline_route", "candidate_route"], "properties": { "topology": { "type": "string", "minLength": 1 }, "baseline_route": { "type": "string", "minLength": 1 }, "candidate_route": { "type": "string", "minLength": 1 } } },
+    "versionedArtifact": { "type": "object", "additionalProperties": false, "required": ["id", "sha256"], "properties": { "id": { "type": "string", "minLength": 1 }, "sha256": { "$ref": "#/$defs/sha256" } } },
+    "loadProfile": { "type": "object", "additionalProperties": false, "required": ["id", "sha256", "concurrency"], "properties": { "id": { "type": "string", "minLength": 1 }, "sha256": { "$ref": "#/$defs/sha256" }, "concurrency": { "type": "array", "minItems": 1, "items": { "type": "integer", "minimum": 1 }, "uniqueItems": true } } },
+    "artifacts": { "type": "object", "additionalProperties": false, "required": ["collector_sha256", "agent_sha256", "orchestrator_sha256"], "properties": { "collector_sha256": { "$ref": "#/$defs/sha256" }, "agent_sha256": { "$ref": "#/$defs/sha256" }, "orchestrator_sha256": { "$ref": "#/$defs/sha256" } } },
+    "approval": { "type": "object", "additionalProperties": false, "required": ["state", "approved_by", "approved_at"], "properties": { "state": { "const": "approved" }, "approved_by": { "type": "string", "minLength": 1 }, "approved_at": { "type": "string", "format": "date-time" } } }
+  }
+}

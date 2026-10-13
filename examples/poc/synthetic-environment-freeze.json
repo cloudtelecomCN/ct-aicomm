@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0.0",
+  "freeze_id": "synthetic-poc-freeze-v1",
+  "status": "frozen",
+  "evidence_origin": "synthetic",
+  "frozen_at": "2026-10-13T06:00:00Z",
+  "experiment_window_start": "2026-10-20T00:00:00Z",
+  "experiment_window_end": "2026-10-21T00:00:00Z",
+  "model": { "identifier": "synthetic/model-not-real", "revision": "synthetic-r1", "artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" },
+  "compute": { "accelerator_model": "synthetic-accelerator", "accelerator_count": 2 },
+  "software": { "kernel": "6.8.0-synthetic", "driver": "synthetic-driver-1.0", "runtime": "synthetic-runtime-1.0", "vllm": "0.11.0" },
+  "network": { "topology": "synthetic-two-path", "baseline_route": "synthetic-route-a", "candidate_route": "synthetic-route-b" },
+  "prompt_dataset": { "id": "ct-ttft-prompts-v1", "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb" },
+  "load_profile": { "id": "synthetic-load-v1", "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", "concurrency": [1, 8, 32] },
+  "artifacts": { "collector_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "agent_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "orchestrator_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff" },
+  "approval": { "state": "approved", "approved_by": "synthetic-reviewer", "approved_at": "2026-10-13T06:05:00Z" }
+}
