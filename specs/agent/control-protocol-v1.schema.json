@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/agent/control-protocol.v1.json",
+  "title": "CT-DataPlane Agent control protocol v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["protocol_version", "message_id", "message_type", "agent_id", "sent_at", "nonce", "payload"],
+  "properties": {
+    "protocol_version": { "const": "1.0.0" },
+    "message_id": { "$ref": "#/$defs/id" },
+    "message_type": { "enum": ["register", "heartbeat", "prepare_policy", "apply_policy", "revoke_policy", "receipt"] },
+    "agent_id": { "$ref": "#/$defs/id" },
+    "sent_at": { "type": "string", "format": "date-time" },
+    "nonce": { "type": "string", "pattern": "^[A-Za-z0-9_-]{22,128}$" },
+    "correlation_id": { "$ref": "#/$defs/id" },
+    "payload": { "type": "object" }
+  },
+  "allOf": [
+    { "if": { "properties": { "message_type": { "const": "register" } } }, "then": { "properties": { "payload": { "$ref": "#/$defs/register" } } } },
+    { "if": { "properties": { "message_type": { "const": "heartbeat" } } }, "then": { "properties": { "payload": { "$ref": "#/$defs/heartbeat" } } } },
+    { "if": { "properties": { "message_type": { "const": "prepare_policy" } } }, "then": { "properties": { "payload": { "$ref": "#/$defs/prepare" } } } },
+    { "if": { "properties": { "message_type": { "const": "apply_policy" } } }, "then": { "properties": { "payload": { "$ref": "#/$defs/apply" } } } },
+    { "if": { "properties": { "message_type": { "const": "revoke_policy" } } }, "then": { "properties": { "payload": { "$ref": "#/$defs/revoke" } } } },
+    { "if": { "properties": { "message_type": { "const": "receipt" } } }, "then": { "required": ["correlation_id"], "properties": { "payload": { "$ref": "#/$defs/receipt" } } } }
+  ],
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$" },
+    "sha256": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "register": {
+      "type": "object", "additionalProperties": false,
+      "required": ["agent_version", "host_fingerprint", "capabilities", "observe_only"],
+      "properties": {
+        "agent_version": { "type": "string", "minLength": 1 },
+        "host_fingerprint": { "$ref": "#/$defs/sha256" },
+        "artifact_fingerprint": { "$ref": "#/$defs/sha256" },
+        "capabilities": { "type": "array", "items": { "enum": ["observe", "tc_classify", "tc_redirect", "cgroup_connect", "route_restore"] }, "uniqueItems": true },
+        "observe_only": { "type": "boolean" }
+      }
+    },
+    "heartbeat": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sequence", "agent_time", "health", "active_policy_revision", "last_known_good_revision"],
+      "properties": {
+        "sequence": { "type": "integer", "minimum": 0 },
+        "agent_time": { "type": "string", "format": "date-time" },
+        "health": { "enum": ["healthy", "degraded", "kill_switch_active"] },
+        "active_policy_revision": { "type": ["integer", "null"], "minimum": 1 },
+        "last_known_good_revision": { "type": ["integer", "null"], "minimum": 1 }
+      }
+    },
+    "prepare": {
+      "type": "object", "additionalProperties": false,
+      "required": ["policy_id", "policy_revision", "policy_fingerprint", "expires_at", "target_route", "previous_route"],
+      "properties": {
+        "policy_id": { "$ref": "#/$defs/id" },
+        "policy_revision": { "type": "integer", "minimum": 1 },
+        "policy_fingerprint": { "$ref": "#/$defs/sha256" },
+        "expires_at": { "type": "string", "format": "date-time" },
+        "target_route": { "$ref": "#/$defs/id" },
+        "previous_route": { "$ref": "#/$defs/id" }
+      }
+    },
+    "apply": {
+      "type": "object", "additionalProperties": false,
+      "required": ["policy_id", "policy_revision", "policy_fingerprint", "prepare_receipt_id"],
+      "properties": {
+        "policy_id": { "$ref": "#/$defs/id" },
+        "policy_revision": { "type": "integer", "minimum": 1 },
+        "policy_fingerprint": { "$ref": "#/$defs/sha256" },
+        "prepare_receipt_id": { "$ref": "#/$defs/id" }
+      }
+    },
+    "revoke": {
+      "type": "object", "additionalProperties": false,
+      "required": ["policy_id", "policy_revision", "reason", "restore_revision"],
+      "properties": {
+        "policy_id": { "$ref": "#/$defs/id" },
+        "policy_revision": { "type": "integer", "minimum": 1 },
+        "reason": { "enum": ["operator", "health_threshold", "lease_expired", "kill_switch", "superseded"] },
+        "restore_revision": { "type": ["integer", "null"], "minimum": 1 }
+      }
+    },
+    "receipt": {
+      "type": "object", "additionalProperties": false,
+      "required": ["receipt_id", "status", "operation", "agent_time", "state_fingerprint"],
+      "properties": {
+        "receipt_id": { "$ref": "#/$defs/id" },
+        "status": { "enum": ["accepted", "rejected", "applied", "revoked", "failed"] },
+        "operation": { "enum": ["register", "heartbeat", "prepare_policy", "apply_policy", "revoke_policy"] },
+        "agent_time": { "type": "string", "format": "date-time" },
+        "state_fingerprint": { "$ref": "#/$defs/sha256" },
+        "failure_code": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{0,79}$" },
+        "active_policy_revision": { "type": ["integer", "null"], "minimum": 1 }
+      },
+      "allOf": [
+        { "if": { "properties": { "status": { "enum": ["rejected", "failed"] } } }, "then": { "required": ["failure_code"] } }
+      ]
+    }
+  }
+}
