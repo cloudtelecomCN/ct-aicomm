@@ -5,6 +5,8 @@
 #include <bpf/bpf_endian.h>
 #include <bpf/bpf_helpers.h>
 
+#define TCP_STATE_CLOSE 7
+
 struct selector_event {
     __u64 cgroup_id;
     __u64 socket_cookie;
@@ -201,7 +203,7 @@ int collect_network_telemetry(struct bpf_sock_ops *ctx)
         emit_network_event(ctx, cookie, selected, 2);
     } else if (ctx->op == BPF_SOCK_OPS_RETRANS_CB) {
         emit_network_event(ctx, cookie, selected, 3);
-    } else if (ctx->op == BPF_SOCK_OPS_STATE_CB && ctx->args[1] == TCP_CLOSE) {
+    } else if (ctx->op == BPF_SOCK_OPS_STATE_CB && ctx->args[1] == TCP_STATE_CLOSE) {
         emit_network_event(ctx, cookie, selected, 4);
     }
     return 1;
