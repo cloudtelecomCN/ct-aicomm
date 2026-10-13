@@ -1,0 +1,32 @@
+name: eBPF
+
+on:
+  push:
+    paths:
+      - "agent/bpf/**"
+      - "packages/agent-control/selector-policy.mjs"
+      - "tests/agent-selector-policy.test.mjs"
+      - ".github/workflows/ebpf.yml"
+  pull_request:
+    paths:
+      - "agent/bpf/**"
+      - "packages/agent-control/selector-policy.mjs"
+      - "tests/agent-selector-policy.test.mjs"
+      - ".github/workflows/ebpf.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  compile-and-test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install eBPF toolchain
+        run: sudo apt-get update && sudo apt-get install -y clang llvm libbpf-dev linux-libc-dev
+      - name: Compile selector
+        run: make -C agent/bpf
+      - name: Verify BPF ELF
+        run: llvm-objdump -h agent/bpf/build/ct_selector.bpf.o | grep -E 'cgroup/connect4|tc/egress|maps|license'
+      - name: Test selector policy
+        run: node --test tests/agent-selector-policy.test.mjs
