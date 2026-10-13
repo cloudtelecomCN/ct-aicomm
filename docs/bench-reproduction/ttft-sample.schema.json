@@ -61,15 +61,22 @@
     "segments": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["request_ingress_ms", "connector_ms", "routing_decision_ms", "network_ms", "inference_queue_ms", "model_execution_to_first_token_ms"],
+      "required": ["client_request_preparation_ms", "time_to_response_headers_ms", "request_ingress_ms", "connector_ms", "routing_decision_ms", "network_ms", "inference_queue_ms", "model_execution_to_first_token_ms", "segment_sources"],
       "properties": {
+        "client_request_preparation_ms": { "$ref": "#/$defs/duration" },
+        "time_to_response_headers_ms": { "$ref": "#/$defs/duration" },
         "request_ingress_ms": { "$ref": "#/$defs/duration" },
         "connector_ms": { "$ref": "#/$defs/duration" },
         "routing_decision_ms": { "$ref": "#/$defs/duration" },
         "network_ms": { "$ref": "#/$defs/duration" },
         "inference_queue_ms": { "$ref": "#/$defs/duration" },
         "model_execution_to_first_token_ms": { "$ref": "#/$defs/duration" },
-        "ttft_ms": { "$ref": "#/$defs/duration" }
+        "ttft_ms": { "$ref": "#/$defs/measuredDuration" },
+        "segment_sources": {
+          "type": "object",
+          "additionalProperties": { "enum": ["measured", "derived", "unavailable"] },
+          "required": ["client_request_preparation_ms", "time_to_response_headers_ms", "request_ingress_ms", "connector_ms", "routing_decision_ms", "network_ms", "inference_queue_ms", "model_execution_to_first_token_ms"]
+        }
       }
     },
     "evidence": {
@@ -84,7 +91,10 @@
       }
     }
   },
-  "$defs": { "duration": { "type": "number", "minimum": 0 } },
+  "$defs": {
+    "duration": { "type": ["number", "null"], "minimum": 0 },
+    "measuredDuration": { "type": "number", "minimum": 0 }
+  },
   "allOf": [
     {
       "if": { "properties": { "outcome": { "properties": { "success": { "const": true } }, "required": ["success"] } }, "required": ["outcome"] },

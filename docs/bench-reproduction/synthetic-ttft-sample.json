@@ -16,13 +16,25 @@
     "policy_revision": "synthetic-policy-v1"
   },
   "segments": {
+    "client_request_preparation_ms": 0.4,
+    "time_to_response_headers_ms": 24.9,
     "request_ingress_ms": 0.8,
     "connector_ms": 1.6,
     "routing_decision_ms": 0.7,
     "network_ms": 8.4,
     "inference_queue_ms": 14.2,
     "model_execution_to_first_token_ms": 20.3,
-    "ttft_ms": 46.0
+    "ttft_ms": 46.0,
+    "segment_sources": {
+      "client_request_preparation_ms": "measured",
+      "time_to_response_headers_ms": "measured",
+      "request_ingress_ms": "derived",
+      "connector_ms": "derived",
+      "routing_decision_ms": "derived",
+      "network_ms": "derived",
+      "inference_queue_ms": "derived",
+      "model_execution_to_first_token_ms": "derived"
+    }
   },
   "evidence": {
     "environment_fingerprint": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",

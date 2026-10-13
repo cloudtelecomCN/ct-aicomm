@@ -19,12 +19,12 @@ for (const field of schema.required) {
 }
 for (const field of schema.properties.segments.required) {
   assert.ok(Object.hasOwn(sample.segments, field), `missing required segment: ${field}`);
-  assert.ok(sample.segments[field] >= 0, `negative segment: ${field}`);
 }
 
-const segmentTotal = Object.entries(sample.segments)
-  .filter(([name]) => name !== "ttft_ms")
-  .reduce((total, [, value]) => total + value, 0);
+const serverSegmentNames = ["request_ingress_ms", "connector_ms", "routing_decision_ms", "network_ms", "inference_queue_ms", "model_execution_to_first_token_ms"];
+const segmentTotal = serverSegmentNames
+  .map((name) => sample.segments[name])
+  .reduce((total, value) => total + value, 0);
 assert.ok(Math.abs(segmentTotal - sample.segments.ttft_ms) <= 0.001, "TTFT must equal the declared segment total");
 assert.equal(sample.outcome.success, true);
 assert.ok(!Object.hasOwn(sample.outcome, "failure_code"));
