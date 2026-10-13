@@ -6,6 +6,8 @@ CT-Bench defines a stable evidence package for communication measurements. A pac
 - `raw-samples.csv`: stable raw sample fields, including retained failures.
 - `SHA256SUMS`: hashes for exported artifacts.
 
+New TTFT runs use [`environment-fingerprint-v2.schema.json`](environment-fingerprint-v2.schema.json), which adds structured accelerator, runtime, vLLM, model artifact, kernel BPF, interface, route, container, and configuration evidence. Environment v1 remains published for existing packages.
+
 For inference TTFT, [`ttft-sample.schema.json`](ttft-sample.schema.json) defines the canonical per-request record. It separates ingress, connector, routing, network, inference queue, and model execution time while binding every observation to a route, environment fingerprint, methodology, and collector version. Successful observations require `ttft_ms`; failed observations retain a machine-readable stage and code.
 
 The frozen experiment design and prompt dataset are documented in [TTFT methodology v1](ttft-methodology.md).

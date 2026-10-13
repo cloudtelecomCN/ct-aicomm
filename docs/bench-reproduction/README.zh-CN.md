@@ -6,6 +6,8 @@ CT-Bench 为通信测量定义稳定的证据包。证据包包含：
 - `raw-samples.csv`：稳定的原始样本字段，包括保留的失败样本。
 - `SHA256SUMS`：导出制品的校验和。
 
+新的 TTFT 运行使用 [`environment-fingerprint-v2.schema.json`](environment-fingerprint-v2.schema.json)，新增结构化加速卡、运行时、vLLM、模型制品、内核 BPF、网卡、路由、容器和配置证据。环境 v1 继续保留，兼容已有证据包。
+
 针对推理 TTFT，[`ttft-sample.schema.json`](ttft-sample.schema.json) 定义规范的逐请求记录。它分别记录入口、Connector、路由、网络、推理排队和模型执行耗时，并将每条观测绑定到路由、环境指纹、方法版本和采集器版本。成功样本必须包含 `ttft_ms`；失败样本必须保留机器可读的失败阶段和代码。
 
 冻结的实验设计和 Prompt 数据集见 [TTFT 实验方法 v1](ttft-methodology.zh-CN.md)。

@@ -1,0 +1,42 @@
+{
+  "schema_version": "2.0.0",
+  "captured_at": "2026-10-13T03:00:00Z",
+  "host": {
+    "hostname_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "os_distribution": "synthetic-linux",
+    "os_version": "demo-only",
+    "machine_arch": "x86_64",
+    "container_image_digest": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  "hardware": {
+    "cpu_model": "synthetic-cpu",
+    "logical_cores": 32,
+    "memory_bytes": 137438953472,
+    "numa_nodes": 2,
+    "accelerators": [{ "vendor": "synthetic", "model": "demo-accelerator", "count": 1, "memory_bytes_each": 85899345920, "firmware_version": "demo" }]
+  },
+  "kernel": {
+    "release": "6.8.0-demo",
+    "command_line_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "bpf_enabled": true,
+    "btf_available": true
+  },
+  "drivers": [{ "name": "synthetic-accelerator-driver", "version": "0.0-demo", "module_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd" }],
+  "runtimes": [{ "name": "cuda", "version": "demo" }, { "name": "python", "version": "3.12-demo" }],
+  "inference_server": { "name": "vllm", "version": "0.31.0", "launch_config_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" },
+  "model": {
+    "identifier": "synthetic/model-not-real",
+    "revision": "demo",
+    "artifact_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "tokenizer_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+    "quantization": null
+  },
+  "protocol_stack": [{ "name": "http2", "version": "demo", "config_sha256": "2222222222222222222222222222222222222222222222222222222222222222" }],
+  "network": {
+    "topology": "synthetic-two-region",
+    "address_family": "ipv4",
+    "route_table_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+    "interfaces": [{ "name": "demo0", "driver": "synthetic-net", "mtu": 1500, "speed_mbps": 10000, "rdma_device": null }]
+  },
+  "artifacts": [{ "name": "collector", "sha256": "4444444444444444444444444444444444444444444444444444444444444444" }]
+}
