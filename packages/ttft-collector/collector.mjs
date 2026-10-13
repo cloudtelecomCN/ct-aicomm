@@ -114,7 +114,9 @@ export async function collectTtft(options) {
       evidence: {
         environment_fingerprint: environmentFingerprint,
         methodology_version: "1.0.0",
-        collector_version: "0.1.0"
+        collector_version: "0.1.0",
+        measurement_scope: "Client-observed streaming request against the declared endpoint.",
+        limitations: ["Server-side queue, network, routing, and model segments unavailable without server instrumentation"]
       }
     };
     sample.evidence.raw_record_sha256 = hashJson(sample);
@@ -161,7 +163,9 @@ export async function collectTtft(options) {
       evidence: {
         environment_fingerprint: environmentFingerprint,
         methodology_version: "1.0.0",
-        collector_version: "0.1.0"
+        collector_version: "0.1.0",
+        measurement_scope: "Client-observed failed streaming request against the declared endpoint.",
+        limitations: ["Server-side queue, network, routing, and model segments unavailable without server instrumentation"]
       }
     };
     sample.evidence.raw_record_sha256 = hashJson(sample);

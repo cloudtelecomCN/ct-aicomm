@@ -8,7 +8,7 @@
   "properties": {
     "schema_version": { "const": "1.0.0" },
     "methodology_version": { "type": "string", "minLength": 1 },
-    "data_origin": { "enum": ["synthetic", "measured"] },
+    "data_origin": { "enum": ["synthetic", "hybrid", "measured"] },
     "scenario_slug": { "type": "string", "minLength": 1 },
     "protocol_slug": { "type": "string", "minLength": 1 },
     "environment_fingerprint": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },

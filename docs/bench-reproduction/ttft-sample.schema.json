@@ -11,7 +11,7 @@
     "sample_id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$" },
     "request_id": { "type": "string", "minLength": 1, "maxLength": 160 },
     "trace_id": { "type": "string", "pattern": "^[a-f0-9]{32}$" },
-    "data_origin": { "enum": ["synthetic", "measured"] },
+    "data_origin": { "enum": ["synthetic", "hybrid", "measured"] },
     "started_at": { "type": "string", "format": "date-time" },
     "clock": {
       "type": "object",
@@ -82,12 +82,14 @@
     "evidence": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["environment_fingerprint", "methodology_version", "collector_version"],
+      "required": ["environment_fingerprint", "methodology_version", "collector_version", "measurement_scope", "limitations"],
       "properties": {
         "environment_fingerprint": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
         "methodology_version": { "type": "string", "minLength": 1 },
         "collector_version": { "type": "string", "minLength": 1 },
-        "raw_record_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+        "raw_record_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "measurement_scope": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "limitations": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true }
       }
     }
   },

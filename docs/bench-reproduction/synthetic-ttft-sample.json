@@ -40,6 +40,8 @@
     "environment_fingerprint": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
     "methodology_version": "0.2.0-draft",
     "collector_version": "0.1.0-contract-example",
+    "measurement_scope": "Fully synthetic contract example; no hardware or network performance was measured.",
+    "limitations": ["Not production data", "Not suitable for performance claims"],
     "raw_record_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
   }
 }

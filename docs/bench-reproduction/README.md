@@ -26,4 +26,6 @@ sample_id,ttft_ms,connection_setup_ms,success,failure_code
 
 Failed samples must remain present with a machine-readable `failure_code`. Successful samples must contain a non-negative `ttft_ms`. Synthetic and measured runs share a schema but must remain explicitly separated by `data_origin`.
 
+The [evidence authenticity gate](../../packages/evidence-gate/README.md) also recognizes `hybrid` observations. Import, aggregation, downloads, APIs, and pages must preserve its fixed origin labels. Cross-origin aggregation is rejected, and only complete `measured` evidence may permit a performance claim.
+
 This directory publishes the report and environment schemas plus a clearly labeled synthetic example. It does not claim that the example represents measured network performance. The runnable packaging tool will be published here when its source release review is complete.

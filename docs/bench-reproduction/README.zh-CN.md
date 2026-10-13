@@ -26,4 +26,6 @@ sample_id,ttft_ms,connection_setup_ms,success,failure_code
 
 失败样本必须保留，并包含机器可读的 `failure_code`；成功样本必须包含非负的 `ttft_ms`。合成运行与真实测量可以使用同一 schema，但必须通过 `data_origin` 强制区分。
 
+[证据真实性门禁](../../packages/evidence-gate/README.md) 同时识别 `hybrid`（半真实）观测。导入、聚合、下载、API 和页面必须保留固定来源标签；禁止跨来源聚合，且只有证据完整的 `measured` 数据才允许形成性能声明。
+
 本目录公开报告 schema、环境 schema 和明确标注的合成示例。该示例不代表真实网络性能。可执行打包工具将在源代码完成公开发布审查后加入本仓库。
