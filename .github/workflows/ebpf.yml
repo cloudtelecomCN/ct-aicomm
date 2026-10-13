@@ -30,3 +30,5 @@ jobs:
         run: llvm-objdump -h agent/bpf/build/ct_selector.bpf.o | grep -E 'cgroup/connect4|tc/egress|sockops|maps|license'
       - name: Test Agent control policies
         run: node --test "tests/agent-*.test.mjs"
+      - name: Test Agent installation lifecycle
+        run: agent/install/test-install.sh

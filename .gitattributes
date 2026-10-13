@@ -6,3 +6,4 @@
 *.gif binary
 *.webp binary
 *.zip binary
+*.sh text eol=lf

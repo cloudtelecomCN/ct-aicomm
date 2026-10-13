@@ -1,0 +1,25 @@
+[Unit]
+Description=CT-AIComm data-plane agent
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+EnvironmentFile=-/etc/ct-aicomm-agent/agent.env
+ExecStart=@@PREFIX@@/bin/ct-aicomm-agent run --bpf-object @@PREFIX@@/lib/ct_selector.bpf.o
+ExecStop=@@PREFIX@@/bin/ct-aicomm-agent restore --all
+Restart=on-failure
+RestartSec=2
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+CapabilityBoundingSet=CAP_BPF CAP_NET_ADMIN CAP_PERFMON
+AmbientCapabilities=CAP_BPF CAP_NET_ADMIN CAP_PERFMON
+
+[Install]
+WantedBy=multi-user.target
