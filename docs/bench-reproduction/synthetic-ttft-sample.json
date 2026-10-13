@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0.0",
+  "sample_id": "synthetic-ttft-0001",
+  "request_id": "synthetic-request-not-production-data",
+  "trace_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "data_origin": "synthetic",
+  "started_at": "2026-10-13T02:00:00Z",
+  "clock": { "duration_source": "monotonic", "resolution_ns": 100, "wall_clock_synchronized": true, "max_clock_error_ms": 1 },
+  "outcome": { "success": true, "http_status": 200 },
+  "route": {
+    "connector": "vllm-openai-demo",
+    "protocol": "http2",
+    "source_region": "synthetic-source",
+    "target_region": "synthetic-target",
+    "inference_instance": "synthetic-vllm-01",
+    "policy_revision": "synthetic-policy-v1"
+  },
+  "segments": {
+    "request_ingress_ms": 0.8,
+    "connector_ms": 1.6,
+    "routing_decision_ms": 0.7,
+    "network_ms": 8.4,
+    "inference_queue_ms": 14.2,
+    "model_execution_to_first_token_ms": 20.3,
+    "ttft_ms": 46.0
+  },
+  "evidence": {
+    "environment_fingerprint": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "methodology_version": "0.2.0-draft",
+    "collector_version": "0.1.0-contract-example",
+    "raw_record_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/bench/ttft-sample.v1.json",
+  "title": "CT-Bench TTFT sample v1",
+  "description": "One traceable time-to-first-token observation. Durations use a monotonic clock and timestamps use UTC.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "sample_id", "request_id", "trace_id", "data_origin", "started_at", "clock", "outcome", "route", "segments", "evidence"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "sample_id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$" },
+    "request_id": { "type": "string", "minLength": 1, "maxLength": 160 },
+    "trace_id": { "type": "string", "pattern": "^[a-f0-9]{32}$" },
+    "data_origin": { "enum": ["synthetic", "measured"] },
+    "started_at": { "type": "string", "format": "date-time" },
+    "clock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["duration_source", "resolution_ns"],
+      "properties": {
+        "duration_source": { "const": "monotonic" },
+        "resolution_ns": { "type": "integer", "minimum": 1 },
+        "wall_clock_synchronized": { "type": "boolean" },
+        "max_clock_error_ms": { "type": "number", "minimum": 0 }
+      }
+    },
+    "outcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["success", "http_status"],
+      "properties": {
+        "success": { "type": "boolean" },
+        "http_status": { "type": "integer", "minimum": 100, "maximum": 599 },
+        "failure_stage": { "enum": ["connector", "routing", "network", "inference_queue", "model_execution", "stream"] },
+        "failure_code": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{0,79}$" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "success": { "const": false } }, "required": ["success"] },
+          "then": { "required": ["failure_stage", "failure_code"] }
+        },
+        {
+          "if": { "properties": { "success": { "const": true } }, "required": ["success"] },
+          "then": { "not": { "anyOf": [{ "required": ["failure_stage"] }, { "required": ["failure_code"] }] } }
+        }
+      ]
+    },
+    "route": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["connector", "protocol", "source_region", "target_region", "inference_instance"],
+      "properties": {
+        "connector": { "type": "string", "minLength": 1 },
+        "protocol": { "type": "string", "minLength": 1 },
+        "source_region": { "type": "string", "minLength": 1 },
+        "target_region": { "type": "string", "minLength": 1 },
+        "inference_instance": { "type": "string", "minLength": 1 },
+        "policy_revision": { "type": "string", "minLength": 1 }
+      }
+    },
+    "segments": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["request_ingress_ms", "connector_ms", "routing_decision_ms", "network_ms", "inference_queue_ms", "model_execution_to_first_token_ms"],
+      "properties": {
+        "request_ingress_ms": { "$ref": "#/$defs/duration" },
+        "connector_ms": { "$ref": "#/$defs/duration" },
+        "routing_decision_ms": { "$ref": "#/$defs/duration" },
+        "network_ms": { "$ref": "#/$defs/duration" },
+        "inference_queue_ms": { "$ref": "#/$defs/duration" },
+        "model_execution_to_first_token_ms": { "$ref": "#/$defs/duration" },
+        "ttft_ms": { "$ref": "#/$defs/duration" }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["environment_fingerprint", "methodology_version", "collector_version"],
+      "properties": {
+        "environment_fingerprint": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+        "methodology_version": { "type": "string", "minLength": 1 },
+        "collector_version": { "type": "string", "minLength": 1 },
+        "raw_record_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    }
+  },
+  "$defs": { "duration": { "type": "number", "minimum": 0 } },
+  "allOf": [
+    {
+      "if": { "properties": { "outcome": { "properties": { "success": { "const": true } }, "required": ["success"] } }, "required": ["outcome"] },
+      "then": { "properties": { "segments": { "required": ["ttft_ms"] } } }
+    }
+  ]
+}

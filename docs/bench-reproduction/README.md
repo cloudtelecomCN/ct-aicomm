@@ -6,6 +6,14 @@ CT-Bench defines a stable evidence package for communication measurements. A pac
 - `raw-samples.csv`: stable raw sample fields, including retained failures.
 - `SHA256SUMS`: hashes for exported artifacts.
 
+For inference TTFT, [`ttft-sample.schema.json`](ttft-sample.schema.json) defines the canonical per-request record. It separates ingress, connector, routing, network, inference queue, and model execution time while binding every observation to a route, environment fingerprint, methodology, and collector version. Successful observations require `ttft_ms`; failed observations retain a machine-readable stage and code.
+
+[`synthetic-ttft-sample.json`](synthetic-ttft-sample.json) is contract test data only. Validate the published contract without installing dependencies:
+
+```sh
+node scripts/validate-ttft-contract.mjs
+```
+
 The canonical CSV header is:
 
 ```text
