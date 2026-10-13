@@ -4,14 +4,14 @@ on:
   push:
     paths:
       - "agent/bpf/**"
-      - "packages/agent-control/selector-policy.mjs"
-      - "tests/agent-selector-policy.test.mjs"
+      - "packages/agent-control/**"
+      - "tests/agent-*.test.mjs"
       - ".github/workflows/ebpf.yml"
   pull_request:
     paths:
       - "agent/bpf/**"
-      - "packages/agent-control/selector-policy.mjs"
-      - "tests/agent-selector-policy.test.mjs"
+      - "packages/agent-control/**"
+      - "tests/agent-*.test.mjs"
       - ".github/workflows/ebpf.yml"
 
 permissions:
@@ -28,5 +28,5 @@ jobs:
         run: make -C agent/bpf
       - name: Verify BPF ELF
         run: llvm-objdump -h agent/bpf/build/ct_selector.bpf.o | grep -E 'cgroup/connect4|tc/egress|maps|license'
-      - name: Test selector policy
-        run: node --test tests/agent-selector-policy.test.mjs
+      - name: Test Agent control policies
+        run: node --test "tests/agent-*.test.mjs"

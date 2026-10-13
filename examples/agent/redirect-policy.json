@@ -1,0 +1,8 @@
+{
+  "schema_version": "1.0.0",
+  "source": { "ipv4": "10.10.0.10", "port": 8000 },
+  "allowed_targets": [
+    { "id": "inference-a", "endpoint": { "ipv4": "10.20.0.11", "port": 8000 } },
+    { "id": "inference-b", "endpoint": { "ipv4": "10.20.0.12", "port": 8000 } }
+  ]
+}

@@ -10,9 +10,25 @@ struct selector_event {
     __u64 timestamp_ns;
     __u64 bytes;
     __u32 destination_ipv4;
+    __u32 effective_ipv4;
     __u16 destination_port;
+    __u16 effective_port;
+    __u32 policy_revision;
     __u8 event_type;
     __u8 protocol;
+};
+
+struct route_key {
+    __u32 ipv4;
+    __u16 port;
+    __u16 padding;
+};
+
+struct route_target {
+    __u32 ipv4;
+    __u16 port;
+    __u16 padding;
+    __u32 policy_revision;
 };
 
 struct {
@@ -28,6 +44,13 @@ struct {
     __type(key, __u16);
     __type(value, __u8);
 } allowed_destination_ports SEC(".maps");
+
+struct {
+    __uint(type, BPF_MAP_TYPE_HASH);
+    __uint(max_entries, 1024);
+    __type(key, struct route_key);
+    __type(value, struct route_target);
+} redirect_routes SEC(".maps");
 
 struct {
     __uint(type, BPF_MAP_TYPE_LRU_HASH);
@@ -67,16 +90,33 @@ int identify_connect4(struct bpf_sock_addr *ctx)
     if (!cookie)
         return 1;
 
+    struct route_key route = {
+        .ipv4 = ctx->user_ip4,
+        .port = destination_port,
+    };
+    struct route_target *target = bpf_map_lookup_elem(&redirect_routes, &route);
+
     struct selector_event event = {
         .cgroup_id = cgroup_id,
         .socket_cookie = cookie,
         .timestamp_ns = bpf_ktime_get_ns(),
         .bytes = 0,
         .destination_ipv4 = ctx->user_ip4,
+        .effective_ipv4 = ctx->user_ip4,
         .destination_port = destination_port,
+        .effective_port = destination_port,
+        .policy_revision = 0,
         .event_type = 1,
         .protocol = IPPROTO_TCP,
     };
+    if (target) {
+        ctx->user_ip4 = target->ipv4;
+        ctx->user_port = bpf_htons(target->port);
+        event.effective_ipv4 = target->ipv4;
+        event.effective_port = target->port;
+        event.policy_revision = target->policy_revision;
+        event.event_type = 3;
+    }
     bpf_map_update_elem(&selected_sockets, &cookie, &event, BPF_ANY);
     emit_event(&event);
     return 1;
