@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "agent_id": "agent-01",
+  "socket_cookie": "8732",
+  "observed_at": "2026-10-13T08:05:00Z",
+  "route": {
+    "source": { "ipv4": "10.10.0.10", "port": 8000 },
+    "effective_target": { "ipv4": "10.20.0.12", "port": 8000 },
+    "policy_revision": 8
+  },
+  "rtt_us": 1450,
+  "retransmits_delta": 0,
+  "connection_errors_delta": 0,
+  "source": "kernel"
+}

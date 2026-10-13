@@ -1,6 +1,7 @@
 #include <linux/bpf.h>
 #include <linux/in.h>
 #include <linux/pkt_cls.h>
+#include <linux/tcp.h>
 #include <bpf/bpf_endian.h>
 #include <bpf/bpf_helpers.h>
 
@@ -29,6 +30,20 @@ struct route_target {
     __u16 port;
     __u16 padding;
     __u32 policy_revision;
+};
+
+struct network_telemetry_event {
+    __u64 socket_cookie;
+    __u64 timestamp_ns;
+    __u32 source_ipv4;
+    __u32 effective_ipv4;
+    __u32 rtt_us;
+    __u32 total_retransmits;
+    __u32 policy_revision;
+    __u16 source_port;
+    __u16 effective_port;
+    __u8 event_type;
+    __u8 connection_error;
 };
 
 struct {
@@ -64,12 +79,38 @@ struct {
     __uint(max_entries, 1 << 22);
 } selector_events SEC(".maps");
 
+struct {
+    __uint(type, BPF_MAP_TYPE_RINGBUF);
+    __uint(max_entries, 1 << 22);
+} network_telemetry_events SEC(".maps");
+
 static __always_inline void emit_event(const struct selector_event *source)
 {
     struct selector_event *event = bpf_ringbuf_reserve(&selector_events, sizeof(*event), 0);
     if (!event)
         return;
     __builtin_memcpy(event, source, sizeof(*event));
+    bpf_ringbuf_submit(event, 0);
+}
+
+static __always_inline void emit_network_event(struct bpf_sock_ops *ctx, __u64 cookie,
+                                               const struct selector_event *selected,
+                                               __u8 event_type)
+{
+    struct network_telemetry_event *event = bpf_ringbuf_reserve(&network_telemetry_events, sizeof(*event), 0);
+    if (!event)
+        return;
+    event->socket_cookie = cookie;
+    event->timestamp_ns = bpf_ktime_get_ns();
+    event->source_ipv4 = selected->destination_ipv4;
+    event->effective_ipv4 = selected->effective_ipv4;
+    event->rtt_us = ctx->srtt_us;
+    event->total_retransmits = ctx->total_retrans;
+    event->policy_revision = selected->policy_revision;
+    event->source_port = selected->destination_port;
+    event->effective_port = selected->effective_port;
+    event->event_type = event_type;
+    event->connection_error = 0;
     bpf_ringbuf_submit(event, 0);
 }
 
@@ -139,6 +180,31 @@ int identify_egress(struct __sk_buff *skb)
     event.event_type = 2;
     emit_event(&event);
     return TC_ACT_OK;
+}
+
+SEC("sockops")
+int collect_network_telemetry(struct bpf_sock_ops *ctx)
+{
+    __u64 cookie = bpf_get_socket_cookie(ctx);
+    if (!cookie)
+        return 1;
+    struct selector_event *selected = bpf_map_lookup_elem(&selected_sockets, &cookie);
+    if (!selected)
+        return 1;
+
+    if (ctx->op == BPF_SOCK_OPS_ACTIVE_ESTABLISHED_CB || ctx->op == BPF_SOCK_OPS_PASSIVE_ESTABLISHED_CB) {
+        bpf_sock_ops_cb_flags_set(ctx, BPF_SOCK_OPS_RTT_CB_FLAG |
+                                      BPF_SOCK_OPS_RETRANS_CB_FLAG |
+                                      BPF_SOCK_OPS_STATE_CB_FLAG);
+        emit_network_event(ctx, cookie, selected, 1);
+    } else if (ctx->op == BPF_SOCK_OPS_RTT_CB) {
+        emit_network_event(ctx, cookie, selected, 2);
+    } else if (ctx->op == BPF_SOCK_OPS_RETRANS_CB) {
+        emit_network_event(ctx, cookie, selected, 3);
+    } else if (ctx->op == BPF_SOCK_OPS_STATE_CB && ctx->args[1] == TCP_CLOSE) {
+        emit_network_event(ctx, cookie, selected, 4);
+    }
+    return 1;
 }
 
 char LICENSE[] SEC("license") = "GPL";
