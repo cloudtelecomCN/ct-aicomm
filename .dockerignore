@@ -1,0 +1,12 @@
+.git
+.github
+.env
+.env.*
+*.key
+*.pem
+*.p12
+*.pfx
+node_modules
+reports
+coverage
+restricted

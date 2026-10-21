@@ -17,6 +17,16 @@ Thank you for helping improve CT-AIComm.
 - Keep Chinese and English documentation aligned when both editions exist.
 - Confirm that you have the right to contribute every submitted file.
 
+## Test environment
+
+Run the credential-free contract tests and executable synthetic scenarios before opening a pull request:
+
+```sh
+npm test
+```
+
+No dependency installation, GPU node, or private endpoint is required. The runner removes credential and deployment variables from child processes and denies non-loopback network access. See the [contributor test environment](docs/contributor/test-environment.md) for profiles and the optional container command.
+
 ## Registry contributions
 
 Protocol metadata follows [Registry contribution specification v2](docs/registry/contributing.md) ([中文](docs/registry/contributing.zh-CN.md)). Copy the synthetic example into `registry/contributions/<contribution_id>.json`, keep its review status pending, and run:

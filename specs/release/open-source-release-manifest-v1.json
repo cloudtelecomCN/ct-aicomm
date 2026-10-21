@@ -14,6 +14,14 @@
         "release_gate": "Maintainer review and bilingual alignment where applicable."
       },
       {
+        "id": "contributor-test-environment",
+        "paths": [".dockerignore", ".nvmrc", "package.json", "containers/"],
+        "owner": "Quality Engineering",
+        "license": "Apache-2.0",
+        "rationale": "Zero-dependency local and container entrypoints let external contributors run public contracts and synthetic scenarios.",
+        "release_gate": "No credentials or private infrastructure; non-root container and offline test boundaries pass."
+      },
+      {
         "id": "github-automation",
         "paths": [".github/"],
         "owner": "Release Engineering",

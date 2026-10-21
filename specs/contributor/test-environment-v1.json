@@ -1,0 +1,104 @@
+{
+  "schema_version": "1.0.0",
+  "environment_id": "ct-aicomm-contributor-v1",
+  "runtime": {
+    "minimum_node_major": 22,
+    "ci_node_major": 24,
+    "package_install_required": false,
+    "external_dependencies": []
+  },
+  "security_boundary": {
+    "network_mode": "loopback-only",
+    "external_network_allowed": false,
+    "credentials_required": false,
+    "private_infrastructure_required": false,
+    "forwarded_environment_variables": [
+      "CI",
+      "COMSPEC",
+      "HOME",
+      "NO_COLOR",
+      "PATH",
+      "PATHEXT",
+      "SystemRoot",
+      "TEMP",
+      "TMP",
+      "USERPROFILE",
+      "WINDIR"
+    ]
+  },
+  "evidence_boundary": {
+    "data_origin": "synthetic",
+    "performance_claim_allowed": false,
+    "measured_production_result": false
+  },
+  "profiles": {
+    "contracts": "Run the stable public SDK, Agent, Registry, and CT-DSL contract tests.",
+    "scenarios": "Run executable synthetic examples and verify their evidence labels.",
+    "all": "Run contracts and synthetic scenarios.",
+    "full": "Run every public Node test in the repository."
+  },
+  "contract_tests": [
+    "tests/agent-protocol-sdk.test.mjs",
+    "tests/connector-sdk-contract.test.mjs",
+    "tests/ct-dsl.test.mjs",
+    "tests/public-sdk-boundary.test.mjs",
+    "tests/registry-entry-integrity.test.mjs"
+  ],
+  "synthetic_scenarios": [
+    {
+      "id": "public-evidence-contract",
+      "entrypoint": "examples/sdk/validate-public-evidence.mjs",
+      "expect": {
+        "equals": {
+          "data_origin": "synthetic",
+          "performance_claim_allowed": false
+        }
+      }
+    },
+    {
+      "id": "connector-contract",
+      "entrypoint": "examples/connectors/synthetic-static-connector.mjs",
+      "expect": {
+        "equals": {
+          "passed": true
+        },
+        "every": {
+          "data_origins": "synthetic"
+        }
+      }
+    },
+    {
+      "id": "agent-protocol-contract",
+      "entrypoint": "examples/agent/protocol-sdk.mjs",
+      "expect": {
+        "equals": {
+          "data_origin": "synthetic",
+          "performance_claim_allowed": false
+        }
+      }
+    },
+    {
+      "id": "registry-history-verification",
+      "entrypoint": "scripts/verify-registry-history.mjs",
+      "arguments": [
+        "registry/entries/synthetic-quic-example/history.json"
+      ],
+      "expect": {
+        "equals": {
+          "artifacts_verified": true,
+          "data_origin": "synthetic",
+          "performance_claim_allowed": false
+        }
+      }
+    }
+  ],
+  "container": {
+    "dockerfile": "containers/contributor/Dockerfile",
+    "runtime_user": "node",
+    "recommended_runtime_flags": [
+      "--network=none",
+      "--read-only",
+      "--tmpfs=/tmp"
+    ]
+  }
+}

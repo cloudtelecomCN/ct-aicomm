@@ -1,0 +1,17 @@
+{
+  "name": "@cloudtelecom/ct-aicomm-public",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Offline contributor contract tests and synthetic scenarios for CT-AIComm.",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node scripts/run-contributor-tests.mjs --profile all",
+    "test:contracts": "node scripts/run-contributor-tests.mjs --profile contracts",
+    "test:scenarios": "node scripts/run-contributor-tests.mjs --profile scenarios",
+    "test:full": "node scripts/run-contributor-tests.mjs --profile full"
+  },
+  "license": "Apache-2.0"
+}

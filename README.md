@@ -7,6 +7,7 @@ CT-AIComm is CloudTelecom's open, evidence-first operating system initiative for
 ## Public resources
 
 - [Documentation index](docs/README.md)
+- [Offline contributor test environment](docs/contributor/test-environment.md)
 - [CT-AIComm whitepaper](docs/whitepaper/README.md)
 - [CT-Bench reproduction and evidence contract](docs/bench-reproduction/README.md)
 - [TTFT sample v1 JSON Schema](docs/bench-reproduction/ttft-sample.schema.json)

@@ -4,16 +4,24 @@ on:
   workflow_dispatch:
   push:
     paths:
+      - ".dockerignore"
+      - ".nvmrc"
+      - "package.json"
+      - "containers/**"
       - "packages/**"
       - "sdk/**"
+      - "specs/contributor/**"
       - "specs/connectors/**"
       - "specs/registry/**"
+      - "docs/contributor/**"
       - "examples/connectors/**"
       - "examples/registry/**"
       - "registry/**"
       - "docs/registry/**"
       - "scripts/validate-registry-contribution.mjs"
       - "scripts/verify-registry-history.mjs"
+      - "scripts/offline-network-guard.mjs"
+      - "scripts/run-contributor-tests.mjs"
       - "CONTRIBUTING.md"
       - "tests/**"
       - ".github/CODEOWNERS"
@@ -22,16 +30,24 @@ on:
       - ".github/workflows/node-tests.yml"
   pull_request:
     paths:
+      - ".dockerignore"
+      - ".nvmrc"
+      - "package.json"
+      - "containers/**"
       - "packages/**"
       - "sdk/**"
+      - "specs/contributor/**"
       - "specs/connectors/**"
       - "specs/registry/**"
+      - "docs/contributor/**"
       - "examples/connectors/**"
       - "examples/registry/**"
       - "registry/**"
       - "docs/registry/**"
       - "scripts/validate-registry-contribution.mjs"
       - "scripts/verify-registry-history.mjs"
+      - "scripts/offline-network-guard.mjs"
+      - "scripts/run-contributor-tests.mjs"
       - "CONTRIBUTING.md"
       - "tests/**"
       - ".github/CODEOWNERS"
@@ -50,5 +66,11 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 24
+      - name: Run contributor contracts and synthetic scenarios
+        run: node scripts/run-contributor-tests.mjs --profile all
+      - name: Build contributor test container
+        run: docker build --file containers/contributor/Dockerfile --tag ct-aicomm-contributor:test .
+      - name: Run contributor container without network or writable root
+        run: docker run --rm --network none --read-only --tmpfs /tmp ct-aicomm-contributor:test --profile all
       - name: Run complete test suite
-        run: node --test "tests/*.test.mjs"
+        run: node scripts/run-contributor-tests.mjs --profile full

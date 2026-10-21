@@ -5,6 +5,7 @@
 ## Documents
 
 - [Working whitepaper](whitepaper/README.md)
+- [Offline contributor test environment](contributor/test-environment.md)
 - [CT-Bench reproduction and evidence contract](bench-reproduction/README.md)
 - [CT-DataPlane Agent threat model](security/agent-threat-model.md)
 - [CT-DataPlane Agent operations runbook](agent/operations.md)
