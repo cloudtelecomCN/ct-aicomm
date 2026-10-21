@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/architecture/phase2-expansion-decision.v1.json",
+  "title": "CT-AIComm Phase 2 expansion decision v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "task", "status", "decision_date", "evidence", "ranking", "selected", "claim_boundary", "revisit_triggers"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "task": { "const": "CT-534" },
+    "status": { "enum": ["approved_for_planning", "superseded"] },
+    "decision_date": { "type": "string", "format": "date" },
+    "evidence": { "type": "array", "minItems": 3, "items": { "type": "object", "additionalProperties": false, "required": ["task", "path", "finding"], "properties": { "task": { "type": "string" }, "path": { "type": "string" }, "finding": { "type": "string", "minLength": 1 } } },
+    "ranking": { "type": "array", "minItems": 4, "maxItems": 4, "items": { "type": "object", "additionalProperties": false, "required": ["priority", "option", "disposition", "rationale", "entry_gate", "exit_evidence"], "properties": { "priority": { "type": "integer", "minimum": 1, "maximum": 4 }, "option": { "enum": ["scale_testing", "kubernetes", "multi_cloud", "xdp_dpdk"] }, "disposition": { "enum": ["start", "next", "defer", "hold"] }, "rationale": { "type": "string", "minLength": 10 }, "entry_gate": { "type": "array", "minItems": 1, "items": { "type": "string" } }, "exit_evidence": { "type": "array", "minItems": 1, "items": { "type": "string" } } } },
+    "selected": { "const": "scale_testing" },
+    "claim_boundary": { "type": "string", "minLength": 10 },
+    "revisit_triggers": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+  }
+}

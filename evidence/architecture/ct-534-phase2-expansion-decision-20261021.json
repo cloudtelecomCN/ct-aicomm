@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0.0",
+  "task": "CT-534",
+  "status": "approved_for_planning",
+  "decision_date": "2026-10-21",
+  "evidence": [
+    { "task": "CT-523", "path": "evidence/poc/ct-523-a10-instance-scheduling-20261021.json", "finding": "Instance selection produced a supported improvement in one frozen dual-A10 environment, but generalization is untested." },
+    { "task": "CT-524", "path": "evidence/poc/ct-524-a10-network-path-20261021.json", "finding": "Real eBPF path execution was verified, but network-only TTFT improvement was not statistically supported." },
+    { "task": "CT-525", "path": "evidence/poc/ct-525-a10-joint-optimization-20261021.json", "finding": "Joint optimization improved TTFT in the frozen environment, while interaction attribution remains exploratory and non-causal." },
+    { "task": "CT-526", "path": "evidence/poc/ct-526-a10-stability-rollback-20261021.json", "finding": "Required faults were contained in the POC, without establishing a production availability SLO." },
+    { "task": "CT-530", "path": "evidence/connectors/ct-530-vllm-compatibility-20261021.json", "finding": "Two vLLM 0.31.0 endpoints passed the primary compatibility probe; other support bands remain fixture-tested." }
+  ],
+  "ranking": [
+    { "priority": 1, "option": "scale_testing", "disposition": "start", "rationale": "The dominant evidence gap is external validity across endpoint count, accelerators, models, concurrency, and network conditions.", "entry_gate": ["CT-529 through CT-533 controls retained", "frozen scale-test methodology", "capacity and cost approval"], "exit_evidence": ["multi-endpoint measured runs", "failure and saturation curves", "bounded claims by topology and workload"] },
+    { "priority": 2, "option": "kubernetes", "disposition": "next", "rationale": "EndpointSlice discovery exists, but deployment, identity, policy application, rollback, and observability have not been validated in a real cluster.", "entry_gate": ["scale harness reusable in a cluster", "test cluster and namespace isolation", "service-account and admission policy design"], "exit_evidence": ["real EndpointSlice discovery", "pod churn and rollback tests", "operator installation and removal record"] },
+    { "priority": 3, "option": "multi_cloud", "disposition": "defer", "rationale": "Cloud expansion before one repeatable cluster delivery would multiply identity, network, cost, and support variables without isolating value.", "entry_gate": ["one Kubernetes pilot accepted", "portable identity and evidence contract", "two funded cloud environments"], "exit_evidence": ["cross-cloud environment fingerprints", "bounded network and cost comparison", "provider-specific failure matrix"] },
+    { "priority": 4, "option": "xdp_dpdk", "disposition": "hold", "rationale": "The current network-only experiment proves execution but does not support a TTFT benefit, so a more invasive data plane is not evidence-justified.", "entry_gate": ["measured packet-processing bottleneck", "network-only effect target approved", "kernel bypass threat model and rollback design"], "exit_evidence": ["isolated network-only improvement with confidence interval", "CPU and packet-rate comparison", "failure containment and operational cost"] }
+  ],
+  "selected": "scale_testing",
+  "claim_boundary": "This is an engineering priority decision. CT-523 through CT-526 performance evidence remains bounded to the frozen POC and public claims remain subject to CT-527 independent review and CT-528 publication.",
+  "revisit_triggers": ["CT-527 independent review decision", "first multi-endpoint scale report", "accepted Kubernetes pilot", "measured packet-processing bottleneck"]
+}
