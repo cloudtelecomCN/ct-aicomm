@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0.0",
   "evidence_type": "environment_freeze_receipt",
-  "freeze_id": "ct-poc-a10-dual-node-20261021-r1",
+  "freeze_id": "ct-poc-a10-dual-node-20261021-r2",
   "evidence_origin": "measured",
-  "environment_fingerprint": "sha256:2a9a12f2494e460f8bbe72780f5812c191891454766f8fc1b115f3967039f80c",
-  "restricted_manifest_sha256": "43909ca237ce2d2f2a5b1e55562f5da332ea5dbd2e1bdecd1a80146de39dee7d",
+  "environment_fingerprint": "sha256:57bda3ca3327fbee49a35e974b0f11e0135f6543cfa8361085964b93b1734c5b",
+  "restricted_manifest_sha256": "785218f763a850593b2cbc67f175157d24c3a095de8314df2609bf769d0ba32a",
   "model_artifact_sha256": "5f1e32ce8859f38f9d4902829cbadc4e896c5dae25fc2de2460052d2bfa76cee",
   "prompt_dataset_sha256": "aa833b7d7b9a4d2541b101c6a3e21a02b40b1ff3c4caa449b50397e63aa11e0e",
   "load_profile_sha256": "5eea9c1d04982770655ac1b156ec0abab8b1d6be3159de6f54619fd8169a4530",
