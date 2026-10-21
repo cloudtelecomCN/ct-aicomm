@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/open-source-release-manifest-v1.schema.json",
+  "title": "CT-AIComm open-source release manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "repository", "default_code_license", "default_documentation_license", "classifications"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "repository": { "const": "cloudtelecomCN/ct-aicomm" },
+    "default_code_license": { "const": "Apache-2.0" },
+    "default_documentation_license": { "const": "CC-BY-4.0" },
+    "classifications": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["public_now", "deferred", "prohibited"],
+      "properties": {
+        "public_now": { "$ref": "#/$defs/items" },
+        "deferred": { "$ref": "#/$defs/items" },
+        "prohibited": { "$ref": "#/$defs/items" }
+      }
+    }
+  },
+  "$defs": {
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "paths", "owner", "license", "rationale", "release_gate"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]+$" },
+          "paths": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+          "owner": { "type": "string", "minLength": 3 },
+          "license": { "type": "string", "enum": ["Apache-2.0", "CC-BY-4.0", "PROPRIETARY-NOT-FOR-RELEASE"] },
+          "rationale": { "type": "string", "minLength": 12 },
+          "release_gate": { "type": "string", "minLength": 12 }
+        }
+      }
+    }
+  }
+}

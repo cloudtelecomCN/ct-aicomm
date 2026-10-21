@@ -12,6 +12,7 @@ CT-AIComm is CloudTelecom's open, evidence-first operating system initiative for
 - [TTFT sample v1 JSON Schema](docs/bench-reproduction/ttft-sample.schema.json)
 - [vLLM connector compatibility v1](docs/connectors/vllm.md)
 - [Public SDK boundary](sdk/README.md)
+- [Open-source release manifest](docs/governance/open-source-release-manifest.md)
 - [Agent control and telemetry schemas](specs/agent/)
 - [POC environment freeze contract](docs/poc/environment-freeze.md)
 - [Measured baseline collection gate](docs/poc/baseline-collection.md)

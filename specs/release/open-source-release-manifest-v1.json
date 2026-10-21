@@ -1,0 +1,142 @@
+{
+  "schema_version": "1.0.0",
+  "repository": "cloudtelecomCN/ct-aicomm",
+  "default_code_license": "Apache-2.0",
+  "default_documentation_license": "CC-BY-4.0",
+  "classifications": {
+    "public_now": [
+      {
+        "id": "repository-governance",
+        "paths": [".gitattributes", ".gitignore", "CODE_OF_CONDUCT.md", "CONTRIBUTING.md", "LICENSE", "LICENSE-DOCUMENTATION.md", "README.md", "README.zh-CN.md", "SECURITY.md"],
+        "owner": "Open Source Maintainers",
+        "license": "CC-BY-4.0",
+        "rationale": "Public project governance, contribution, security, and licensing material.",
+        "release_gate": "Maintainer review and bilingual alignment where applicable."
+      },
+      {
+        "id": "github-automation",
+        "paths": [".github/"],
+        "owner": "Release Engineering",
+        "license": "Apache-2.0",
+        "rationale": "Public CI and supply-chain checks make release behavior inspectable.",
+        "release_gate": "No credentials or private deployment configuration; workflow tests pass."
+      },
+      {
+        "id": "agent-source",
+        "paths": ["agent/"],
+        "owner": "Agent Engineering",
+        "license": "Apache-2.0",
+        "rationale": "Agent source, eBPF source, and install tooling are independently reviewable.",
+        "release_gate": "Threat-model, eBPF, install, rollback, and supply-chain checks pass."
+      },
+      {
+        "id": "public-api",
+        "paths": ["api/", "sdk/"],
+        "owner": "Developer Platform",
+        "license": "Apache-2.0",
+        "rationale": "Versioned public API and SDK surface required by external integrators.",
+        "release_gate": "API boundary, compatibility, and credential-exclusion tests pass."
+      },
+      {
+        "id": "runtime-packages",
+        "paths": ["packages/", "scripts/"],
+        "owner": "Core Engineering",
+        "license": "Apache-2.0",
+        "rationale": "Runnable public implementation and deterministic validation tools.",
+        "release_gate": "Unit, contract, security-boundary, and secret scans pass."
+      },
+      {
+        "id": "contracts-and-examples",
+        "paths": ["specs/", "examples/"],
+        "owner": "Architecture Maintainers",
+        "license": "Apache-2.0",
+        "rationale": "Versioned schemas and synthetic examples define interoperable contracts.",
+        "release_gate": "Schemas are versioned; examples are synthetic, validated, and non-sensitive."
+      },
+      {
+        "id": "documentation-and-media",
+        "paths": ["docs/", "assets/"],
+        "owner": "Documentation Maintainers",
+        "license": "CC-BY-4.0",
+        "rationale": "Public bilingual documentation, diagrams, and whitepaper artifacts.",
+        "release_gate": "Bilingual claims match released capabilities and evidence boundaries."
+      },
+      {
+        "id": "public-evidence-receipts",
+        "paths": ["evidence/"],
+        "owner": "Evidence Reviewers",
+        "license": "CC-BY-4.0",
+        "rationale": "Checksum-bound receipts expose reviewable conclusions without restricted samples.",
+        "release_gate": "Receipt schema, provenance, privacy, and independent-review gates pass."
+      },
+      {
+        "id": "verification-tests",
+        "paths": ["tests/"],
+        "owner": "Quality Engineering",
+        "license": "Apache-2.0",
+        "rationale": "Public tests let third parties verify contracts and safety boundaries.",
+        "release_gate": "Tests contain no private fixtures and pass on public CI."
+      }
+    ],
+    "deferred": [
+      {
+        "id": "registry-service-runtime",
+        "paths": ["planned/registry-service/"],
+        "owner": "Registry Maintainers",
+        "license": "Apache-2.0",
+        "rationale": "Service runtime is planned after tenant and moderation boundaries stabilize.",
+        "release_gate": "Complete CT-550 contribution contract and remove private infrastructure coupling."
+      },
+      {
+        "id": "published-sdk-packages",
+        "paths": ["planned/package-registry-releases/"],
+        "owner": "Developer Platform",
+        "license": "Apache-2.0",
+        "rationale": "Package-registry publication follows source-level API compatibility evidence.",
+        "release_gate": "SemVer policy, provenance, signing, and compatibility matrix are complete."
+      },
+      {
+        "id": "production-agent-binaries",
+        "paths": ["planned/agent-release-binaries/"],
+        "owner": "Release Engineering",
+        "license": "Apache-2.0",
+        "rationale": "Binary releases require durable signing and reproducible build evidence.",
+        "release_gate": "Publish SBOM, provenance, checksums, signature, and verified installer bundle."
+      }
+    ],
+    "prohibited": [
+      {
+        "id": "credentials-and-private-keys",
+        "paths": ["restricted/credentials/", "restricted/signing-private-keys/"],
+        "owner": "Security Operations",
+        "license": "PROPRIETARY-NOT-FOR-RELEASE",
+        "rationale": "Credentials and signing private keys must never enter a public repository.",
+        "release_gate": "No release path exists; rotate and investigate if detected."
+      },
+      {
+        "id": "customer-and-partner-data",
+        "paths": ["restricted/customer-data/", "restricted/partner-data/"],
+        "owner": "Data Protection Owner",
+        "license": "PROPRIETARY-NOT-FOR-RELEASE",
+        "rationale": "Customer and partner material is confidential and purpose-limited.",
+        "release_gate": "Only independently reviewed, anonymized receipts may be created separately."
+      },
+      {
+        "id": "private-infrastructure",
+        "paths": ["restricted/deployment-config/", "restricted/topology/", "restricted/endpoints/"],
+        "owner": "Platform Security",
+        "license": "PROPRIETARY-NOT-FOR-RELEASE",
+        "rationale": "Private topology, endpoints, and deployment configuration increase attack surface.",
+        "release_gate": "Only generic examples with synthetic identifiers may enter public_now."
+      },
+      {
+        "id": "restricted-poc-material",
+        "paths": ["restricted/raw-poc-samples/", "restricted/operator-approvals/"],
+        "owner": "POC Evidence Custodian",
+        "license": "PROPRIETARY-NOT-FOR-RELEASE",
+        "rationale": "Raw samples and approvals may identify environments, operators, or counterparties.",
+        "release_gate": "Publish checksum-only receipts after privacy and independent evidence review."
+      }
+    ]
+  }
+}

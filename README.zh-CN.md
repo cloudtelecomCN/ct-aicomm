@@ -12,6 +12,7 @@ CT-AIComm 是 CloudTelecom 面向 AI 训练与推理通信场景构建的开放�
 - [TTFT 样本 v1 JSON Schema](docs/bench-reproduction/ttft-sample.schema.json)
 - [vLLM Connector 兼容矩阵 v1](docs/connectors/vllm.zh-CN.md)
 - [公开 SDK 边界](sdk/README.zh-CN.md)
+- [开源发布清单](docs/governance/open-source-release-manifest.zh-CN.md)
 - [Agent 控制与遥测 Schema](specs/agent/)
 - [POC 环境冻结契约](docs/poc/environment-freeze.zh-CN.md)
 - [真实基线采集门禁](docs/poc/baseline-collection.zh-CN.md)
