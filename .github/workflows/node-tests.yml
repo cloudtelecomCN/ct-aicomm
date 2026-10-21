@@ -6,6 +6,8 @@ on:
     paths:
       - ".dockerignore"
       - ".nvmrc"
+      - "SECURITY.md"
+      - "SECURITY.zh-CN.md"
       - "package.json"
       - "containers/**"
       - "packages/**"
@@ -25,6 +27,7 @@ on:
       - "CONTRIBUTING.md"
       - "tests/**"
       - ".github/CODEOWNERS"
+      - ".github/ISSUE_TEMPLATE/config.yml"
       - ".github/PULL_REQUEST_TEMPLATE/registry-contribution.md"
       - ".github/workflows/registry-preflight.yml"
       - ".github/workflows/node-tests.yml"
@@ -32,6 +35,8 @@ on:
     paths:
       - ".dockerignore"
       - ".nvmrc"
+      - "SECURITY.md"
+      - "SECURITY.zh-CN.md"
       - "package.json"
       - "containers/**"
       - "packages/**"
@@ -51,6 +56,7 @@ on:
       - "CONTRIBUTING.md"
       - "tests/**"
       - ".github/CODEOWNERS"
+      - ".github/ISSUE_TEMPLATE/config.yml"
       - ".github/PULL_REQUEST_TEMPLATE/registry-contribution.md"
       - ".github/workflows/registry-preflight.yml"
       - ".github/workflows/node-tests.yml"

@@ -7,7 +7,7 @@
     "public_now": [
       {
         "id": "repository-governance",
-        "paths": [".gitattributes", ".gitignore", "CODE_OF_CONDUCT.md", "CONTRIBUTING.md", "LICENSE", "LICENSE-DOCUMENTATION.md", "README.md", "README.zh-CN.md", "SECURITY.md"],
+        "paths": [".gitattributes", ".gitignore", "CODE_OF_CONDUCT.md", "CONTRIBUTING.md", "LICENSE", "LICENSE-DOCUMENTATION.md", "README.md", "README.zh-CN.md", "SECURITY.md", "SECURITY.zh-CN.md"],
         "owner": "Open Source Maintainers",
         "license": "CC-BY-4.0",
         "rationale": "Public project governance, contribution, security, and licensing material.",

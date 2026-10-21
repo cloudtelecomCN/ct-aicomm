@@ -10,6 +10,8 @@ Thank you for helping improve CT-AIComm.
 4. Label synthetic data explicitly. Do not present synthetic or estimated values as measured results.
 5. Include provenance, units, methodology, environment information, and failure samples with benchmark evidence.
 
+Security vulnerabilities are not ordinary contributions. Do not disclose them in an issue or pull request; follow the private process in [SECURITY.md](SECURITY.md).
+
 ## Pull requests
 
 - Use a focused title and explain the compatibility impact.

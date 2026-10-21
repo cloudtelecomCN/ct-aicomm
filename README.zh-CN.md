@@ -39,7 +39,7 @@ CT-AIComm 是 CloudTelecom 面向 AI 训练与推理通信场景构建的开放�
 
 - 官网：[cloudtelecom.cn](https://cloudtelecom.cn/)
 - 英文站：[cloudtelecom.cn/en/](https://cloudtelecom.cn/en/)
-- 安全问题：参见 [SECURITY.md](SECURITY.md)
+- 安全问题：参见 [SECURITY.zh-CN.md](SECURITY.zh-CN.md)
 - 参与贡献：参见 [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## 许可
