@@ -13,6 +13,7 @@ CT-AIComm 是 CloudTelecom 面向 AI 训练与推理通信场景构建的开放�
 - [vLLM Connector 兼容矩阵 v1](docs/connectors/vllm.zh-CN.md)
 - [POC 环境冻结契约](docs/poc/environment-freeze.zh-CN.md)
 - [真实基线采集门禁](docs/poc/baseline-collection.zh-CN.md)
+- [真实仅实例调度实验](docs/poc/instance-scheduling-experiment.zh-CN.md)
 - [CT-DSL v1 JSON Schema](specs/ct-dsl/ct-dsl-v1.schema.json)
 - [CT-DSL 示例](examples/ct-dsl/)
 - [OpenAPI 3.1 合约](api/openapi.yaml)

@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0.0",
+  "evidence_type": "measured_instance_scheduling_receipt",
+  "task": "CT-523",
+  "data_origin": "measured",
+  "environment_fingerprint": "sha256:57bda3ca3327fbee49a35e974b0f11e0135f6543cfa8361085964b93b1734c5b",
+  "baseline_batch_sha256": [
+    "cc2b425a5c596ca5710f26a38edf1a5f819e98bf8c19ecb1469a1cd0fd83f457",
+    "08a22d3fa45663fa664992e1c3f326e7aadda235705cd2fe74c5dd3afeaf3ff5"
+  ],
+  "treatment_plan_sha256": "d123dd1a46f2ede60682c8b7c0fa4b14ee670252a7983e6f4583e609ed1aa474",
+  "treatment_batch_sha256": "601c5a89a3028251a149af968795e25dcec3e87288c8de8a70052b78819d59c3",
+  "analysis_sha256": "d6cfa272849f92410e966ca28b4a377a5c470eeba2b2741554c9be8f5b63e3cd",
+  "restricted_file_sha256": {
+    "batch": "d75bd6d59c31d5f494c5f367df73abd7083772ef039e3acc6505db8225083736",
+    "summary": "9a35ef9bd00176cb0281f8be58186ad55eb16110a19a3534514792ae10342742",
+    "analysis": "633ed0580da91647b008dd6db465ebe3898c9baf27aa9905d7f9692215bcc191"
+  },
+  "sample_counts": {
+    "baseline": 400,
+    "connector_only": 200,
+    "baseline_success_rate": 1,
+    "connector_only_success_rate": 1
+  },
+  "relative_improvement_percent": {
+    "p50": 42.452081,
+    "p95": 12.294881,
+    "p99": 12.867058
+  },
+  "confidence_interval_95_percent": {
+    "p50": [39.561, 43.475941],
+    "p95": [9.402654, 14.277251],
+    "p99": [12.512369, 14.135716]
+  },
+  "analysis_method": "10,000-resample deterministic stratified bootstrap paired by repetition, concurrency, and prompt class",
+  "network_policy": "fixed_path_not_scored",
+  "claim_gate": "passed_for_this_poc_environment",
+  "restricted_fields_published": false,
+  "limitations": [
+    "Applies only to the frozen dual-NVIDIA-A10, Qwen2.5-7B-Instruct, vLLM 0.31.0 environment.",
+    "Measures instance selection only; it does not measure eBPF or network-path optimization.",
+    "Does not establish production availability, cost savings, or performance on other models, accelerators, regions, or load profiles.",
+    "Restricted raw samples and per-request decision evidence are not published in this repository."
+  ]
+}
