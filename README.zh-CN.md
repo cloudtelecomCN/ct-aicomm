@@ -19,6 +19,7 @@ CT-AIComm 是 CloudTelecom 面向 AI 训练与推理通信场景构建的开放�
 - [真实仅实例调度实验](docs/poc/instance-scheduling-experiment.zh-CN.md)
 - [CT-DSL v1 JSON Schema](specs/ct-dsl/ct-dsl-v1.schema.json)
 - [CT-DSL 示例](examples/ct-dsl/)
+- [CT-DSL 参考包](packages/ct-dsl/)与[版本策略](docs/ct-dsl/versioning.zh-CN.md)
 - [OpenAPI 3.1 合约](api/openapi.yaml)
 - [白皮书 PDF](assets/whitepaper/)
 

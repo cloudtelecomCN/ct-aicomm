@@ -1,6 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://cloudtelecom.cn/docs/ct-dsl-v1.schema.json",
+  "$id": "https://cloudtelecom.cn/schemas/ct-dsl/ct-dsl-v1.schema.json",
+  "x-ct-aicomm-version": "1.0.0",
   "title": "CT-DSL Policy v1",
   "description": "Minimum policy contract for deterministic local path simulation.",
   "type": "object",

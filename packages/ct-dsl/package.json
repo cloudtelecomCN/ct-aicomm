@@ -1,0 +1,11 @@
+{
+  "name": "@cloudtelecom/ct-dsl",
+  "version": "1.0.0",
+  "description": "Dependency-free CT-DSL v1 policy validation and compatibility tools.",
+  "type": "module",
+  "license": "Apache-2.0",
+  "exports": {
+    ".": "./index.mjs",
+    "./compatibility": "./compatibility.mjs"
+  }
+}

@@ -22,11 +22,15 @@
     "specs/agent/network-telemetry-v1.schema.json",
     "specs/connectors/vllm-compatibility-v1.json",
     "specs/connectors/vllm-metrics-v1.schema.json",
+    "specs/ct-dsl/ct-dsl-v1.schema.json",
     "docs/bench-reproduction/ttft-sample.schema.json"
   ],
   "public_tools": [
     "packages/ttft-collector/cli.mjs",
+    "packages/ct-dsl/index.mjs",
+    "packages/ct-dsl/compatibility.mjs",
     "scripts/probe-vllm-compatibility.mjs",
+    "scripts/validate-ct-dsl.mjs",
     "scripts/validate-ttft-contract.mjs",
     "scripts/validate-ttft-methodology.mjs"
   ],

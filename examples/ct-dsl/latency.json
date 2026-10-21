@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "policy": {
+    "name": "cross-domain-inference",
+    "objective": "latency",
+    "constraints": { "max_latency_ms": 80, "max_cost_per_gb": 0.12, "data_regions": ["cn-east", "cn-north"], "require_encryption": true, "failure_mode": "fail_static" }
+  },
+  "routes": [
+    { "id": "http3-east", "protocol": "HTTP/3", "region": "cn-east", "latency_ms": 46, "cost_per_gb": 0.09, "encrypted": true },
+    { "id": "grpc-north", "protocol": "gRPC", "region": "cn-north", "latency_ms": 63, "cost_per_gb": 0.07, "encrypted": true },
+    { "id": "tcp-west", "protocol": "TCP", "region": "cn-west", "latency_ms": 72, "cost_per_gb": 0.05, "encrypted": false }
+  ]
+}

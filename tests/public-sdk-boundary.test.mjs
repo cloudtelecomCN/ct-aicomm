@@ -16,6 +16,14 @@ test("public SDK exports exactly the versioned manifest", async () => {
   assert.deepEqual(Object.keys(sdk).sort(), [...manifest.exports].sort());
 });
 
+test("public API manifest includes the versioned CT-DSL package", async () => {
+  const manifest = JSON.parse(await readFile(new URL("../specs/public-api-v1.json", import.meta.url), "utf8"));
+  assert.ok(manifest.public_contracts.includes("specs/ct-dsl/ct-dsl-v1.schema.json"));
+  assert.ok(manifest.public_tools.includes("packages/ct-dsl/index.mjs"));
+  assert.ok(manifest.public_tools.includes("packages/ct-dsl/compatibility.mjs"));
+  assert.ok(manifest.public_tools.includes("scripts/validate-ct-dsl.mjs"));
+});
+
 test("public telemetry example is accepted and receives a stable route identity", async () => {
   const example = JSON.parse(await readFile(new URL("../examples/agent/network-telemetry.json", import.meta.url), "utf8"));
   const event = sdk.normalizeNetworkTelemetry(example);
