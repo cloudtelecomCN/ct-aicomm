@@ -28,4 +28,4 @@ Failed samples must remain present with a machine-readable `failure_code`. Succe
 
 The [evidence authenticity gate](../../packages/evidence-gate/README.md) also recognizes `hybrid` observations. Import, aggregation, downloads, APIs, and pages must preserve its fixed origin labels. Cross-origin aggregation is rejected, and only complete `measured` evidence may permit a performance claim.
 
-This directory publishes the report and environment schemas plus a clearly labeled synthetic example. It does not claim that the example represents measured network performance. The runnable packaging tool will be published here when its source release review is complete.
+This directory publishes the report and environment schemas plus a clearly labeled synthetic example. It does not claim that the example represents measured network performance. The zero-dependency runnable collector is published at [`../../packages/ttft-collector/cli.mjs`](../../packages/ttft-collector/cli.mjs), and the public SDK boundary is declared in [`../../specs/public-api-v1.json`](../../specs/public-api-v1.json).

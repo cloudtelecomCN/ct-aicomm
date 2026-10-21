@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0.0",
+  "sdk_version": "0.1.0",
+  "runtime": "Node.js >=22 ESM",
+  "entrypoint": "sdk/index.mjs",
+  "exports": [
+    "NetworkTelemetryReporter",
+    "NonceReplayGuard",
+    "classifyVllmVersion",
+    "collectTtft",
+    "createReceipt",
+    "evaluateVllmCompatibility",
+    "fingerprint",
+    "normalizeNetworkTelemetry",
+    "normalizeVllmMetrics",
+    "parsePrometheus",
+    "routeIdentity",
+    "validateControlMessage"
+  ],
+  "public_contracts": [
+    "specs/agent/control-protocol-v1.schema.json",
+    "specs/agent/network-telemetry-v1.schema.json",
+    "specs/connectors/vllm-compatibility-v1.json",
+    "specs/connectors/vllm-metrics-v1.schema.json",
+    "docs/bench-reproduction/ttft-sample.schema.json"
+  ],
+  "public_tools": [
+    "packages/ttft-collector/cli.mjs",
+    "scripts/probe-vllm-compatibility.mjs",
+    "scripts/validate-ttft-contract.mjs",
+    "scripts/validate-ttft-methodology.mjs"
+  ],
+  "excluded": [
+    "credentials and signing private keys",
+    "website and Cloudflare deployment configuration",
+    "customer and partner data",
+    "private host, endpoint, and topology inventories",
+    "restricted raw POC samples",
+    "production authorization and policy approvals"
+  ]
+}

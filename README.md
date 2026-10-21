@@ -11,6 +11,8 @@ CT-AIComm is CloudTelecom's open, evidence-first operating system initiative for
 - [CT-Bench reproduction and evidence contract](docs/bench-reproduction/README.md)
 - [TTFT sample v1 JSON Schema](docs/bench-reproduction/ttft-sample.schema.json)
 - [vLLM connector compatibility v1](docs/connectors/vllm.md)
+- [Public SDK boundary](sdk/README.md)
+- [Agent control and telemetry schemas](specs/agent/)
 - [POC environment freeze contract](docs/poc/environment-freeze.md)
 - [Measured baseline collection gate](docs/poc/baseline-collection.md)
 - [Measured instance scheduling experiment](docs/poc/instance-scheduling-experiment.md)
@@ -23,7 +25,7 @@ CT-AIComm is CloudTelecom's open, evidence-first operating system initiative for
 
 Catalog records are not benchmark results. Synthetic demonstrations are not measured runs. Recommendations are not execution authorization. Readiness artifacts are not external certification. Synthetic data in this repository is always labeled and must not be presented as measured production performance.
 
-Registry, CT-Bench, CT-DSL, SDK, and other components will be added progressively after public review. Website deployment configuration, credentials, customer data, and internal operational material are outside the public release boundary.
+The public SDK, Agent protocol, telemetry schemas, CT-Bench collector, CT-DSL, examples, and validation tools are source-released under the repository licenses. Registry components and other modules will be added progressively after public review. Website deployment configuration, credentials, signing private keys, customer data, private topology, restricted raw POC samples, and internal operational material are outside the public release boundary.
 
 ## Project links
 

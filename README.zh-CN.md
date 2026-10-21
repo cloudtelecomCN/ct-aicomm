@@ -11,6 +11,8 @@ CT-AIComm 是 CloudTelecom 面向 AI 训练与推理通信场景构建的开放�
 - [CT-Bench 复现与证据规范](docs/bench-reproduction/README.zh-CN.md)
 - [TTFT 样本 v1 JSON Schema](docs/bench-reproduction/ttft-sample.schema.json)
 - [vLLM Connector 兼容矩阵 v1](docs/connectors/vllm.zh-CN.md)
+- [公开 SDK 边界](sdk/README.zh-CN.md)
+- [Agent 控制与遥测 Schema](specs/agent/)
 - [POC 环境冻结契约](docs/poc/environment-freeze.zh-CN.md)
 - [真实基线采集门禁](docs/poc/baseline-collection.zh-CN.md)
 - [真实仅实例调度实验](docs/poc/instance-scheduling-experiment.zh-CN.md)
@@ -23,7 +25,7 @@ CT-AIComm 是 CloudTelecom 面向 AI 训练与推理通信场景构建的开放�
 
 目录记录不等于基准结果，合成演示不等于真实测量，策略建议不等于执行授权，准备材料也不等于外部认证。仓库中的合成数据始终使用明确标记，不得作为真实生产性能声明。
 
-后续通过公开评审的 Registry、CT-Bench、CT-DSL、SDK 和其他组件将按版本逐步加入本仓库。网站部署配置、凭证、客户数据和内部运营材料不属于公开范围。
+公开 SDK、Agent 协议、遥测 Schema、CT-Bench 采集器、CT-DSL、示例和校验工具已按仓库许可证以源码发布。Registry 组件及其他模块将在公开评审后继续加入。网站部署配置、凭证、签名私钥、客户数据、私有拓扑、受限 POC 原始样本和内部运营材料不属于公开范围。
 
 ## 项目链接
 

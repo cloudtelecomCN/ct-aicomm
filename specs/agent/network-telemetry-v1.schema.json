@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/agent/network-telemetry.v1.json",
+  "title": "CT-AIComm Agent network telemetry v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "agent_id", "socket_cookie", "observed_at", "route", "rtt_us", "retransmits_delta", "connection_errors_delta", "source"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "agent_id": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "socket_cookie": { "type": "string", "pattern": "^[0-9]+$" },
+    "observed_at": { "type": "string", "format": "date-time" },
+    "route_id": { "type": "string", "pattern": "^route-[a-f0-9]{24}$" },
+    "route": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "effective_target", "policy_revision"],
+      "properties": {
+        "source": { "$ref": "#/$defs/endpoint" },
+        "effective_target": { "$ref": "#/$defs/endpoint" },
+        "policy_revision": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "rtt_us": { "$ref": "#/$defs/nullableCounter" },
+    "retransmits_delta": { "$ref": "#/$defs/nullableCounter" },
+    "connection_errors_delta": { "$ref": "#/$defs/nullableCounter" },
+    "source": { "enum": ["kernel", "connect_error"] }
+  },
+  "$defs": {
+    "endpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ipv4", "port"],
+      "properties": {
+        "ipv4": { "type": "string", "format": "ipv4" },
+        "port": { "type": "integer", "minimum": 1, "maximum": 65535 }
+      }
+    },
+    "nullableCounter": { "type": ["integer", "null"], "minimum": 0 }
+  }
+}

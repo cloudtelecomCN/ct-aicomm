@@ -28,4 +28,4 @@ sample_id,ttft_ms,connection_setup_ms,success,failure_code
 
 [证据真实性门禁](../../packages/evidence-gate/README.md) 同时识别 `hybrid`（半真实）观测。导入、聚合、下载、API 和页面必须保留固定来源标签；禁止跨来源聚合，且只有证据完整的 `measured` 数据才允许形成性能声明。
 
-本目录公开报告 schema、环境 schema 和明确标注的合成示例。该示例不代表真实网络性能。可执行打包工具将在源代码完成公开发布审查后加入本仓库。
+本目录公开报告 Schema、环境 Schema 和明确标注的合成示例。该示例不代表真实网络性能。零依赖可执行采集器已发布在 [`../../packages/ttft-collector/cli.mjs`](../../packages/ttft-collector/cli.mjs)，公开 SDK 边界声明位于 [`../../specs/public-api-v1.json`](../../specs/public-api-v1.json)。

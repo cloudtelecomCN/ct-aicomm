@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/connectors/vllm-metrics.v1.json",
+  "title": "CT-AIComm normalized vLLM metrics snapshot v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "connector", "instance", "vllm_version", "collected_at", "health", "missing_required_metrics", "queue", "cache", "latency_aggregate_seconds", "evidence"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "connector": { "const": "vllm-openai" },
+    "instance": { "type": "string", "minLength": 1 },
+    "vllm_version": { "type": "string", "minLength": 1 },
+    "collected_at": { "type": "string", "format": "date-time" },
+    "health": { "enum": ["ready", "degraded"] },
+    "missing_required_metrics": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+    "queue": { "type": "object", "additionalProperties": false, "required": ["waiting_requests", "running_requests"], "properties": { "waiting_requests": { "$ref": "#/$defs/nullableNumber" }, "running_requests": { "$ref": "#/$defs/nullableNumber" } } },
+    "cache": { "type": "object", "additionalProperties": false, "required": ["kv_usage_ratio"], "properties": { "kv_usage_ratio": { "$ref": "#/$defs/nullableNumber" } } },
+    "latency_aggregate_seconds": { "type": "object", "additionalProperties": false, "required": ["ttft_mean", "queue_mean", "inference_mean"], "properties": { "ttft_mean": { "$ref": "#/$defs/nullableNumber" }, "queue_mean": { "$ref": "#/$defs/nullableNumber" }, "inference_mean": { "$ref": "#/$defs/nullableNumber" } } },
+    "evidence": { "type": "object", "additionalProperties": false, "required": ["raw_sample_count", "aggregate_only", "per_request_correlation_allowed"], "properties": { "raw_sample_count": { "type": "integer", "minimum": 0 }, "aggregate_only": { "const": true }, "per_request_correlation_allowed": { "const": false } } }
+  },
+  "$defs": { "nullableNumber": { "type": ["number", "null"], "minimum": 0 } }
+}

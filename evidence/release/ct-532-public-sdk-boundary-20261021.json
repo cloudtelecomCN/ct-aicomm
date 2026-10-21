@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0.0",
+  "task": "CT-532",
+  "evidence_type": "public_protocol_sdk_boundary_receipt",
+  "status": "passed",
+  "sdk": {
+    "version": "0.1.0",
+    "runtime": "Node.js >=22 ESM",
+    "dependency_count": 0,
+    "registry_published": false,
+    "source_entrypoint": "sdk/index.mjs",
+    "export_manifest": "specs/public-api-v1.json"
+  },
+  "published_contracts": [
+    "Agent control protocol v1",
+    "Agent network telemetry v1",
+    "normalized vLLM metrics v1",
+    "vLLM compatibility v1",
+    "TTFT sample v1"
+  ],
+  "published_tools": [
+    "TTFT collector CLI",
+    "vLLM compatibility probe",
+    "TTFT contract validator",
+    "TTFT methodology validator",
+    "public synthetic SDK example"
+  ],
+  "boundary_assertions": {
+    "synthetic_origin_explicit": true,
+    "performance_claim_disabled_for_example": true,
+    "credentials_included": false,
+    "private_topology_included": false,
+    "restricted_raw_samples_included": false,
+    "execution_authorization_included": false
+  },
+  "limitations": [
+    "SDK version 0.1.0 is source-distributed and has not been published to an npm registry.",
+    "The SDK validates evidence and protocols; it does not grant production execution authority.",
+    "Public examples are synthetic and cannot support a performance claim."
+  ]
+}
