@@ -14,6 +14,7 @@ CT-AIComm 是 CloudTelecom 面向 AI 训练与推理通信场景构建的开放�
 - [vLLM Connector 兼容矩阵 v1](docs/connectors/vllm.zh-CN.md)
 - [Connector SDK 契约 v1](docs/connectors/sdk.zh-CN.md)
 - [Agent 协议 SDK v1](docs/agent/protocol-sdk.zh-CN.md)
+- [Registry 贡献规范 v2](docs/registry/contributing.zh-CN.md)
 - [公开 SDK 边界](sdk/README.zh-CN.md)
 - [开源发布清单](docs/governance/open-source-release-manifest.zh-CN.md)
 - [Agent 控制与遥测 Schema](specs/agent/)

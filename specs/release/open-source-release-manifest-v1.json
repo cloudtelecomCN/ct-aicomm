@@ -54,6 +54,14 @@
         "release_gate": "Schemas are versioned; examples are synthetic, validated, and non-sensitive."
       },
       {
+        "id": "registry-contributions",
+        "paths": ["registry/"],
+        "owner": "Registry Maintainers",
+        "license": "CC-BY-4.0",
+        "rationale": "Public, review-pending protocol metadata packets preserve provenance and contribution history.",
+        "release_gate": "Registry contribution v2 preflight and independent reviewer requirements pass."
+      },
+      {
         "id": "documentation-and-media",
         "paths": ["docs/", "assets/"],
         "owner": "Documentation Maintainers",
@@ -85,7 +93,7 @@
         "owner": "Registry Maintainers",
         "license": "Apache-2.0",
         "rationale": "Service runtime is planned after tenant and moderation boundaries stabilize.",
-        "release_gate": "Complete CT-550 contribution contract and remove private infrastructure coupling."
+        "release_gate": "Keep the CT-550 contribution contract compatible and remove private infrastructure coupling."
       },
       {
         "id": "published-sdk-packages",

@@ -1,0 +1,63 @@
+{
+  "schema_version": "2.0.0",
+  "contribution_id": "synthetic-quic-example-v1",
+  "change_type": "add",
+  "supersedes": null,
+  "protocol": {
+    "id": "synthetic-quic-example",
+    "name": "Synthetic QUIC metadata example",
+    "version": "1.0.0-example",
+    "category": "transport",
+    "summary": "Synthetic contribution fixture showing the required metadata and review boundary without making a performance claim.",
+    "specification_urls": [
+      "https://www.rfc-editor.org/rfc/rfc9000"
+    ],
+    "implementation_urls": [],
+    "interoperability_tags": [
+      "quic",
+      "tls-1.3",
+      "udp"
+    ]
+  },
+  "provenance": {
+    "contributor": {
+      "github_login": "example-contributor",
+      "affiliation": null
+    },
+    "sources": [
+      {
+        "kind": "official-specification",
+        "title": "QUIC: A UDP-Based Multiplexed and Secure Transport",
+        "publisher": "RFC Editor",
+        "url": "https://www.rfc-editor.org/rfc/rfc9000",
+        "accessed_at": "2026-10-21",
+        "license_spdx": null,
+        "sha256": null
+      }
+    ],
+    "rights": {
+      "basis": "link-only",
+      "has_rights_to_contribute": true,
+      "contains_confidential_material": false
+    }
+  },
+  "conflict_of_interest": {
+    "declared": false,
+    "relationships": []
+  },
+  "review": {
+    "status": "pending",
+    "requested_roles": [
+      "registry-maintainer",
+      "independent-domain-reviewer"
+    ],
+    "required_checks": [
+      "metadata",
+      "provenance-rights",
+      "conflict-of-interest",
+      "technical"
+    ],
+    "independent_review_required": true,
+    "submitter_may_approve": false
+  }
+}

@@ -14,6 +14,7 @@ CT-AIComm is CloudTelecom's open, evidence-first operating system initiative for
 - [vLLM connector compatibility v1](docs/connectors/vllm.md)
 - [Connector SDK contract v1](docs/connectors/sdk.md)
 - [Agent protocol SDK v1](docs/agent/protocol-sdk.md)
+- [Registry contribution specification v2](docs/registry/contributing.md)
 - [Public SDK boundary](sdk/README.md)
 - [Open-source release manifest](docs/governance/open-source-release-manifest.md)
 - [Agent control and telemetry schemas](specs/agent/)

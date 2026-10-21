@@ -12,6 +12,7 @@
 - [Connector SDK 契约 v1](connectors/sdk.zh-CN.md)
 - [vLLM Connector 兼容矩阵 v1](connectors/vllm.zh-CN.md)
 - [Agent 协议 SDK v1](agent/protocol-sdk.zh-CN.md)
+- [Registry 贡献规范 v2](registry/contributing.zh-CN.md)
 - [公开 API 清单](../specs/public-api-v1.json)
 - [企业试点验收包](pilot/enterprise-acceptance.zh-CN.md)
 - [Phase 2 扩展决策](architecture/phase2-expansion-decision.zh-CN.md)

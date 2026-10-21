@@ -17,4 +17,14 @@ Thank you for helping improve CT-AIComm.
 - Keep Chinese and English documentation aligned when both editions exist.
 - Confirm that you have the right to contribute every submitted file.
 
+## Registry contributions
+
+Protocol metadata follows [Registry contribution specification v2](docs/registry/contributing.md) ([中文](docs/registry/contributing.zh-CN.md)). Copy the synthetic example into `registry/contributions/<contribution_id>.json`, keep its review status pending, and run:
+
+```sh
+node scripts/validate-registry-contribution.mjs --files registry/contributions/<contribution_id>.json
+```
+
+The external pull-request preflight checks metadata, public provenance, rights attestations, conflicts of interest, and review requirements. Passing preflight is not approval or publication.
+
 By contributing, you agree that code contributions are licensed under Apache-2.0 and documentation contributions under CC BY 4.0, unless explicitly stated otherwise.

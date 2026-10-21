@@ -1,0 +1,56 @@
+name: Registry contribution preflight
+
+on:
+  pull_request:
+    paths:
+      - "registry/contributions/**"
+      - "specs/registry/**"
+      - "scripts/validate-registry-contribution.mjs"
+      - "tests/registry-contribution-v2.test.mjs"
+      - ".github/workflows/registry-preflight.yml"
+  push:
+    branches: [main]
+    paths:
+      - "registry/contributions/**"
+      - "specs/registry/**"
+      - "examples/registry/**"
+      - "docs/registry/**"
+      - "scripts/validate-registry-contribution.mjs"
+      - "tests/registry-contribution-v2.test.mjs"
+      - ".github/PULL_REQUEST_TEMPLATE/registry-contribution.md"
+      - ".github/CODEOWNERS"
+      - ".github/workflows/registry-preflight.yml"
+      - "CONTRIBUTING.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: registry-preflight-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  preflight:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out review revision without credentials
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - name: Validate changed external contribution packets
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: node scripts/validate-registry-contribution.mjs --base "$BASE_SHA" --head "$HEAD_SHA"
+      - name: Validate all committed contribution packets
+        if: github.event_name != 'pull_request'
+        run: node scripts/validate-registry-contribution.mjs --all
+      - name: Run Registry contribution contract tests
+        run: node --test tests/registry-contribution-v2.test.mjs

@@ -1,0 +1,264 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/ct-aicomm/registry-contribution-v2.schema.json",
+  "title": "CT-AIComm Registry contribution v2",
+  "description": "A review-pending, provenance-bound protocol metadata contribution. Passing validation is not publication approval.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "contribution_id",
+    "change_type",
+    "supersedes",
+    "protocol",
+    "provenance",
+    "conflict_of_interest",
+    "review"
+  ],
+  "properties": {
+    "schema_version": { "const": "2.0.0" },
+    "contribution_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "minLength": 3,
+      "maxLength": 96
+    },
+    "change_type": { "enum": ["add", "update", "deprecate"] },
+    "supersedes": {
+      "type": ["string", "null"],
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*@[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$"
+    },
+    "protocol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "version",
+        "category",
+        "summary",
+        "specification_urls",
+        "implementation_urls",
+        "interoperability_tags"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+          "minLength": 2,
+          "maxLength": 64
+        },
+        "name": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$"
+        },
+        "category": {
+          "enum": [
+            "collective-communication",
+            "transport",
+            "rpc",
+            "inference-serving",
+            "network-offload",
+            "security",
+            "observability",
+            "other"
+          ]
+        },
+        "summary": { "type": "string", "minLength": 20, "maxLength": 500 },
+        "specification_urls": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 12,
+          "uniqueItems": true,
+          "items": { "type": "string", "format": "uri" }
+        },
+        "implementation_urls": {
+          "type": "array",
+          "maxItems": 12,
+          "uniqueItems": true,
+          "items": { "type": "string", "format": "uri" }
+        },
+        "interoperability_tags": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 20,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$",
+            "maxLength": 48
+          }
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contributor", "sources", "rights"],
+      "properties": {
+        "contributor": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["github_login", "affiliation"],
+          "properties": {
+            "github_login": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$"
+            },
+            "affiliation": { "type": ["string", "null"], "maxLength": 120 }
+          }
+        },
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 20,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "title",
+              "publisher",
+              "url",
+              "accessed_at",
+              "license_spdx",
+              "sha256"
+            ],
+            "properties": {
+              "kind": {
+                "enum": [
+                  "official-specification",
+                  "vendor-documentation",
+                  "research-paper",
+                  "reference-implementation",
+                  "benchmark-report",
+                  "other"
+                ]
+              },
+              "title": { "type": "string", "minLength": 3, "maxLength": 200 },
+              "publisher": { "type": "string", "minLength": 2, "maxLength": 120 },
+              "url": { "type": "string", "format": "uri" },
+              "accessed_at": { "type": "string", "format": "date" },
+              "license_spdx": {
+                "type": ["string", "null"],
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9.+-]{0,63}$"
+              },
+              "sha256": {
+                "type": ["string", "null"],
+                "pattern": "^sha256:[0-9a-f]{64}$"
+              }
+            }
+          }
+        },
+        "rights": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "basis",
+            "has_rights_to_contribute",
+            "contains_confidential_material"
+          ],
+          "properties": {
+            "basis": {
+              "enum": ["author", "public-domain", "open-license", "link-only"]
+            },
+            "has_rights_to_contribute": { "const": true },
+            "contains_confidential_material": { "const": false }
+          }
+        }
+      }
+    },
+    "conflict_of_interest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["declared", "relationships"],
+      "properties": {
+        "declared": { "type": "boolean" },
+        "relationships": {
+          "type": "array",
+          "maxItems": 12,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["kind", "party", "description"],
+            "properties": {
+              "kind": {
+                "enum": [
+                  "employer",
+                  "vendor",
+                  "consultant",
+                  "investor",
+                  "maintainer",
+                  "other"
+                ]
+              },
+              "party": { "type": "string", "minLength": 2, "maxLength": 120 },
+              "description": { "type": "string", "minLength": 10, "maxLength": 500 }
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "declared": { "const": true } } },
+          "then": { "properties": { "relationships": { "minItems": 1 } } }
+        },
+        {
+          "if": { "properties": { "declared": { "const": false } } },
+          "then": { "properties": { "relationships": { "maxItems": 0 } } }
+        }
+      ]
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "requested_roles",
+        "required_checks",
+        "independent_review_required",
+        "submitter_may_approve"
+      ],
+      "properties": {
+        "status": { "const": "pending" },
+        "requested_roles": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": { "enum": ["registry-maintainer", "independent-domain-reviewer"] },
+          "allOf": [
+            { "contains": { "const": "registry-maintainer" } },
+            { "contains": { "const": "independent-domain-reviewer" } }
+          ]
+        },
+        "required_checks": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "uniqueItems": true,
+          "items": { "enum": ["metadata", "provenance-rights", "conflict-of-interest", "technical"] },
+          "allOf": [
+            { "contains": { "const": "metadata" } },
+            { "contains": { "const": "provenance-rights" } },
+            { "contains": { "const": "conflict-of-interest" } },
+            { "contains": { "const": "technical" } }
+          ]
+        },
+        "independent_review_required": { "const": true },
+        "submitter_may_approve": { "const": false }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "change_type": { "const": "add" } } },
+      "then": { "properties": { "supersedes": { "type": "null" } } }
+    },
+    {
+      "if": { "properties": { "change_type": { "enum": ["update", "deprecate"] } } },
+      "then": { "properties": { "supersedes": { "type": "string" } } }
+    }
+  ]
+}
