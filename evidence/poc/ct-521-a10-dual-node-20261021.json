@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0.0",
+  "evidence_type": "environment_freeze_receipt",
+  "freeze_id": "ct-poc-a10-dual-node-20261021-r1",
+  "evidence_origin": "measured",
+  "environment_fingerprint": "sha256:2a9a12f2494e460f8bbe72780f5812c191891454766f8fc1b115f3967039f80c",
+  "restricted_manifest_sha256": "43909ca237ce2d2f2a5b1e55562f5da332ea5dbd2e1bdecd1a80146de39dee7d",
+  "model_artifact_sha256": "5f1e32ce8859f38f9d4902829cbadc4e896c5dae25fc2de2460052d2bfa76cee",
+  "prompt_dataset_sha256": "aa833b7d7b9a4d2541b101c6a3e21a02b40b1ff3c4caa449b50397e63aa11e0e",
+  "load_profile_sha256": "5eea9c1d04982770655ac1b156ec0abab8b1d6be3159de6f54619fd8169a4530",
+  "artifact_hashes": {
+    "collector_sha256": "ab2019a41e35f82f6676eef1b6513f9e4284e39c3f0ed97d8567af95ad2709f1",
+    "agent_sha256": "92586e96ba44347368ed21f8385d879bc2e6b932545c96e47f08f396ec67df6c",
+    "orchestrator_sha256": "c61e9cbb5e82f39c626278eebdb76db9931dac64d831e70e0eb97ad02fc43f7a"
+  },
+  "scope": "Two isolated NVIDIA A10 inference endpoints on a private VPC",
+  "restricted_fields_published": false,
+  "performance_claim": "none",
+  "notes": "This public receipt proves the frozen environment identity only. Hostnames, addresses, credentials, topology details, and the signed manifest remain in restricted evidence storage."
+}
