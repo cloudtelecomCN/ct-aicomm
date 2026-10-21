@@ -8,6 +8,7 @@ on:
       - "scripts/validate-registry-contribution.mjs"
       - "tests/registry-contribution-v2.test.mjs"
       - ".github/workflows/registry-preflight.yml"
+      - ".github/workflows/node-tests.yml"
   push:
     branches: [main]
     paths:
@@ -20,6 +21,7 @@ on:
       - ".github/PULL_REQUEST_TEMPLATE/registry-contribution.md"
       - ".github/CODEOWNERS"
       - ".github/workflows/registry-preflight.yml"
+      - ".github/workflows/node-tests.yml"
       - "CONTRIBUTING.md"
   workflow_dispatch:
 
