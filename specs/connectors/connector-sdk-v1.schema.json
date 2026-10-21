@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/connectors/connector-sdk.v1.json",
+  "title": "CT-AIComm Connector SDK contract v1",
+  "oneOf": [
+    { "$ref": "#/$defs/candidate" },
+    { "$ref": "#/$defs/metrics" }
+  ],
+  "$defs": {
+    "nullableNonNegative": { "type": ["number", "null"], "minimum": 0 },
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "connector", "id", "source", "endpoint", "metrics_endpoint", "region", "zone", "models", "ready", "discovered_at", "source_revision"],
+      "properties": {
+        "schema_version": { "const": "1.0.0" },
+        "connector": { "type": "string", "minLength": 1 },
+        "id": { "type": "string", "minLength": 1 },
+        "source": { "type": "string", "minLength": 1 },
+        "endpoint": { "type": "string", "format": "uri", "pattern": "^https?://" },
+        "metrics_endpoint": { "type": "string", "format": "uri", "pattern": "^https?://" },
+        "region": { "type": "string", "minLength": 1 },
+        "zone": { "type": ["string", "null"], "minLength": 1 },
+        "models": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+        "ready": { "type": "boolean" },
+        "discovered_at": { "type": "string", "format": "date-time" },
+        "source_revision": { "type": ["string", "null"], "minLength": 1 }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "connector", "instance", "collected_at", "data_origin", "health", "missing_required_metrics", "queue", "cache", "latency_aggregate_seconds", "evidence"],
+      "properties": {
+        "schema_version": { "const": "1.0.0" },
+        "connector": { "type": "string", "minLength": 1 },
+        "instance": { "type": "string", "minLength": 1 },
+        "collected_at": { "type": "string", "format": "date-time" },
+        "data_origin": { "enum": ["synthetic", "hybrid", "measured"] },
+        "health": { "enum": ["ready", "degraded", "unavailable"] },
+        "missing_required_metrics": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+        "queue": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["waiting_requests", "running_requests"],
+          "properties": {
+            "waiting_requests": { "type": ["integer", "null"], "minimum": 0 },
+            "running_requests": { "type": ["integer", "null"], "minimum": 0 }
+          }
+        },
+        "cache": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kv_usage_ratio"],
+          "properties": { "kv_usage_ratio": { "type": ["number", "null"], "minimum": 0, "maximum": 1 } }
+        },
+        "latency_aggregate_seconds": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["ttft_mean", "queue_mean", "inference_mean"],
+          "properties": {
+            "ttft_mean": { "$ref": "#/$defs/nullableNonNegative" },
+            "queue_mean": { "$ref": "#/$defs/nullableNonNegative" },
+            "inference_mean": { "$ref": "#/$defs/nullableNonNegative" }
+          }
+        },
+        "evidence": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["source", "raw_sample_count", "aggregate_only", "per_request_correlation_allowed", "limitations"],
+          "properties": {
+            "source": { "type": "string", "minLength": 1 },
+            "raw_sample_count": { "type": ["integer", "null"], "minimum": 0 },
+            "aggregate_only": { "type": "boolean" },
+            "per_request_correlation_allowed": { "type": "boolean" },
+            "limitations": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+          }
+        }
+      }
+    }
+  }
+}

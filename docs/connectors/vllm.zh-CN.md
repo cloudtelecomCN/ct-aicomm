@@ -2,6 +2,8 @@
 
 首版 Connector 面向 vLLM OpenAI 兼容服务。机器可读契约位于 [`../../specs/connectors/vllm-compatibility-v1.json`](../../specs/connectors/vllm-compatibility-v1.json)。
 
+该厂商实现同时遵循统一的 [Connector SDK 契约 v1](sdk.zh-CN.md)。`createVllmConnectorAdapter` 接受运营方自有的发现和指标加载回调，再由公共 SDK 校验每个候选实例与指标快照。
+
 ## 冻结支持范围
 
 | vLLM 版本 | 状态 | 行为 |

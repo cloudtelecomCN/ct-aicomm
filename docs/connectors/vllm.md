@@ -2,6 +2,8 @@
 
 The first connector release targets the vLLM OpenAI-compatible server. The machine-readable contract is [`../../specs/connectors/vllm-compatibility-v1.json`](../../specs/connectors/vllm-compatibility-v1.json).
 
+The provider implementation also conforms to the shared [Connector SDK contract v1](sdk.md). `createVllmConnectorAdapter` accepts operator-owned discovery and metric-loading callbacks, while the common SDK validates every candidate and metric snapshot.
+
 ## Frozen support range
 
 | vLLM version | Status | Behavior |

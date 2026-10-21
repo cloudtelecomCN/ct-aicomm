@@ -1,0 +1,11 @@
+{
+  "name": "@cloudtelecom/connector-sdk",
+  "version": "1.0.0",
+  "description": "Versioned CT-AIComm candidate and metrics adapter contract",
+  "type": "module",
+  "exports": "./index.mjs",
+  "files": ["index.mjs", "README.md", "README.zh-CN.md"],
+  "engines": { "node": ">=22" },
+  "license": "Apache-2.0",
+  "private": true
+}

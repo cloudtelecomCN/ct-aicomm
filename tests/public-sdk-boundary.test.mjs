@@ -24,6 +24,15 @@ test("public API manifest includes the versioned CT-DSL package", async () => {
   assert.ok(manifest.public_tools.includes("scripts/validate-ct-dsl.mjs"));
 });
 
+test("public API manifest includes Connector SDK 1.0", async () => {
+  const manifest = JSON.parse(await readFile(new URL("../specs/public-api-v1.json", import.meta.url), "utf8"));
+  assert.ok(manifest.public_contracts.includes("specs/connectors/connector-sdk-v1.schema.json"));
+  assert.ok(manifest.public_tools.includes("packages/connector-sdk/index.mjs"));
+  assert.ok(manifest.exports.includes("createConnectorAdapter"));
+  assert.ok(manifest.exports.includes("runConnectorContract"));
+  assert.ok(manifest.exports.includes("createVllmConnectorAdapter"));
+});
+
 test("public telemetry example is accepted and receives a stable route identity", async () => {
   const example = JSON.parse(await readFile(new URL("../examples/agent/network-telemetry.json", import.meta.url), "utf8"));
   const event = sdk.normalizeNetworkTelemetry(example);

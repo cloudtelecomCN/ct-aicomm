@@ -9,6 +9,8 @@
 - [CT-DataPlane Agent threat model](security/agent-threat-model.md)
 - [CT-DataPlane Agent operations runbook](agent/operations.md)
 - [Public SDK boundary](../sdk/README.md)
+- [Connector SDK contract v1](connectors/sdk.md)
+- [vLLM connector compatibility v1](connectors/vllm.md)
 - [Public API manifest](../specs/public-api-v1.json)
 - [Enterprise pilot acceptance package](pilot/enterprise-acceptance.md)
 - [Phase 2 expansion decision](architecture/phase2-expansion-decision.md)

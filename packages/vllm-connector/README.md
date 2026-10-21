@@ -16,3 +16,5 @@ The ledger rejects identity changes, time regression, duplicate milestones, out-
 `ConnectorCircuitBreaker` fails closed on missing metrics, fetch failures, and unsuccessful recovery probes. Any degraded observation immediately preserves the original route and disables automatic route changes. Repeated failures open the circuit; after cooldown, exactly a probe-only half-open state can recover it. Every degradation, open, and recovery transition produces a structured alert.
 
 `evaluateVllmCompatibility` applies the frozen version matrix together with metrics and streaming-interface checks. Primary and compatible versions become `ready` only when every required check passes. Probe-only, unknown, incomplete, and unsupported targets preserve the original route and cannot receive automatic execution.
+
+`createVllmConnectorAdapter` binds operator-provided discovery and Prometheus loading callbacks to the public Connector SDK 1.0 contract. The callback must label evidence as `synthetic`, `hybrid`, or `measured`; the adapter never assumes that a metric payload is measured. See the shared executable contract test in `tests/vllm-adapter-contract.test.mjs`.

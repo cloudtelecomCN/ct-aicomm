@@ -4,11 +4,17 @@ on:
   push:
     paths:
       - "packages/**"
+      - "sdk/**"
+      - "specs/connectors/**"
+      - "examples/connectors/**"
       - "tests/**"
       - ".github/workflows/node-tests.yml"
   pull_request:
     paths:
       - "packages/**"
+      - "sdk/**"
+      - "specs/connectors/**"
+      - "examples/connectors/**"
       - "tests/**"
       - ".github/workflows/node-tests.yml"
 
