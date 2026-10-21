@@ -10,6 +10,7 @@
 - [CT-DataPlane Agent operations runbook](agent/operations.md)
 - [Public SDK boundary](../sdk/README.md)
 - [Public API manifest](../specs/public-api-v1.json)
+- [Enterprise pilot acceptance package](pilot/enterprise-acceptance.md)
 - [CT-DSL v1 JSON Schema](../specs/ct-dsl/ct-dsl-v1.schema.json)
 - [CT-DSL examples](../examples/ct-dsl/)
 - [OpenAPI 3.1 contract](../api/openapi.yaml)

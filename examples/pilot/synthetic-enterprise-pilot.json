@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "pilot_id": "synthetic-ttft-pilot",
+  "status": "draft",
+  "data_origin": "synthetic",
+  "scenario": {
+    "name": "Synthetic dual-endpoint TTFT routing pilot",
+    "business_question": "Can policy-constrained instance and path selection improve TTFT without reducing request success?",
+    "in_scope": ["one approved model", "two synthetic inference endpoints", "client-observed streaming TTFT"],
+    "out_of_scope": ["production traffic", "autonomous cross-domain execution", "availability certification"],
+    "start_at": "2026-11-01T00:00:00Z",
+    "end_at": "2026-11-15T00:00:00Z"
+  },
+  "environment_fingerprint": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "responsibilities": [
+    { "deliverable": "frozen environment", "responsible": ["customer-sre"], "accountable": "customer-owner", "consulted": ["ct-engineer"], "informed": ["security-reviewer"] },
+    { "deliverable": "measured evidence package", "responsible": ["ct-bench-operator"], "accountable": "ct-pilot-owner", "consulted": ["customer-sre"], "informed": ["independent-reviewer"] },
+    { "deliverable": "acceptance decision", "responsible": ["customer-owner", "ct-pilot-owner"], "accountable": "customer-owner", "consulted": ["independent-reviewer"], "informed": ["security-reviewer"] }
+  ],
+  "acceptance_metrics": [
+    { "id": "ttft_p95_improvement", "definition": "Paired P95 client-observed TTFT improvement", "unit": "percent", "comparison": "greater_than_or_equal", "target": 15, "minimum_samples": 200, "evidence_required": ["raw samples", "environment fingerprint", "confidence interval"] },
+    { "id": "request_success_rate", "definition": "Successful streamed requests divided by attempts", "unit": "ratio", "comparison": "greater_than_or_equal", "target": 0.99, "minimum_samples": 200, "evidence_required": ["retained failures", "request receipts"] },
+    { "id": "rollback_recovery", "definition": "Maximum measured recovery after an injected supported fault", "unit": "milliseconds", "comparison": "less_than_or_equal", "target": 1000, "minimum_samples": 5, "evidence_required": ["fault timeline", "rollback receipt", "state fingerprints"] }
+  ],
+  "execution_boundary": { "initial_mode": "observe_only", "human_approval_required": true, "automatic_execution_scope": ["single approved service during change window"], "rollback_required": true, "change_window_required": true },
+  "data_boundary": { "allowed": ["pseudonymous request ids", "timings", "route identity hashes", "environment hashes"], "prohibited": ["credentials", "raw customer prompts", "customer payloads", "unapproved topology"], "retention_days": 30, "encryption_in_transit": true, "encryption_at_rest": true, "access_roles": ["customer-reviewer", "ct-bench-operator", "independent-reviewer"], "export_approval_required": true, "deletion_verification_required": true },
+  "exit_plan": { "triggers": ["pilot end", "safety boundary violation", "customer withdrawal"], "restore_baseline": true, "uninstall_agent": true, "export_evidence": true, "delete_restricted_data": true, "close_access": true, "owner": "customer-owner" },
+  "decision": { "state": "pending", "customer_approver": null, "provider_approver": null, "independent_review": null, "evidence_sha256": [] }
+}

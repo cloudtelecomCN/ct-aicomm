@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0.0",
+  "task": "CT-533",
+  "evidence_type": "enterprise_pilot_acceptance_package_receipt",
+  "status": "passed",
+  "deliverables": {
+    "machine_readable_contract": "specs/pilot/enterprise-pilot-acceptance-v1.schema.json",
+    "validator": "packages/pilot/acceptance.mjs",
+    "synthetic_template": "examples/pilot/synthetic-enterprise-pilot.json",
+    "english_guide": "docs/pilot/enterprise-acceptance.md",
+    "chinese_guide": "docs/pilot/enterprise-acceptance.zh-CN.md"
+  },
+  "required_boundaries": {
+    "scenario": true,
+    "raci_responsibilities": true,
+    "measurable_acceptance_metrics": true,
+    "minimum_sample_floors": true,
+    "execution_authorization": true,
+    "rollback_and_change_window": true,
+    "data_allow_and_prohibit_lists": true,
+    "retention_export_and_deletion": true,
+    "exit_and_baseline_restoration": true,
+    "bilateral_approval": true,
+    "independent_review_for_acceptance": true
+  },
+  "public_release_boundary": "The published package is a synthetic reusable template and contains no customer identity, commercial term, credential, private topology, or restricted evidence.",
+  "limitations": [
+    "This artifact is a pilot acceptance template, not a signed customer agreement.",
+    "Synthetic target values are examples and must be negotiated and approved for each pilot.",
+    "A real accepted decision requires measured evidence and independent review."
+  ]
+}
