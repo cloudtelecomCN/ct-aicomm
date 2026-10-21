@@ -27,7 +27,12 @@ jobs:
       - name: Compile selector
         run: make -C agent/bpf
       - name: Verify BPF ELF
-        run: llvm-objdump -h agent/bpf/build/ct_selector.bpf.o | grep -E 'cgroup/connect4|tc/egress|sockops|maps|license'
+        run: |
+          llvm-objdump -h agent/bpf/build/ct_selector.bpf.o | grep -q 'cgroup/connect4'
+          llvm-objdump -h agent/bpf/build/ct_selector.bpf.o | grep -q 'classifier'
+          llvm-objdump -h agent/bpf/build/ct_selector.bpf.o | grep -q 'sockops'
+          llvm-objdump -h agent/bpf/build/ct_selector.bpf.o | grep -q '.maps'
+          llvm-objdump -h agent/bpf/build/ct_selector.bpf.o | grep -q 'license'
       - name: Test Agent control policies
         run: node --test "tests/agent-*.test.mjs"
       - name: Test Agent installation lifecycle

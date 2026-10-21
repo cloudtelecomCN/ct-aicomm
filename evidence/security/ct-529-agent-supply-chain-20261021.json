@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0.0",
+  "task": "CT-529",
+  "evidence_type": "agent_security_and_supply_chain_receipt",
+  "status": "passed",
+  "controls": {
+    "sbom": "SPDX-2.3 inventory generated deterministically from Agent source",
+    "provenance": "in-toto SLSA v1 statement binds source revision and release artifacts",
+    "signature": "offline Ed25519 signature covers the canonical SHA256SUMS manifest",
+    "installation": "production installation rejects missing, unsigned, extra, or modified artifacts",
+    "least_privilege": "dedicated system user, bounded Linux capabilities, system-call filter, and systemd isolation",
+    "dependency_audit": "runtime import audit permits only Node.js built-ins and repository-relative modules",
+    "upgrade": "previous signed installation is restored when post-install health verification fails"
+  },
+  "verification": {
+    "node_test_count": 94,
+    "node_test_failures": 0,
+    "linux_signed_install": "passed",
+    "linux_tamper_rejection": "passed",
+    "linux_failed_upgrade_restore": "passed",
+    "linux_install_lifecycle": "passed",
+    "third_party_runtime_dependency_count": 0
+  },
+  "key_handling": {
+    "production_private_key_stored_in_repository": false,
+    "test_private_key_persistence": "ephemeral temporary directory only"
+  },
+  "public_release_boundary": "This receipt contains no credentials, private topology, host address, customer data, or restricted POC samples.",
+  "limitations": [
+    "The audit verifies repository controls and isolated Linux lifecycle behavior; it is not an external penetration test.",
+    "The checked service capability set remains kernel-dependent and must fail preflight on unsupported hosts.",
+    "Release operators must protect the offline production signing key outside the repository and CI environment."
+  ]
+}

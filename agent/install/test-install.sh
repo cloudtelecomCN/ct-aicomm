@@ -14,14 +14,17 @@ chmod +x "$fixture/agent"
 printf 'test-bpf-object\n' >"$fixture/selector.o"
 export CT_AGENT_TEST_LOG="$fixture/agent.log"
 
-"$script_dir/install.sh" --root "$root" --agent-binary "$fixture/agent" --bpf-object "$fixture/selector.o"
+"$script_dir/install.sh" --root "$root" --agent-binary "$fixture/agent" --bpf-object "$fixture/selector.o" --allow-unsigned-development
 printf 'CT_AGENT_MODE=enforce\n' >"$root/etc/ct-aicomm-agent/agent.env"
-"$script_dir/install.sh" --root "$root" --agent-binary "$fixture/agent" --bpf-object "$fixture/selector.o"
+"$script_dir/install.sh" --root "$root" --agent-binary "$fixture/agent" --bpf-object "$fixture/selector.o" --allow-unsigned-development
 
 grep -q '^CT_AGENT_MODE=enforce$' "$root/etc/ct-aicomm-agent/agent.env"
 grep -q 'CapabilityBoundingSet=CAP_BPF CAP_NET_ADMIN CAP_PERFMON' "$root/etc/systemd/system/ct-aicomm-agent.service"
+grep -q '^User=ct-aicomm-agent$' "$root/etc/systemd/system/ct-aicomm-agent.service"
+grep -q '^SystemCallFilter=@system-service bpf$' "$root/etc/systemd/system/ct-aicomm-agent.service"
 test -x "$root/usr/local/lib/ct-aicomm-agent/bin/ct-aicomm-agent"
 test -f "$root/var/lib/ct-aicomm-agent/install.manifest"
+grep -q '^development_unsigned=true$' "$root/var/lib/ct-aicomm-agent/install.manifest"
 
 "$script_dir/uninstall.sh" --root "$root"
 grep -q '^restore --all$' "$CT_AGENT_TEST_LOG"

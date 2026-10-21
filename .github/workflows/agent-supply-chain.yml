@@ -1,0 +1,39 @@
+name: Agent supply chain
+
+on:
+  push:
+    paths:
+      - "agent/**"
+      - "packages/agent-control/**"
+      - "scripts/generate-agent-*.mjs"
+      - "scripts/create-release-checksums.mjs"
+      - "scripts/audit-agent-dependencies.mjs"
+      - ".github/workflows/agent-supply-chain.yml"
+  pull_request:
+    paths:
+      - "agent/**"
+      - "packages/agent-control/**"
+      - "scripts/generate-agent-*.mjs"
+      - "scripts/create-release-checksums.mjs"
+      - "scripts/audit-agent-dependencies.mjs"
+      - ".github/workflows/agent-supply-chain.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - name: Validate security boundary
+        run: node scripts/validate-agent-security-boundary.mjs
+      - name: Audit runtime dependencies
+        run: node scripts/audit-agent-dependencies.mjs
+      - name: Verify signed supply-chain lifecycle
+        run: agent/install/test-supply-chain.sh
+      - name: Verify installation lifecycle
+        run: agent/install/test-install.sh
