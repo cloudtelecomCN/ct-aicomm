@@ -24,6 +24,8 @@ test("binds every measured baseline group to the frozen environment", async () =
   assert.equal(baseline.environment_fingerprint, environment.environment_fingerprint);
   assert.equal(baseline.data_origin, "measured");
   assert.equal(baseline.performance_claim, "baseline_only");
+  assert.equal(baseline.repetitions, 3);
+  assert.deepEqual(baseline.concurrency_levels, [1, 8, 32]);
   assert.equal(baseline.groups.length, 2);
   for (const group of baseline.groups) {
     assert.equal(group.sample_count, 200);

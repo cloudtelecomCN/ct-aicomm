@@ -4,23 +4,25 @@
   "task": "CT-522",
   "data_origin": "measured",
   "environment_fingerprint": "sha256:57bda3ca3327fbee49a35e974b0f11e0135f6543cfa8361085964b93b1734c5b",
-  "plan_sha256": "f19805b0fbdca7a2b1240484a2db2aa15cfcc538c92bbde82767f362aef1378d",
+  "plan_sha256": "d974a268ea2df5fa46916dc7e05ec493fe66b1ff71a26f7aa6b80b9efef6e0ec",
+  "repetitions": 3,
+  "concurrency_levels": [1, 8, 32],
   "groups": [
     {
       "node_alias": "node-a",
       "sample_count": 200,
       "success_count": 200,
       "failure_count": 0,
-      "batch_sha256": "0d035376e78958da4243f5c09872f18d6c75b15e5fcd5489a49ec52a9db7d3d9",
-      "restricted_file_sha256": "91bbc31af817724bd6f5e8981a7352de3f18acde4dd4a9ebae573d0bf6515fab"
+      "batch_sha256": "cc2b425a5c596ca5710f26a38edf1a5f819e98bf8c19ecb1469a1cd0fd83f457",
+      "restricted_file_sha256": "cb570b631c251c374481ed03182e8f7e30bbc5affeae0fed22febc1238067109"
     },
     {
       "node_alias": "node-b",
       "sample_count": 200,
       "success_count": 200,
       "failure_count": 0,
-      "batch_sha256": "1ed67185ea9ca876277116574118ec370757398a72d1fea91b2603b188458751",
-      "restricted_file_sha256": "6232fe615dbed7d58092fcd9605718d512f601145acd895a9107c1da49a9032b"
+      "batch_sha256": "08a22d3fa45663fa664992e1c3f326e7aadda235705cd2fe74c5dd3afeaf3ff5",
+      "restricted_file_sha256": "19420e24a06b97981853c137bbd1032df99d34c894f38ec6fe090bfdcc82c104"
     }
   ],
   "restricted_fields_published": false,
