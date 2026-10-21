@@ -74,3 +74,5 @@ Use an authenticated system of record to supply `expectedContext`. Context value
 ## Evidence boundary
 
 A successful verification proves that the supplied package is internally complete, byte-consistent, and optionally matched to caller-supplied identifiers. A checksum is not a signature: an attacker who can replace every file can also recompute every checksum. Version 1 therefore reports `authenticity_verified`, `authorization_verified`, and `legal_or_certification_conclusion` as `false`. Trusted signing, identity validation, retention policy, and regulatory conclusions require separate controls.
+
+Use [CT-559 evidence gap detection](evidence-gap-detection.md) to apply explicit freshness, conflict, and verified-signature requirements. Package integrity alone cannot produce a `requirements_satisfied` result.

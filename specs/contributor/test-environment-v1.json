@@ -41,6 +41,7 @@
     "tests/agent-protocol-sdk.test.mjs",
     "tests/compliance-audit-package.test.mjs",
     "tests/compliance-data-path-declaration.test.mjs",
+    "tests/compliance-evidence-gap.test.mjs",
     "tests/compliance-evidence-binding.test.mjs",
     "tests/connector-sdk-contract.test.mjs",
     "tests/ct-dsl.test.mjs",
@@ -112,6 +113,21 @@
           "context_verified": true,
           "evidence_origin": "synthetic",
           "authenticity_verified": false,
+          "authorization_verified": false,
+          "legal_or_certification_conclusion": false
+        }
+      }
+    },
+    {
+      "id": "evidence-gap-detection",
+      "entrypoint": "examples/compliance/generate-synthetic-evidence-gap-report.mjs",
+      "expect": {
+        "equals": {
+          "default_deny": true,
+          "status": "not_satisfied",
+          "requirements_satisfied": false,
+          "gap_count": 4,
+          "evidence_origin": "synthetic",
           "authorization_verified": false,
           "legal_or_certification_conclusion": false
         }

@@ -13,3 +13,4 @@
 /scripts/validate-data-path-declaration.mjs @cloudtelecomCN
 /scripts/build-audit-package.mjs @cloudtelecomCN
 /scripts/verify-audit-package.mjs @cloudtelecomCN
+/scripts/inspect-evidence-gaps.mjs @cloudtelecomCN

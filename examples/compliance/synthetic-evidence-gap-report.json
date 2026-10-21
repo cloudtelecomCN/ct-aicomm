@@ -1,0 +1,81 @@
+{
+  "schema_version": "1.0.0",
+  "assessment_id": "evidence-gap-synthetic-001",
+  "assessment_fingerprint": "sha256:439139eb5d97e7c98ed1d000ccb905148f53edb0052311be8a65fa2fcb830b4b",
+  "policy_id": "minimum-audit-evidence-synthetic",
+  "policy_version": "1.0.0",
+  "policy_fingerprint": "sha256:d8aad93f6c2cd16b3b83d0b2604b34703c1b13caecd69816ef4120973540c958",
+  "subject": {
+    "tenant_id": "tenant-synthetic-alpha",
+    "workload_id": "workload-inference-synthetic",
+    "execution_id": "execution-synthetic-001"
+  },
+  "evaluated_at": "2026-10-22T12:00:00.000Z",
+  "trusted_verifier_ids": [
+    "synthetic-verifier-v1"
+  ],
+  "evidence_origin": "synthetic",
+  "default_deny": true,
+  "status": "not_satisfied",
+  "requirements_satisfied": false,
+  "gap_count": 4,
+  "gaps": [
+    {
+      "type": "missing",
+      "requirement_id": "rollback-record",
+      "evidence_ids": [],
+      "expected_evidence_kind": "rollback",
+      "gap_fingerprint": "sha256:10fa185db822647c7a65deb9f62330885297ee444cc8b58bcc6949e824618486"
+    },
+    {
+      "type": "stale",
+      "requirement_id": "data-path-declaration",
+      "evidence_ids": [
+        "declaration-synthetic-stale"
+      ],
+      "observed_at": "2026-10-22T08:00:00.000Z",
+      "age_milliseconds": 14400000,
+      "max_age_milliseconds": 3600000,
+      "gap_fingerprint": "sha256:e78cb9e8d8edbfd6f9725f9c9c27fc2d2e9612a1a20adaaf90801e0d69674c0d"
+    },
+    {
+      "type": "conflicting",
+      "requirement_id": "execution-approval",
+      "evidence_ids": [
+        "approval-synthetic-a",
+        "approval-synthetic-b"
+      ],
+      "claim_fingerprints": [
+        "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+        "sha256:4222222222222222222222222222222222222222222222222222222222222222"
+      ],
+      "gap_fingerprint": "sha256:2065d71e8471789865dd58881904d1a21ba60dd4d7103ce16931afb5b4f80811"
+    },
+    {
+      "type": "unsigned",
+      "requirement_id": "execution-record",
+      "evidence_ids": [
+        "execution-synthetic-unsigned"
+      ],
+      "submitted_signature_verifications": 0,
+      "accepted_verified_signatures": 0,
+      "minimum_verified_signatures": 1,
+      "allowed_signer_roles": [
+        "runtime-attestor"
+      ],
+      "gap_fingerprint": "sha256:97e988531661d9f08f92a311574e08175a4f1344954831307e1daa94cf3368dd"
+    }
+  ],
+  "summary": {
+    "requirement_count": 4,
+    "submitted_evidence_count": 4,
+    "fresh_evidence_count": 3,
+    "stale_evidence_count": 1,
+    "signature_sufficient_evidence_count": 3,
+    "signature_deficient_evidence_count": 1,
+    "conflicting_requirement_count": 1
+  },
+  "authorization_verified": false,
+  "legal_or_certification_conclusion": false,
+  "report_fingerprint": "sha256:f3e55a88ce29719c6e74601176ff476bfb344fe87e2e401bdc26fdf4515e4bcd"
+}

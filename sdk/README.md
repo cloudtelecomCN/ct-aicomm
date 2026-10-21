@@ -6,7 +6,7 @@ This zero-dependency ESM entry point exposes only the versioned public protocol 
 import { normalizeNetworkTelemetry, validateControlMessage } from "./sdk/index.mjs";
 ```
 
-The SDK validates and normalizes caller-supplied evidence. It does not contain credentials, discover private infrastructure, authorize execution, attach eBPF programs, or claim that synthetic data is measured. Version `0.7.0` adds CT-558 deterministic audit packages containing one declaration, approval, execution, and rollback artifact. Tenant lookup, legal approval, trusted signing, and production evidence access remain deliberately excluded. It is source-distributed and is not an npm registry publication.
+The SDK validates and normalizes caller-supplied evidence. It does not contain credentials, discover private infrastructure, authorize execution, attach eBPF programs, or claim that synthetic data is measured. Version `0.8.0` adds CT-559 fail-closed evidence gap detection for missing, stale, conflicting, and unsigned records. Tenant lookup, legal approval, trusted signing, verifier authentication, and production evidence access remain deliberately excluded. It is source-distributed and is not an npm registry publication.
 
 Run the example with `node examples/sdk/validate-public-evidence.mjs`. Run one measured client-side TTFT observation with `node packages/ttft-collector/cli.mjs --endpoint=URL --model=MODEL --prompt=TEXT --environment-fingerprint=sha256:...`; provide credentials only through `VLLM_API_KEY`.
 
@@ -21,3 +21,5 @@ Compliance integrators can import `createExecutionEvidenceBinding` and `verifyEx
 Data-governance integrators can import `createDataPathDeclaration`, `validateDataPathDeclaration`, and `verifyDataPathDeclaration`. Structural validation does not authenticate context; authoritative verification requires the expected tenant, workload, and declaration revision.
 
 Audit tooling can import `createAuditPackage` and `verifyAuditPackage`, or run the offline builder and verifier CLIs. Package verification detects omission and tampering and can bind identifiers to caller-supplied context; checksum verification alone does not authenticate an approver or authorize an execution.
+
+Evidence reviewers can import `inspectEvidenceGaps` or run `scripts/inspect-evidence-gaps.mjs`. The caller must supply authoritative context, a trusted evaluation time, and authenticated verifier IDs separately from the submitted assessment. Only a zero-gap report emits `requirements_satisfied`; that status is not execution authorization, legal approval, or external certification.

@@ -10,3 +10,4 @@ export { REGISTRY_ENTRY_INTEGRITY_VERSION, canonicalizeRegistryValue, digestRegi
 export { EXECUTION_EVIDENCE_BINDING_VERSION, createExecutionEvidenceBinding, verifyExecutionEvidenceBinding } from "../packages/compliance/evidence-binding.mjs";
 export { DATA_PATH_DECLARATION_VERSION, createDataPathDeclaration, validateDataPathDeclaration, verifyDataPathDeclaration } from "../packages/compliance/data-path-declaration.mjs";
 export { AUDIT_PACKAGE_KINDS, AUDIT_PACKAGE_VERSION, createAuditPackage, renderAuditPackageChecksums, serializeAuditPackageManifest, verifyAuditPackage } from "../packages/compliance/audit-package.mjs";
+export { EVIDENCE_GAP_REPORT_VERSION, EVIDENCE_GAP_TYPES, inspectEvidenceGaps } from "../packages/compliance/evidence-gap.mjs";

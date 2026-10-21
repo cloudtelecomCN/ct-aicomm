@@ -63,6 +63,20 @@ test("public API exposes the CT-558 audit package without signing or approval au
   for (const forbidden of ["signAuditPackage", "approveAuditPackage", "issueAuditorCredential"]) assert.equal(Object.hasOwn(sdk, forbidden), false);
 });
 
+test("public API exposes CT-559 evidence gap detection without verifier or certification authority", async () => {
+  const manifest = JSON.parse(await readFile(new URL("../specs/public-api-v1.json", import.meta.url), "utf8"));
+  assert.ok(manifest.public_contracts.includes("specs/compliance/evidence-gap-assessment-v1.schema.json"));
+  assert.ok(manifest.public_contracts.includes("specs/compliance/evidence-gap-report-v1.schema.json"));
+  assert.ok(manifest.public_tools.includes("packages/compliance/evidence-gap.mjs"));
+  assert.ok(manifest.public_tools.includes("packages/compliance/evidence-gap.d.ts"));
+  assert.ok(manifest.public_tools.includes("scripts/inspect-evidence-gaps.mjs"));
+  for (const symbol of ["EVIDENCE_GAP_REPORT_VERSION", "EVIDENCE_GAP_TYPES", "inspectEvidenceGaps"]) assert.ok(manifest.exports.includes(symbol));
+  for (const forbidden of ["authenticateEvidenceVerifier", "issueComplianceConclusion", "approveEvidencePolicy"]) {
+    assert.equal(manifest.exports.includes(forbidden), false);
+    assert.equal(Object.hasOwn(sdk, forbidden), false);
+  }
+});
+
 test("public API manifest includes Agent protocol SDK 1.0 without credential APIs", async () => {
   const manifest = JSON.parse(await readFile(new URL("../specs/public-api-v1.json", import.meta.url), "utf8"));
   assert.ok(manifest.public_contracts.includes("specs/agent/control-protocol-v1.schema.json"));

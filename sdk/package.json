@@ -1,6 +1,6 @@
 {
   "name": "@cloudtelecom/ct-aicomm-sdk",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Public zero-dependency CT-AIComm protocol and evidence helpers",
   "type": "module",
   "exports": "./index.mjs",

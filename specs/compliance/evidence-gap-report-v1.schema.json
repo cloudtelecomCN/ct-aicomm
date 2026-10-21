@@ -1,0 +1,236 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/compliance/evidence-gap-report-v1.schema.json",
+  "title": "CT-AIComm evidence gap report v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "assessment_id",
+    "assessment_fingerprint",
+    "policy_id",
+    "policy_version",
+    "policy_fingerprint",
+    "subject",
+    "evaluated_at",
+    "trusted_verifier_ids",
+    "evidence_origin",
+    "default_deny",
+    "status",
+    "requirements_satisfied",
+    "gap_count",
+    "gaps",
+    "summary",
+    "authorization_verified",
+    "legal_or_certification_conclusion",
+    "report_fingerprint"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "assessment_id": { "$ref": "#/$defs/id" },
+    "assessment_fingerprint": { "$ref": "#/$defs/fingerprint" },
+    "policy_id": { "$ref": "#/$defs/id" },
+    "policy_version": { "$ref": "#/$defs/id" },
+    "policy_fingerprint": { "$ref": "#/$defs/fingerprint" },
+    "subject": { "$ref": "#/$defs/context" },
+    "evaluated_at": { "$ref": "#/$defs/instant" },
+    "trusted_verifier_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/id" }
+    },
+    "evidence_origin": {
+      "enum": ["none", "declared", "measured", "synthetic", "mixed"]
+    },
+    "default_deny": { "const": true },
+    "status": {
+      "enum": ["requirements_satisfied", "not_satisfied"]
+    },
+    "requirements_satisfied": { "type": "boolean" },
+    "gap_count": { "type": "integer", "minimum": 0 },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          { "$ref": "#/$defs/missing_gap" },
+          { "$ref": "#/$defs/stale_gap" },
+          { "$ref": "#/$defs/conflicting_gap" },
+          { "$ref": "#/$defs/unsigned_gap" }
+        ]
+      }
+    },
+    "summary": { "$ref": "#/$defs/summary" },
+    "authorization_verified": { "const": false },
+    "legal_or_certification_conclusion": { "const": false },
+    "report_fingerprint": { "$ref": "#/$defs/fingerprint" }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$"
+    },
+    "fingerprint": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "instant": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tenant_id", "workload_id", "execution_id"],
+      "properties": {
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "workload_id": { "$ref": "#/$defs/id" },
+        "execution_id": { "$ref": "#/$defs/id" }
+      }
+    },
+    "gap_base": {
+      "type": "object",
+      "required": ["type", "requirement_id", "evidence_ids", "gap_fingerprint"],
+      "properties": {
+        "type": { "enum": ["missing", "stale", "conflicting", "unsigned"] },
+        "requirement_id": { "$ref": "#/$defs/id" },
+        "evidence_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" }
+        },
+        "gap_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "missing_gap": {
+      "allOf": [
+        { "$ref": "#/$defs/gap_base" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "requirement_id", "evidence_ids", "expected_evidence_kind", "gap_fingerprint"],
+          "properties": {
+            "type": { "const": "missing" },
+            "requirement_id": { "$ref": "#/$defs/id" },
+            "evidence_ids": { "type": "array", "maxItems": 0 },
+            "expected_evidence_kind": { "$ref": "#/$defs/id" },
+            "gap_fingerprint": { "$ref": "#/$defs/fingerprint" }
+          }
+        }
+      ]
+    },
+    "stale_gap": {
+      "allOf": [
+        { "$ref": "#/$defs/gap_base" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "requirement_id", "evidence_ids", "observed_at", "age_milliseconds", "max_age_milliseconds", "gap_fingerprint"],
+          "properties": {
+            "type": { "const": "stale" },
+            "requirement_id": { "$ref": "#/$defs/id" },
+            "evidence_ids": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 1,
+              "items": { "$ref": "#/$defs/id" }
+            },
+            "observed_at": { "$ref": "#/$defs/instant" },
+            "age_milliseconds": { "type": "integer", "minimum": 0 },
+            "max_age_milliseconds": { "type": "integer", "minimum": 1000 },
+            "gap_fingerprint": { "$ref": "#/$defs/fingerprint" }
+          }
+        }
+      ]
+    },
+    "conflicting_gap": {
+      "allOf": [
+        { "$ref": "#/$defs/gap_base" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["type", "requirement_id", "evidence_ids", "claim_fingerprints", "gap_fingerprint"],
+          "properties": {
+            "type": { "const": "conflicting" },
+            "requirement_id": { "$ref": "#/$defs/id" },
+            "evidence_ids": {
+              "type": "array",
+              "minItems": 2,
+              "uniqueItems": true,
+              "items": { "$ref": "#/$defs/id" }
+            },
+            "claim_fingerprints": {
+              "type": "array",
+              "minItems": 2,
+              "uniqueItems": true,
+              "items": { "$ref": "#/$defs/fingerprint" }
+            },
+            "gap_fingerprint": { "$ref": "#/$defs/fingerprint" }
+          }
+        }
+      ]
+    },
+    "unsigned_gap": {
+      "allOf": [
+        { "$ref": "#/$defs/gap_base" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "requirement_id",
+            "evidence_ids",
+            "submitted_signature_verifications",
+            "accepted_verified_signatures",
+            "minimum_verified_signatures",
+            "allowed_signer_roles",
+            "gap_fingerprint"
+          ],
+          "properties": {
+            "type": { "const": "unsigned" },
+            "requirement_id": { "$ref": "#/$defs/id" },
+            "evidence_ids": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 1,
+              "items": { "$ref": "#/$defs/id" }
+            },
+            "submitted_signature_verifications": { "type": "integer", "minimum": 0 },
+            "accepted_verified_signatures": { "type": "integer", "minimum": 0 },
+            "minimum_verified_signatures": { "type": "integer", "minimum": 1 },
+            "allowed_signer_roles": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": { "$ref": "#/$defs/id" }
+            },
+            "gap_fingerprint": { "$ref": "#/$defs/fingerprint" }
+          }
+        }
+      ]
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requirement_count",
+        "submitted_evidence_count",
+        "fresh_evidence_count",
+        "stale_evidence_count",
+        "signature_sufficient_evidence_count",
+        "signature_deficient_evidence_count",
+        "conflicting_requirement_count"
+      ],
+      "properties": {
+        "requirement_count": { "type": "integer", "minimum": 1 },
+        "submitted_evidence_count": { "type": "integer", "minimum": 0 },
+        "fresh_evidence_count": { "type": "integer", "minimum": 0 },
+        "stale_evidence_count": { "type": "integer", "minimum": 0 },
+        "signature_sufficient_evidence_count": { "type": "integer", "minimum": 0 },
+        "signature_deficient_evidence_count": { "type": "integer", "minimum": 0 },
+        "conflicting_requirement_count": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

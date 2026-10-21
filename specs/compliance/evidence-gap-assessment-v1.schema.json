@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/compliance/evidence-gap-assessment-v1.schema.json",
+  "title": "CT-AIComm evidence gap assessment input v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "assessment_id",
+    "policy",
+    "subject",
+    "evidence",
+    "signature_verifications"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "assessment_id": { "$ref": "#/$defs/id" },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policy_id", "policy_version", "requirements"],
+      "properties": {
+        "policy_id": { "$ref": "#/$defs/id" },
+        "policy_version": { "$ref": "#/$defs/id" },
+        "requirements": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "items": { "$ref": "#/$defs/requirement" }
+        }
+      }
+    },
+    "subject": { "$ref": "#/$defs/context" },
+    "evidence": {
+      "type": "array",
+      "maxItems": 256,
+      "items": { "$ref": "#/$defs/evidence" }
+    },
+    "signature_verifications": {
+      "type": "array",
+      "maxItems": 1024,
+      "items": { "$ref": "#/$defs/verification" }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$"
+    },
+    "fingerprint": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "instant": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tenant_id", "workload_id", "execution_id"],
+      "properties": {
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "workload_id": { "$ref": "#/$defs/id" },
+        "execution_id": { "$ref": "#/$defs/id" }
+      }
+    },
+    "requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requirement_id",
+        "evidence_kind",
+        "max_age_seconds",
+        "minimum_verified_signatures",
+        "allowed_signer_roles"
+      ],
+      "properties": {
+        "requirement_id": { "$ref": "#/$defs/id" },
+        "evidence_kind": { "$ref": "#/$defs/id" },
+        "max_age_seconds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 31536000
+        },
+        "minimum_verified_signatures": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16
+        },
+        "allowed_signer_roles": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" }
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence_id",
+        "requirement_id",
+        "evidence_kind",
+        "subject",
+        "observed_at",
+        "claim_fingerprint",
+        "content_fingerprint",
+        "evidence_origin"
+      ],
+      "properties": {
+        "evidence_id": { "$ref": "#/$defs/id" },
+        "requirement_id": { "$ref": "#/$defs/id" },
+        "evidence_kind": { "$ref": "#/$defs/id" },
+        "subject": { "$ref": "#/$defs/context" },
+        "observed_at": { "$ref": "#/$defs/instant" },
+        "claim_fingerprint": { "$ref": "#/$defs/fingerprint" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" },
+        "evidence_origin": {
+          "enum": ["declared", "measured", "synthetic"]
+        }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "verification_id",
+        "evidence_id",
+        "status",
+        "signer_id",
+        "signer_role",
+        "key_id",
+        "verifier_id",
+        "verified_at",
+        "signature_fingerprint"
+      ],
+      "properties": {
+        "verification_id": { "$ref": "#/$defs/id" },
+        "evidence_id": { "$ref": "#/$defs/id" },
+        "status": { "enum": ["verified", "invalid", "unknown"] },
+        "signer_id": { "$ref": "#/$defs/id" },
+        "signer_role": { "$ref": "#/$defs/id" },
+        "key_id": { "$ref": "#/$defs/id" },
+        "verifier_id": { "$ref": "#/$defs/id" },
+        "verified_at": { "$ref": "#/$defs/instant" },
+        "signature_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    }
+  }
+}

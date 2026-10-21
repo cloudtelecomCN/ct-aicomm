@@ -1,0 +1,136 @@
+{
+  "schema_version": "1.0.0",
+  "assessment_id": "evidence-gap-synthetic-001",
+  "policy": {
+    "policy_id": "minimum-audit-evidence-synthetic",
+    "policy_version": "1.0.0",
+    "requirements": [
+      {
+        "requirement_id": "data-path-declaration",
+        "evidence_kind": "declaration",
+        "max_age_seconds": 3600,
+        "minimum_verified_signatures": 1,
+        "allowed_signer_roles": ["data-owner"]
+      },
+      {
+        "requirement_id": "execution-approval",
+        "evidence_kind": "approval",
+        "max_age_seconds": 7200,
+        "minimum_verified_signatures": 1,
+        "allowed_signer_roles": ["compliance-reviewer"]
+      },
+      {
+        "requirement_id": "execution-record",
+        "evidence_kind": "execution",
+        "max_age_seconds": 900,
+        "minimum_verified_signatures": 1,
+        "allowed_signer_roles": ["runtime-attestor"]
+      },
+      {
+        "requirement_id": "rollback-record",
+        "evidence_kind": "rollback",
+        "max_age_seconds": 3600,
+        "minimum_verified_signatures": 1,
+        "allowed_signer_roles": ["operations-reviewer"]
+      }
+    ]
+  },
+  "subject": {
+    "tenant_id": "tenant-synthetic-alpha",
+    "workload_id": "workload-inference-synthetic",
+    "execution_id": "execution-synthetic-001"
+  },
+  "evidence": [
+    {
+      "evidence_id": "declaration-synthetic-stale",
+      "requirement_id": "data-path-declaration",
+      "evidence_kind": "declaration",
+      "subject": {
+        "tenant_id": "tenant-synthetic-alpha",
+        "workload_id": "workload-inference-synthetic",
+        "execution_id": "execution-synthetic-001"
+      },
+      "observed_at": "2026-10-22T08:00:00.000Z",
+      "claim_fingerprint": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+      "content_fingerprint": "sha256:2111111111111111111111111111111111111111111111111111111111111111",
+      "evidence_origin": "synthetic"
+    },
+    {
+      "evidence_id": "approval-synthetic-a",
+      "requirement_id": "execution-approval",
+      "evidence_kind": "approval",
+      "subject": {
+        "tenant_id": "tenant-synthetic-alpha",
+        "workload_id": "workload-inference-synthetic",
+        "execution_id": "execution-synthetic-001"
+      },
+      "observed_at": "2026-10-22T11:30:00.000Z",
+      "claim_fingerprint": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+      "content_fingerprint": "sha256:3222222222222222222222222222222222222222222222222222222222222222",
+      "evidence_origin": "synthetic"
+    },
+    {
+      "evidence_id": "approval-synthetic-b",
+      "requirement_id": "execution-approval",
+      "evidence_kind": "approval",
+      "subject": {
+        "tenant_id": "tenant-synthetic-alpha",
+        "workload_id": "workload-inference-synthetic",
+        "execution_id": "execution-synthetic-001"
+      },
+      "observed_at": "2026-10-22T11:31:00.000Z",
+      "claim_fingerprint": "sha256:4222222222222222222222222222222222222222222222222222222222222222",
+      "content_fingerprint": "sha256:5222222222222222222222222222222222222222222222222222222222222222",
+      "evidence_origin": "synthetic"
+    },
+    {
+      "evidence_id": "execution-synthetic-unsigned",
+      "requirement_id": "execution-record",
+      "evidence_kind": "execution",
+      "subject": {
+        "tenant_id": "tenant-synthetic-alpha",
+        "workload_id": "workload-inference-synthetic",
+        "execution_id": "execution-synthetic-001"
+      },
+      "observed_at": "2026-10-22T11:50:00.000Z",
+      "claim_fingerprint": "sha256:3333333333333333333333333333333333333333333333333333333333333333",
+      "content_fingerprint": "sha256:6333333333333333333333333333333333333333333333333333333333333333",
+      "evidence_origin": "synthetic"
+    }
+  ],
+  "signature_verifications": [
+    {
+      "verification_id": "verify-declaration-synthetic",
+      "evidence_id": "declaration-synthetic-stale",
+      "status": "verified",
+      "signer_id": "synthetic-data-owner",
+      "signer_role": "data-owner",
+      "key_id": "synthetic-key-data-owner",
+      "verifier_id": "synthetic-verifier-v1",
+      "verified_at": "2026-10-22T08:01:00.000Z",
+      "signature_fingerprint": "sha256:7111111111111111111111111111111111111111111111111111111111111111"
+    },
+    {
+      "verification_id": "verify-approval-synthetic-a",
+      "evidence_id": "approval-synthetic-a",
+      "status": "verified",
+      "signer_id": "synthetic-reviewer-a",
+      "signer_role": "compliance-reviewer",
+      "key_id": "synthetic-key-reviewer-a",
+      "verifier_id": "synthetic-verifier-v1",
+      "verified_at": "2026-10-22T11:32:00.000Z",
+      "signature_fingerprint": "sha256:7222222222222222222222222222222222222222222222222222222222222222"
+    },
+    {
+      "verification_id": "verify-approval-synthetic-b",
+      "evidence_id": "approval-synthetic-b",
+      "status": "verified",
+      "signer_id": "synthetic-reviewer-b",
+      "signer_role": "compliance-reviewer",
+      "key_id": "synthetic-key-reviewer-b",
+      "verifier_id": "synthetic-verifier-v1",
+      "verified_at": "2026-10-22T11:33:00.000Z",
+      "signature_fingerprint": "sha256:8222222222222222222222222222222222222222222222222222222222222222"
+    }
+  ]
+}

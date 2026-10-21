@@ -74,3 +74,5 @@ const result = verifyAuditPackage({
 ## 证据边界
 
 验证通过只证明所提供审计包内部完整、字节一致，并且可选地与调用方提供的标识符匹配。校验和不是签名：能够替换全部文件的攻击者也能重新计算全部校验和。因此 v1 固定返回 `authenticity_verified: false`、`authorization_verified: false` 和 `legal_or_certification_conclusion: false`。可信签名、身份校验、留存策略和法规结论需要独立控制。
+
+如需应用明确的新鲜度、冲突和已验证签名要求，请使用 [CT-559 证据缺口检测](evidence-gap-detection.zh-CN.md)。仅通过审计包完整性检查不能产生 `requirements_satisfied` 结果。
