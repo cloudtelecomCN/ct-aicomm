@@ -27,6 +27,7 @@
   ],
   "public_tools": [
     "packages/ttft-collector/cli.mjs",
+    "packages/bench-reproduce/cli.mjs",
     "packages/ct-dsl/index.mjs",
     "packages/ct-dsl/compatibility.mjs",
     "scripts/probe-vllm-compatibility.mjs",

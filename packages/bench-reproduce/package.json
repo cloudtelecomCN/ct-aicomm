@@ -1,0 +1,1 @@
+{"name":"@cloudtelecom/bench-reproduce","version":"1.0.0","description":"Zero-dependency CT-Bench evidence package generator and verifier.","type":"module","license":"Apache-2.0","bin":{"ct-bench-reproduce":"./cli.mjs"},"exports":"./index.mjs"}

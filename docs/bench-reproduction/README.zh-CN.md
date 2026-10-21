@@ -29,3 +29,15 @@ sample_id,ttft_ms,connection_setup_ms,success,failure_code
 [证据真实性门禁](../../packages/evidence-gate/README.md) 同时识别 `hybrid`（半真实）观测。导入、聚合、下载、API 和页面必须保留固定来源标签；禁止跨来源聚合，且只有证据完整的 `measured` 数据才允许形成性能声明。
 
 本目录公开报告 Schema、环境 Schema 和明确标注的合成示例。该示例不代表真实网络性能。零依赖可执行采集器已发布在 [`../../packages/ttft-collector/cli.mjs`](../../packages/ttft-collector/cli.mjs)，公开 SDK 边界声明位于 [`../../specs/public-api-v1.json`](../../specs/public-api-v1.json)。
+
+## 生成并校验可移植复现包
+
+将规范 TTFT 样本保存为 JSONL 后，使用零依赖 [CT-Bench 复现 CLI](../../packages/bench-reproduce/README.md)生成报告、稳定 CSV 和校验和：
+
+```sh
+node packages/bench-reproduce/cli.mjs --fingerprint-environment=./environment.json
+node packages/bench-reproduce/cli.mjs --samples=./samples.jsonl --environment=./environment.json --output=./bench-package --data-origin=measured --scenario=inference-ttft --protocol=http
+node packages/bench-reproduce/cli.mjs --verify=./bench-package
+```
+
+生成器会拒绝混合数据来源、环境指纹不一致、重复样本编号、成功样本缺少 TTFT，以及失败样本缺少失败代码。校验命令会重新计算两个制品摘要和报告内嵌的环境指纹。

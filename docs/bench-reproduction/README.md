@@ -29,3 +29,15 @@ Failed samples must remain present with a machine-readable `failure_code`. Succe
 The [evidence authenticity gate](../../packages/evidence-gate/README.md) also recognizes `hybrid` observations. Import, aggregation, downloads, APIs, and pages must preserve its fixed origin labels. Cross-origin aggregation is rejected, and only complete `measured` evidence may permit a performance claim.
 
 This directory publishes the report and environment schemas plus a clearly labeled synthetic example. It does not claim that the example represents measured network performance. The zero-dependency runnable collector is published at [`../../packages/ttft-collector/cli.mjs`](../../packages/ttft-collector/cli.mjs), and the public SDK boundary is declared in [`../../specs/public-api-v1.json`](../../specs/public-api-v1.json).
+
+## Build and verify a portable package
+
+After collecting canonical TTFT records as JSONL, generate the report, stable CSV, and checksums with the zero-dependency [CT-Bench reproduction CLI](../../packages/bench-reproduce/README.md):
+
+```sh
+node packages/bench-reproduce/cli.mjs --fingerprint-environment=./environment.json
+node packages/bench-reproduce/cli.mjs --samples=./samples.jsonl --environment=./environment.json --output=./bench-package --data-origin=measured --scenario=inference-ttft --protocol=http
+node packages/bench-reproduce/cli.mjs --verify=./bench-package
+```
+
+The generator refuses mixed data origins, environment fingerprint mismatches, duplicate sample IDs, successful samples without TTFT, and failed samples without a failure code. Verification recalculates both artifact digests and the embedded environment fingerprint.
