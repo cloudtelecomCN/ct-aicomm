@@ -10,3 +10,4 @@
 /specs/compliance/ @cloudtelecomCN
 /docs/compliance/ @cloudtelecomCN
 /examples/compliance/ @cloudtelecomCN
+/scripts/validate-data-path-declaration.mjs @cloudtelecomCN

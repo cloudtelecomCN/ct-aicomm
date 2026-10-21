@@ -1,11 +1,12 @@
 {
   "schema_version": "1.0.0",
-  "sdk_version": "0.5.0",
+  "sdk_version": "0.6.0",
   "runtime": "Node.js >=22 ESM",
   "entrypoint": "sdk/index.mjs",
   "exports": [
     "AGENT_PROTOCOL_VERSION",
     "CONNECTOR_CONTRACT_VERSION",
+    "DATA_PATH_DECLARATION_VERSION",
     "EXECUTION_EVIDENCE_BINDING_VERSION",
     "REGISTRY_ENTRY_INTEGRITY_VERSION",
     "NetworkTelemetryReporter",
@@ -16,6 +17,7 @@
     "createAgentReceipt",
     "createApplyPolicyMessage",
     "createConnectorAdapter",
+    "createDataPathDeclaration",
     "createExecutionEvidenceBinding",
     "createPreparePolicyMessage",
     "createRegistrationMessage",
@@ -32,8 +34,10 @@
     "parsePrometheus",
     "routeIdentity",
     "runConnectorContract",
+    "validateDataPathDeclaration",
     "validateControlMessage",
     "verifyAgentReceipt",
+    "verifyDataPathDeclaration",
     "verifyExecutionEvidenceBinding",
     "verifyRegistryEntryHistory",
     "verifyRegistryEntryRecord"
@@ -41,6 +45,7 @@
   "public_contracts": [
     "specs/agent/control-protocol-v1.schema.json",
     "specs/agent/network-telemetry-v1.schema.json",
+    "specs/compliance/data-path-declaration-v1.schema.json",
     "specs/compliance/execution-evidence-binding-v1.schema.json",
     "specs/connectors/connector-sdk-v1.schema.json",
     "specs/connectors/vllm-compatibility-v1.json",
@@ -52,6 +57,8 @@
   "public_tools": [
     "packages/agent-protocol-sdk/index.mjs",
     "packages/agent-protocol-sdk/index.d.ts",
+    "packages/compliance/data-path-declaration.mjs",
+    "packages/compliance/data-path-declaration.d.ts",
     "packages/compliance/evidence-binding.mjs",
     "packages/compliance/evidence-binding.d.ts",
     "packages/connector-sdk/index.mjs",
@@ -64,6 +71,7 @@
     "scripts/probe-vllm-compatibility.mjs",
     "scripts/validate-registry-contribution.mjs",
     "scripts/validate-ct-dsl.mjs",
+    "scripts/validate-data-path-declaration.mjs",
     "scripts/validate-ttft-contract.mjs",
     "scripts/validate-ttft-methodology.mjs",
     "scripts/verify-registry-history.mjs"

@@ -42,6 +42,16 @@ test("public API exposes the CT-556 execution evidence binding without tenant lo
   for (const forbidden of ["lookupTenantContext", "issueTenantCredential", "readProductionEvidence"]) assert.equal(Object.hasOwn(sdk, forbidden), false);
 });
 
+test("public API exposes the CT-557 data path declaration without legal authority", async () => {
+  const manifest = JSON.parse(await readFile(new URL("../specs/public-api-v1.json", import.meta.url), "utf8"));
+  assert.ok(manifest.public_contracts.includes("specs/compliance/data-path-declaration-v1.schema.json"));
+  assert.ok(manifest.public_tools.includes("packages/compliance/data-path-declaration.mjs"));
+  assert.ok(manifest.public_tools.includes("packages/compliance/data-path-declaration.d.ts"));
+  assert.ok(manifest.public_tools.includes("scripts/validate-data-path-declaration.mjs"));
+  for (const symbol of ["DATA_PATH_DECLARATION_VERSION", "createDataPathDeclaration", "validateDataPathDeclaration", "verifyDataPathDeclaration"]) assert.ok(manifest.exports.includes(symbol));
+  for (const forbidden of ["approveTransferBasis", "certifyDataPath", "lookupProcessorAgreement"]) assert.equal(Object.hasOwn(sdk, forbidden), false);
+});
+
 test("public API manifest includes Agent protocol SDK 1.0 without credential APIs", async () => {
   const manifest = JSON.parse(await readFile(new URL("../specs/public-api-v1.json", import.meta.url), "utf8"));
   assert.ok(manifest.public_contracts.includes("specs/agent/control-protocol-v1.schema.json"));

@@ -22,6 +22,7 @@ CT-AIComm 是 CloudTelecom 面向 AI 训练与推理通信场景构建的开放�
 - [项目治理与外部维护者机制](GOVERNANCE.zh-CN.md)
 - [当前机器可读角色名册](governance/roles.json)
 - [执行证据绑定模型 v1](docs/compliance/execution-evidence-binding.zh-CN.md)
+- [数据路径声明 v1](docs/compliance/data-path-declaration.zh-CN.md)
 - [版本验证与 SBOM](docs/release/verification.zh-CN.md)
 - [变更记录](CHANGELOG.zh-CN.md)
 - [Agent 控制与遥测 Schema](specs/agent/)

@@ -22,6 +22,7 @@ CT-AIComm is CloudTelecom's open, evidence-first operating system initiative for
 - [Project governance and external maintainer process](GOVERNANCE.md)
 - [Current machine-readable role roster](governance/roles.json)
 - [Execution evidence binding v1](docs/compliance/execution-evidence-binding.md)
+- [Data path declaration v1](docs/compliance/data-path-declaration.md)
 - [Release verification and SBOM](docs/release/verification.md)
 - [Changelog](CHANGELOG.md)
 - [Agent control and telemetry schemas](specs/agent/)

@@ -10,6 +10,7 @@
 - [Project governance and external maintainer process](../GOVERNANCE.md)
 - [Current role roster](../governance/roles.json)
 - [Execution evidence binding v1](compliance/execution-evidence-binding.md)
+- [Data path declaration v1](compliance/data-path-declaration.md)
 - [CT-Bench reproduction and evidence contract](bench-reproduction/README.md)
 - [CT-DataPlane Agent threat model](security/agent-threat-model.md)
 - [CT-DataPlane Agent operations runbook](agent/operations.md)
