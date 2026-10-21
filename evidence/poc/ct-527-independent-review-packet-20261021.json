@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0.0",
+  "task": "CT-527",
+  "packet_type": "independent_result_review",
+  "status": "awaiting_independent_review",
+  "executor_identity": "cloudtelecomCN",
+  "environment_fingerprint": "sha256:57bda3ca3327fbee49a35e974b0f11e0135f6543cfa8361085964b93b1734c5b",
+  "source_commit": "12dfaa121282e45a15959e1e39d01f3ad37c9ab3",
+  "public_receipts": [
+    { "task": "CT-521", "path": "evidence/poc/ct-521-a10-dual-node-20261021.json", "sha256": "b734d1882eb1979afe775017cc885e127aea07dcae1f1568b78473a04d01455a" },
+    { "task": "CT-522", "path": "evidence/poc/ct-522-a10-dual-node-baseline-20261021.json", "sha256": "963d045459ce663b351e7aac01240360372f479baadadcbdd34b127068b57948" },
+    { "task": "CT-523", "path": "evidence/poc/ct-523-a10-instance-scheduling-20261021.json", "sha256": "1252d6ada6a3e6b159bf97b3dc262401176ee96403ff32ce0796277c777a6f97" },
+    { "task": "CT-524", "path": "evidence/poc/ct-524-a10-network-path-20261021.json", "sha256": "b00011eb2eb82220de4b923f6440e5332f31d85ada78a9ee5469d8c714ada4a6" },
+    { "task": "CT-525", "path": "evidence/poc/ct-525-a10-joint-optimization-20261021.json", "sha256": "7a84ef3143bfb7075dea3d0ba130acdd49d66f505754608d6d7cf97cd1c1acc6" },
+    { "task": "CT-526", "path": "evidence/poc/ct-526-a10-stability-rollback-20261021.json", "sha256": "688f6cadc91e6e9c0fb9e37471f90a30802239fb9cdd61e5711b73a9936398cb" }
+  ],
+  "required_review": [
+    "Verify every public receipt hash against source_commit.",
+    "Verify every referenced restricted file hash against the read-only evidence package.",
+    "Recompute environment, plan, batch, analysis, and report fingerprints.",
+    "Review sample retention, failure accounting, strata, bootstrap implementation, and claim gates.",
+    "Confirm CT-524 does not claim a statistically supported network-only improvement.",
+    "Confirm CT-525 interaction language remains exploratory and non-causal.",
+    "Confirm CT-526 recovery measurements do not imply a production availability SLO.",
+    "Record every finding, exception, unresolved limitation, and final decision in an attestation conforming to independent-review-attestation-v1.schema.json."
+  ],
+  "independence_rule": "reviewer_identifier must differ from executor_identity and the reviewer must not have executed or altered the measured runs",
+  "attestation_schema": "specs/poc/independent-review-attestation-v1.schema.json",
+  "reviewer_identifier": null,
+  "review_decision": null,
+  "completed_at": null
+}

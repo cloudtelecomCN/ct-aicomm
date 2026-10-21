@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/poc/independent-review-attestation-v1.schema.json",
+  "title": "CT-AIComm independent result review attestation v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "packet_sha256", "reviewer_identifier", "independent", "reviewed_receipts", "restricted_evidence_verified", "findings", "decision", "signed_at", "attestation_sha256"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "packet_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "reviewer_identifier": { "type": "string", "minLength": 3, "maxLength": 200 },
+    "independent": { "const": true },
+    "reviewed_receipts": { "type": "array", "minItems": 6, "items": { "type": "object", "required": ["task", "sha256", "verified"], "properties": { "task": { "type": "string" }, "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }, "verified": { "const": true } }, "additionalProperties": false } },
+    "restricted_evidence_verified": { "const": true },
+    "findings": { "type": "array", "items": { "type": "object", "required": ["severity", "description", "disposition"], "properties": { "severity": { "enum": ["critical", "high", "medium", "low", "note"] }, "description": { "type": "string", "minLength": 1 }, "disposition": { "type": "string", "minLength": 1 } }, "additionalProperties": false } },
+    "decision": { "enum": ["accepted", "qualified", "rejected"] },
+    "signed_at": { "type": "string", "format": "date-time" },
+    "attestation_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  }
+}
