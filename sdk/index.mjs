@@ -7,3 +7,4 @@ export { classifyVllmVersion, evaluateVllmCompatibility } from "../packages/vllm
 export { normalizeVllmMetrics, parsePrometheus } from "../packages/vllm-connector/metrics.mjs";
 export { collectTtft } from "../packages/ttft-collector/collector.mjs";
 export { REGISTRY_ENTRY_INTEGRITY_VERSION, canonicalizeRegistryValue, digestRegistryArtifact, verifyRegistryEntryHistory, verifyRegistryEntryRecord } from "../packages/registry-entry-integrity/index.mjs";
+export { EXECUTION_EVIDENCE_BINDING_VERSION, createExecutionEvidenceBinding, verifyExecutionEvidenceBinding } from "../packages/compliance/evidence-binding.mjs";

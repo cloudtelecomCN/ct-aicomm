@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/compliance/execution-evidence-binding-v1.json",
+  "title": "CT-AIComm execution evidence binding v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "binding_id", "tenant_id", "execution_id", "evidence_origin", "created_at", "components", "lock_fingerprint", "binding_fingerprint"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "binding_id": { "$ref": "#/$defs/id" },
+    "tenant_id": { "$ref": "#/$defs/id" },
+    "execution_id": { "$ref": "#/$defs/id" },
+    "evidence_origin": { "enum": ["measured", "synthetic"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "components": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policy", "agent", "route", "trace", "environment"],
+      "properties": {
+        "policy": { "$ref": "#/$defs/policy" },
+        "agent": { "$ref": "#/$defs/agent" },
+        "route": { "$ref": "#/$defs/route" },
+        "trace": { "$ref": "#/$defs/trace" },
+        "environment": { "$ref": "#/$defs/environment" }
+      }
+    },
+    "lock_fingerprint": { "$ref": "#/$defs/fingerprint" },
+    "binding_fingerprint": { "$ref": "#/$defs/fingerprint" }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$" },
+    "version": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:+-]{0,127}$" },
+    "fingerprint": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tenant_id", "policy_id", "policy_version", "policy_fingerprint"],
+      "properties": {
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "policy_id": { "$ref": "#/$defs/id" },
+        "policy_version": { "$ref": "#/$defs/version" },
+        "policy_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "agent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tenant_id", "agent_id", "agent_version", "agent_fingerprint"],
+      "properties": {
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "agent_id": { "$ref": "#/$defs/id" },
+        "agent_version": { "$ref": "#/$defs/version" },
+        "agent_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "route": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tenant_id", "execution_id", "route_id", "route_version", "route_fingerprint"],
+      "properties": {
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "execution_id": { "$ref": "#/$defs/id" },
+        "route_id": { "$ref": "#/$defs/id" },
+        "route_version": { "$ref": "#/$defs/version" },
+        "route_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "trace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tenant_id", "execution_id", "trace_id", "trace_version", "trace_fingerprint"],
+      "properties": {
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "execution_id": { "$ref": "#/$defs/id" },
+        "trace_id": { "$ref": "#/$defs/id" },
+        "trace_version": { "$ref": "#/$defs/version" },
+        "trace_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tenant_id", "environment_id", "environment_version", "environment_fingerprint"],
+      "properties": {
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "environment_id": { "$ref": "#/$defs/id" },
+        "environment_version": { "$ref": "#/$defs/version" },
+        "environment_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    }
+  }
+}

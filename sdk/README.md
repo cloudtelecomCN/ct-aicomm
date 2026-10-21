@@ -6,7 +6,7 @@ This zero-dependency ESM entry point exposes only the versioned public protocol 
 import { normalizeNetworkTelemetry, validateControlMessage } from "./sdk/index.mjs";
 ```
 
-The SDK validates and normalizes caller-supplied evidence. It does not contain credentials, discover private infrastructure, authorize execution, attach eBPF programs, or claim that synthetic data is measured. Version `0.4.0` adds deterministic Registry canonicalization, artifact hashing, signed-record verification, and version-history verification. Signing remains an offline maintainer operation and is deliberately excluded from this aggregate SDK. It is source-distributed and is not an npm registry publication.
+The SDK validates and normalizes caller-supplied evidence. It does not contain credentials, discover private infrastructure, authorize execution, attach eBPF programs, or claim that synthetic data is measured. Version `0.5.0` adds CT-556 execution evidence binding and requires an authoritative tenant, execution, version, and fingerprint context during verification. Tenant lookup, signing, and production evidence access remain deliberately excluded. It is source-distributed and is not an npm registry publication.
 
 Run the example with `node examples/sdk/validate-public-evidence.mjs`. Run one measured client-side TTFT observation with `node packages/ttft-collector/cli.mjs --endpoint=URL --model=MODEL --prompt=TEXT --environment-fingerprint=sha256:...`; provide credentials only through `VLLM_API_KEY`.
 
@@ -15,3 +15,5 @@ Third-party Connector authors can start with `examples/connectors/synthetic-stat
 Agent integrators can use the typed source package in `packages/agent-protocol-sdk/` to construct registration, prepare, apply, revoke, and receipt records. That package contains no transport client, production credential authority, or execution callback.
 
 Registry consumers can verify the committed synthetic history with `node scripts/verify-registry-history.mjs` or import `verifyRegistryEntryRecord` and `verifyRegistryEntryHistory`. Verification proves supplied-byte integrity and digest-chain continuity; it does not grant publication authority or certify a protocol.
+
+Compliance integrators can import `createExecutionEvidenceBinding` and `verifyExecutionEvidenceBinding`. The verifier rejects self-contained verification: its expected context must come from an authenticated tenant and execution lookup outside this SDK.

@@ -6,3 +6,7 @@
 /governance/ @cloudtelecomCN
 /specs/governance/ @cloudtelecomCN
 /scripts/validate-governance-roster.mjs @cloudtelecomCN
+/packages/compliance/ @cloudtelecomCN
+/specs/compliance/ @cloudtelecomCN
+/docs/compliance/ @cloudtelecomCN
+/examples/compliance/ @cloudtelecomCN

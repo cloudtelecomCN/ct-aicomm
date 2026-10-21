@@ -1,11 +1,12 @@
 {
   "schema_version": "1.0.0",
-  "sdk_version": "0.4.0",
+  "sdk_version": "0.5.0",
   "runtime": "Node.js >=22 ESM",
   "entrypoint": "sdk/index.mjs",
   "exports": [
     "AGENT_PROTOCOL_VERSION",
     "CONNECTOR_CONTRACT_VERSION",
+    "EXECUTION_EVIDENCE_BINDING_VERSION",
     "REGISTRY_ENTRY_INTEGRITY_VERSION",
     "NetworkTelemetryReporter",
     "NonceReplayGuard",
@@ -15,6 +16,7 @@
     "createAgentReceipt",
     "createApplyPolicyMessage",
     "createConnectorAdapter",
+    "createExecutionEvidenceBinding",
     "createPreparePolicyMessage",
     "createRegistrationMessage",
     "createReceipt",
@@ -32,12 +34,14 @@
     "runConnectorContract",
     "validateControlMessage",
     "verifyAgentReceipt",
+    "verifyExecutionEvidenceBinding",
     "verifyRegistryEntryHistory",
     "verifyRegistryEntryRecord"
   ],
   "public_contracts": [
     "specs/agent/control-protocol-v1.schema.json",
     "specs/agent/network-telemetry-v1.schema.json",
+    "specs/compliance/execution-evidence-binding-v1.schema.json",
     "specs/connectors/connector-sdk-v1.schema.json",
     "specs/connectors/vllm-compatibility-v1.json",
     "specs/connectors/vllm-metrics-v1.schema.json",
@@ -48,6 +52,8 @@
   "public_tools": [
     "packages/agent-protocol-sdk/index.mjs",
     "packages/agent-protocol-sdk/index.d.ts",
+    "packages/compliance/evidence-binding.mjs",
+    "packages/compliance/evidence-binding.d.ts",
     "packages/connector-sdk/index.mjs",
     "packages/registry-entry-integrity/index.mjs",
     "packages/registry-entry-integrity/index.d.ts",

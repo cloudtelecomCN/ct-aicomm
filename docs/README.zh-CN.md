@@ -9,6 +9,7 @@
 - [版本验证与 SBOM](release/verification.zh-CN.md)
 - [项目治理与外部维护者机制](../GOVERNANCE.zh-CN.md)
 - [当前角色名册](../governance/roles.json)
+- [执行证据绑定模型 v1](compliance/execution-evidence-binding.zh-CN.md)
 - [CT-Bench 复现与证据规范](bench-reproduction/README.zh-CN.md)
 - [CT-DataPlane Agent 威胁模型](security/agent-threat-model.zh-CN.md)
 - [CT-DataPlane Agent 安装与运维手册](agent/operations.zh-CN.md)

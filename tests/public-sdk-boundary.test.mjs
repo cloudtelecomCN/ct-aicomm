@@ -33,6 +33,15 @@ test("public API manifest includes Connector SDK 1.0", async () => {
   assert.ok(manifest.exports.includes("createVllmConnectorAdapter"));
 });
 
+test("public API exposes the CT-556 execution evidence binding without tenant lookup authority", async () => {
+  const manifest = JSON.parse(await readFile(new URL("../specs/public-api-v1.json", import.meta.url), "utf8"));
+  assert.ok(manifest.public_contracts.includes("specs/compliance/execution-evidence-binding-v1.schema.json"));
+  assert.ok(manifest.public_tools.includes("packages/compliance/evidence-binding.mjs"));
+  assert.ok(manifest.public_tools.includes("packages/compliance/evidence-binding.d.ts"));
+  for (const symbol of ["EXECUTION_EVIDENCE_BINDING_VERSION", "createExecutionEvidenceBinding", "verifyExecutionEvidenceBinding"]) assert.ok(manifest.exports.includes(symbol));
+  for (const forbidden of ["lookupTenantContext", "issueTenantCredential", "readProductionEvidence"]) assert.equal(Object.hasOwn(sdk, forbidden), false);
+});
+
 test("public API manifest includes Agent protocol SDK 1.0 without credential APIs", async () => {
   const manifest = JSON.parse(await readFile(new URL("../specs/public-api-v1.json", import.meta.url), "utf8"));
   assert.ok(manifest.public_contracts.includes("specs/agent/control-protocol-v1.schema.json"));

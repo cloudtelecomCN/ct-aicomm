@@ -39,6 +39,7 @@
   },
   "contract_tests": [
     "tests/agent-protocol-sdk.test.mjs",
+    "tests/compliance-evidence-binding.test.mjs",
     "tests/connector-sdk-contract.test.mjs",
     "tests/ct-dsl.test.mjs",
     "tests/public-sdk-boundary.test.mjs",
