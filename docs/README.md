@@ -11,6 +11,7 @@
 - [Public SDK boundary](../sdk/README.md)
 - [Connector SDK contract v1](connectors/sdk.md)
 - [vLLM connector compatibility v1](connectors/vllm.md)
+- [Agent protocol SDK v1](agent/protocol-sdk.md)
 - [Public API manifest](../specs/public-api-v1.json)
 - [Enterprise pilot acceptance package](pilot/enterprise-acceptance.md)
 - [Phase 2 expansion decision](architecture/phase2-expansion-decision.md)

@@ -1,16 +1,22 @@
 {
   "schema_version": "1.0.0",
-  "sdk_version": "0.2.0",
+  "sdk_version": "0.3.0",
   "runtime": "Node.js >=22 ESM",
   "entrypoint": "sdk/index.mjs",
   "exports": [
+    "AGENT_PROTOCOL_VERSION",
     "CONNECTOR_CONTRACT_VERSION",
     "NetworkTelemetryReporter",
     "NonceReplayGuard",
     "classifyVllmVersion",
     "collectTtft",
+    "createAgentReceipt",
+    "createApplyPolicyMessage",
     "createConnectorAdapter",
+    "createPreparePolicyMessage",
+    "createRegistrationMessage",
     "createReceipt",
+    "createRevokePolicyMessage",
     "createVllmConnectorAdapter",
     "evaluateVllmCompatibility",
     "fingerprint",
@@ -21,7 +27,8 @@
     "parsePrometheus",
     "routeIdentity",
     "runConnectorContract",
-    "validateControlMessage"
+    "validateControlMessage",
+    "verifyAgentReceipt"
   ],
   "public_contracts": [
     "specs/agent/control-protocol-v1.schema.json",
@@ -33,6 +40,8 @@
     "docs/bench-reproduction/ttft-sample.schema.json"
   ],
   "public_tools": [
+    "packages/agent-protocol-sdk/index.mjs",
+    "packages/agent-protocol-sdk/index.d.ts",
     "packages/connector-sdk/index.mjs",
     "packages/ttft-collector/cli.mjs",
     "packages/bench-reproduce/cli.mjs",

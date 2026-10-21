@@ -8,3 +8,4 @@ This contract does not itself authorize execution. CT-509 implements the two-pha
 
 - Schema: [`../../specs/agent/control-protocol-v1.schema.json`](../../specs/agent/control-protocol-v1.schema.json)
 - Reference implementation: [`../../packages/agent-control/protocol.mjs`](../../packages/agent-control/protocol.mjs)
+- Typed public SDK: [`../../packages/agent-protocol-sdk/`](../../packages/agent-protocol-sdk/)

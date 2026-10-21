@@ -33,6 +33,15 @@ test("public API manifest includes Connector SDK 1.0", async () => {
   assert.ok(manifest.exports.includes("createVllmConnectorAdapter"));
 });
 
+test("public API manifest includes Agent protocol SDK 1.0 without credential APIs", async () => {
+  const manifest = JSON.parse(await readFile(new URL("../specs/public-api-v1.json", import.meta.url), "utf8"));
+  assert.ok(manifest.public_contracts.includes("specs/agent/control-protocol-v1.schema.json"));
+  assert.ok(manifest.public_tools.includes("packages/agent-protocol-sdk/index.mjs"));
+  assert.ok(manifest.public_tools.includes("packages/agent-protocol-sdk/index.d.ts"));
+  for (const symbol of ["createRegistrationMessage", "createPreparePolicyMessage", "createApplyPolicyMessage", "createRevokePolicyMessage", "createAgentReceipt", "verifyAgentReceipt"]) assert.ok(manifest.exports.includes(symbol));
+  for (const forbidden of ["AgentCredentialAuthority", "issueAgentCredential", "connectAgentControlPlane"]) assert.equal(manifest.exports.includes(forbidden), false);
+});
+
 test("public telemetry example is accepted and receives a stable route identity", async () => {
   const example = JSON.parse(await readFile(new URL("../examples/agent/network-telemetry.json", import.meta.url), "utf8"));
   const event = sdk.normalizeNetworkTelemetry(example);

@@ -6,8 +6,10 @@ This zero-dependency ESM entry point exposes only the versioned public protocol 
 import { normalizeNetworkTelemetry, validateControlMessage } from "./sdk/index.mjs";
 ```
 
-The SDK validates and normalizes caller-supplied evidence. It does not contain credentials, discover private infrastructure, authorize execution, attach eBPF programs, or claim that synthetic data is measured. Version `0.2.0` adds the Connector SDK 1.0 candidate and metrics adapter contract. It is source-distributed and is not an npm registry publication.
+The SDK validates and normalizes caller-supplied evidence. It does not contain credentials, discover private infrastructure, authorize execution, attach eBPF programs, or claim that synthetic data is measured. Version `0.3.0` adds Agent protocol SDK 1.0 message builders and receipt verification after the Connector SDK 1.0 adapter contract introduced in `0.2.0`. It is source-distributed and is not an npm registry publication.
 
 Run the example with `node examples/sdk/validate-public-evidence.mjs`. Run one measured client-side TTFT observation with `node packages/ttft-collector/cli.mjs --endpoint=URL --model=MODEL --prompt=TEXT --environment-fingerprint=sha256:...`; provide credentials only through `VLLM_API_KEY`.
 
 Third-party Connector authors can start with `examples/connectors/synthetic-static-connector.mjs` and call `runConnectorContract` from their own test suite. Passing the contract validates record shape and evidence boundaries; it does not authorize traffic execution or certify performance.
+
+Agent integrators can use the typed source package in `packages/agent-protocol-sdk/` to construct registration, prepare, apply, revoke, and receipt records. That package contains no transport client, production credential authority, or execution callback.
