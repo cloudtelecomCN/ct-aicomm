@@ -2,6 +2,12 @@
 
 All notable public changes to CT-AIComm are recorded in this file. The project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html) for tagged public releases.
 
+## [Unreleased]
+
+### Added
+
+- Truthful bootstrap governance, a machine-readable role roster, and a public external reviewer or maintainer admission, permission, review, and exit process.
+
 ## [0.1.0] - 2026-10-22
 
 ### Added

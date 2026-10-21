@@ -12,6 +12,7 @@
     "test:contracts": "node scripts/run-contributor-tests.mjs --profile contracts",
     "test:scenarios": "node scripts/run-contributor-tests.mjs --profile scenarios",
     "test:full": "node scripts/run-contributor-tests.mjs --profile full",
+    "governance:validate": "node scripts/validate-governance-roster.mjs",
     "release:validate": "node --test tests/public-release.test.mjs",
     "release:build": "node scripts/create-public-release.mjs"
   },

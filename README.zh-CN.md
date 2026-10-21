@@ -19,6 +19,8 @@ CT-AIComm 是 CloudTelecom 面向 AI 训练与推理通信场景构建的开放�
 - [Registry 条目签名与版本历史](docs/registry/entry-integrity.zh-CN.md)
 - [公开 SDK 边界](sdk/README.zh-CN.md)
 - [开源发布清单](docs/governance/open-source-release-manifest.zh-CN.md)
+- [项目治理与外部维护者机制](GOVERNANCE.zh-CN.md)
+- [当前机器可读角色名册](governance/roles.json)
 - [版本验证与 SBOM](docs/release/verification.zh-CN.md)
 - [变更记录](CHANGELOG.zh-CN.md)
 - [Agent 控制与遥测 Schema](specs/agent/)
@@ -42,7 +44,8 @@ CT-AIComm 是 CloudTelecom 面向 AI 训练与推理通信场景构建的开放�
 - 官网：[cloudtelecom.cn](https://cloudtelecom.cn/)
 - 英文站：[cloudtelecom.cn/en/](https://cloudtelecom.cn/en/)
 - 安全问题：参见 [SECURITY.zh-CN.md](SECURITY.zh-CN.md)
-- 参与贡献：参见 [CONTRIBUTING.md](CONTRIBUTING.md)
+- 参与贡献：参见 [CONTRIBUTING.zh-CN.md](CONTRIBUTING.zh-CN.md)
+- 项目治理：参见 [GOVERNANCE.zh-CN.md](GOVERNANCE.zh-CN.md)
 - 公开版本：[已签名 GitHub Releases](https://github.com/cloudtelecomCN/ct-aicomm/releases)
 
 ## 许可

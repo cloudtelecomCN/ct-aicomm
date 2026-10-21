@@ -1,5 +1,7 @@
 # Contributing
 
+[中文](CONTRIBUTING.zh-CN.md)
+
 Thank you for helping improve CT-AIComm.
 
 ## Before opening a change
@@ -40,6 +42,10 @@ node scripts/validate-registry-contribution.mjs --files registry/contributions/<
 The external pull-request preflight checks metadata, public provenance, rights attestations, conflicts of interest, and review requirements. Passing preflight is not approval or publication.
 
 Signed entry histories are maintainer-generated release artifacts. Contributors must not add signing private keys or self-sign a contribution as proof of approval. Public verification keys, signed records, and declared artifacts must follow the [Registry entry integrity contract](docs/registry/entry-integrity.md).
+
+## Governance roles
+
+External reviewer and maintainer roles follow the [project governance process](GOVERNANCE.md): public nomination, conflict disclosure, least-privilege probation, and periodic review. Contribution history or comments do not grant a role. The [machine-readable roster](governance/roles.json) is the current public record.
 
 By contributing, you agree that code contributions are licensed under Apache-2.0 and documentation contributions under CC BY 4.0, unless explicitly stated otherwise.
 

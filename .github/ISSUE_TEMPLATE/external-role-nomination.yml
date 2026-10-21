@@ -1,0 +1,64 @@
+name: External reviewer or maintainer nomination
+description: Publicly nominate a candidate for a scoped CT-AIComm project role.
+title: "[Governance nomination] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This form is public. Do not include credentials, private identity documents, customer data, private endpoints, or vulnerability details. Security reports belong in GitHub private vulnerability reporting. Read GOVERNANCE.md before submitting.
+  - type: input
+    id: candidate
+    attributes:
+      label: Candidate GitHub login
+      description: Use the public GitHub login only.
+      placeholder: octocat
+    validations:
+      required: true
+  - type: dropdown
+    id: role
+    attributes:
+      label: Requested role
+      options:
+        - External domain reviewer
+        - Scoped maintainer
+    validations:
+      required: true
+  - type: input
+    id: scope
+    attributes:
+      label: Requested scope
+      description: Name one bounded area such as Registry metadata, CT-DSL, Agent protocol, or documentation.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Public evidence
+      description: Link substantive public contributions or reviews and explain the candidate's judgment in this scope.
+    validations:
+      required: true
+  - type: textarea
+    id: conflicts
+    attributes:
+      label: Conflict-of-interest disclosure
+      description: Disclose relevant employer, vendor, consulting, investment, maintainer, or other relationships. Write "none known" when applicable.
+    validations:
+      required: true
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Nomination rationale
+      description: Explain the requested permission, its minimum necessary scope, and who can make an unconflicted decision.
+    validations:
+      required: true
+  - type: checkboxes
+    id: attestations
+    attributes:
+      label: Public governance attestations
+      options:
+        - label: The candidate has agreed to this nomination and the public Code of Conduct.
+          required: true
+        - label: The nomination does not contain credentials, customer data, private evidence, or vulnerability details.
+          required: true
+        - label: The candidate will not approve their own nomination or review work where they have an unresolved conflict.
+          required: true

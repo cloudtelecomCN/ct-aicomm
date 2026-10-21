@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0.0",
+  "repository": "cloudtelecomCN/ct-aicomm",
+  "governance_phase": "bootstrap",
+  "as_of": "2026-10-22",
+  "technical_steering_committee": {
+    "formed": false,
+    "members": []
+  },
+  "external_role_counts": {
+    "reviewers": 0,
+    "maintainers": 0
+  },
+  "assignments": [
+    {
+      "github_login": "cloudtelecomCN",
+      "role": "bootstrap-maintainer",
+      "scope": [
+        "repository"
+      ],
+      "repository_permission": "admin",
+      "status": "active",
+      "external": false,
+      "recorded_at": "2026-10-22",
+      "review_due": "2027-04-22",
+      "nomination_issue": null,
+      "granted_by": "cloudtelecomCN"
+    }
+  ]
+}

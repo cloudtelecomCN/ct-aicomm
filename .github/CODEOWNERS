@@ -1,3 +1,8 @@
 /registry/contributions/ @cloudtelecomCN
 /specs/registry/ @cloudtelecomCN
 /scripts/validate-registry-contribution.mjs @cloudtelecomCN
+/GOVERNANCE.md @cloudtelecomCN
+/GOVERNANCE.zh-CN.md @cloudtelecomCN
+/governance/ @cloudtelecomCN
+/specs/governance/ @cloudtelecomCN
+/scripts/validate-governance-roster.mjs @cloudtelecomCN

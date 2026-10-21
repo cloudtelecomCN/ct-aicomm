@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/governance/project-role-roster-v1.schema.json",
+  "title": "CT-AIComm public project role roster v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "repository",
+    "governance_phase",
+    "as_of",
+    "technical_steering_committee",
+    "external_role_counts",
+    "assignments"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "repository": { "const": "cloudtelecomCN/ct-aicomm" },
+    "governance_phase": { "enum": ["bootstrap", "delegated"] },
+    "as_of": { "type": "string", "format": "date" },
+    "technical_steering_committee": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["formed", "members"],
+      "properties": {
+        "formed": { "type": "boolean" },
+        "members": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/githubLogin" }
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "formed": { "const": false } } },
+          "then": { "properties": { "members": { "maxItems": 0 } } },
+          "else": { "properties": { "members": { "minItems": 3 } } }
+        }
+      ]
+    },
+    "external_role_counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reviewers", "maintainers"],
+      "properties": {
+        "reviewers": { "type": "integer", "minimum": 0 },
+        "maintainers": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "assignments": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "github_login",
+          "role",
+          "scope",
+          "repository_permission",
+          "status",
+          "external",
+          "recorded_at",
+          "review_due",
+          "nomination_issue",
+          "granted_by"
+        ],
+        "properties": {
+          "github_login": { "$ref": "#/$defs/githubLogin" },
+          "role": {
+            "enum": [
+              "external-domain-reviewer",
+              "scoped-maintainer",
+              "release-manager",
+              "security-maintainer",
+              "bootstrap-maintainer"
+            ]
+          },
+          "scope": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{1,63}$" }
+          },
+          "repository_permission": { "enum": ["none", "triage", "write", "maintain", "admin", "security"] },
+          "status": { "enum": ["probation", "active", "suspended", "retired"] },
+          "external": { "type": "boolean" },
+          "recorded_at": { "type": "string", "format": "date" },
+          "review_due": { "type": "string", "format": "date" },
+          "nomination_issue": {
+            "oneOf": [
+              { "type": "null" },
+              { "type": "string", "pattern": "^https://github\\.com/cloudtelecomCN/ct-aicomm/issues/[1-9][0-9]*$" }
+            ]
+          },
+          "granted_by": { "$ref": "#/$defs/githubLogin" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "githubLogin": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$"
+    }
+  }
+}
