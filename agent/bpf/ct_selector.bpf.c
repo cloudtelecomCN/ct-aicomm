@@ -139,19 +139,17 @@ int identify_connect4(struct bpf_sock_addr *ctx)
     };
     struct route_target *target = bpf_map_lookup_elem(&redirect_routes, &route);
 
-    struct selector_event event = {
-        .cgroup_id = cgroup_id,
-        .socket_cookie = cookie,
-        .timestamp_ns = bpf_ktime_get_ns(),
-        .bytes = 0,
-        .destination_ipv4 = ctx->user_ip4,
-        .effective_ipv4 = ctx->user_ip4,
-        .destination_port = destination_port,
-        .effective_port = destination_port,
-        .policy_revision = 0,
-        .event_type = 1,
-        .protocol = IPPROTO_TCP,
-    };
+    struct selector_event event;
+    __builtin_memset(&event, 0, sizeof(event));
+    event.cgroup_id = cgroup_id;
+    event.socket_cookie = cookie;
+    event.timestamp_ns = bpf_ktime_get_ns();
+    event.destination_ipv4 = ctx->user_ip4;
+    event.effective_ipv4 = ctx->user_ip4;
+    event.destination_port = destination_port;
+    event.effective_port = destination_port;
+    event.event_type = 1;
+    event.protocol = IPPROTO_TCP;
     if (target) {
         ctx->user_ip4 = target->ipv4;
         ctx->user_port = bpf_htons(target->port);
@@ -165,7 +163,7 @@ int identify_connect4(struct bpf_sock_addr *ctx)
     return 1;
 }
 
-SEC("tc/egress")
+SEC("classifier")
 int identify_egress(struct __sk_buff *skb)
 {
     __u64 cookie = bpf_get_socket_cookie(skb);

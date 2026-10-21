@@ -62,13 +62,14 @@ function effect(baseline, treatment) {
   return Object.fromEntries(Object.keys(baseline).map((metric) => [metric, ((baseline[metric] - treatment[metric]) / baseline[metric]) * 100]));
 }
 
-export function compareExperimentGroups({ baselineBatches, treatmentBatch, resamples = 10_000, confidenceLevel = 0.95, seed = "ct-aicomm-comparison-v1" }) {
+export function compareExperimentGroups({ baselineBatches, treatmentBatch, treatmentGroup = "connector_only", resamples = 10_000, confidenceLevel = 0.95, seed = "ct-aicomm-comparison-v1" }) {
   if (!Array.isArray(baselineBatches) || !baselineBatches.length || !treatmentBatch) fail("comparison_groups_missing", "baseline and treatment groups are required");
   if (!Number.isInteger(resamples) || resamples < 100) fail("comparison_resamples_invalid", "at least 100 bootstrap resamples are required");
   if (!(confidenceLevel > 0 && confidenceLevel < 1)) fail("comparison_confidence_invalid", "confidence level must be between zero and one");
   const fingerprint = treatmentBatch.environment_fingerprint;
   if (!fingerprint || baselineBatches.some((batch) => batch.environment_fingerprint !== fingerprint)) fail("comparison_environment_mismatch", "all groups must use one environment fingerprint");
-  if (treatmentBatch.group !== "connector_only" || baselineBatches.some((batch) => batch.group !== "baseline")) fail("comparison_group_invalid", "baseline and connector_only groups are required");
+  if (!["connector_only", "network_only"].includes(treatmentGroup)) fail("comparison_treatment_invalid", "treatment group must be connector_only or network_only");
+  if (treatmentBatch.group !== treatmentGroup || baselineBatches.some((batch) => batch.group !== "baseline")) fail("comparison_group_invalid", `baseline and ${treatmentGroup} groups are required`);
 
   const baselineStrata = strataFor(baselineBatches);
   const treatmentStrata = strataFor([treatmentBatch]);
@@ -107,6 +108,7 @@ export function compareExperimentGroups({ baselineBatches, treatmentBatch, resam
     resamples,
     confidence_level: confidenceLevel,
     seed,
+    ...(treatmentGroup !== "connector_only" ? { treatment_group: treatmentGroup } : {}),
     baseline: { sample_count: baselineValues.length, success_rate: baselineSuccessRate, ttft_ms: baselineSummary },
     treatment: { sample_count: treatmentValues.length, success_rate: treatmentSuccessRate, ttft_ms: treatmentSummary },
     relative_improvement_percent: observedEffect,

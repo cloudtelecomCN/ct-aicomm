@@ -9,4 +9,8 @@ The program does not redirect, drop, mirror, or capture payloads. Non-selected p
 
 Source: [`../../agent/bpf/ct_selector.bpf.c`](../../agent/bpf/ct_selector.bpf.c)
 
+The egress program uses the standard `classifier` ELF section so it can be loaded by the libbpf version shipped with Ubuntu 22.04 as well as newer toolchains; it is attached at the tc egress hook by the loader.
+
+Stack-backed event records are fully zero-initialized before map insertion. This includes compiler-added padding and keeps kernel verifier behavior deterministic across supported toolchains.
+
 Linux compilation is enforced by the eBPF GitHub workflow. Loading and attaching the program still requires a compatible Linux test node with BTF, cgroup v2, and the capabilities defined by the Agent security boundary.

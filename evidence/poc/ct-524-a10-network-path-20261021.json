@@ -1,0 +1,62 @@
+{
+  "schema_version": "1.0.0",
+  "task": "CT-524",
+  "evidence_type": "network_path_experiment_receipt",
+  "data_origin": "measured",
+  "environment_fingerprint": "sha256:57bda3ca3327fbee49a35e974b0f11e0135f6543cfa8361085964b93b1734c5b",
+  "experiment_controls": {
+    "fixed_inference_instance": true,
+    "same_logical_client_endpoint": true,
+    "same_model_and_prompt_plan": true,
+    "repetitions": 3,
+    "concurrency_levels": [1, 8, 32],
+    "only_changed_variable": "network execution path"
+  },
+  "execution_proof": {
+    "mechanism": "isolated cgroup connect4 redirect",
+    "treatment_ran_without_logical_endpoint_listener": true,
+    "bpf_object_sha256": "0b58460ac620d011977e3e3b0db4bede1c4b816160024189e5cf633eab252865",
+    "restricted_cgroup_attach_sha256": "e0ea88306e7afd0ea7a56d595faf5d89508a8242238f7d98c748cb66db17c5af",
+    "restricted_redirect_map_sha256": "dca1f4abaa0e57df3c25064883aa3c5b2e0e88eba16bc7c6b188b147b9dcfd53",
+    "restricted_no_listener_sha256": "14f4ea5bdea2bd6f8d856ec28619243555e53de100d4bca155a751876e97a843",
+    "restricted_redirect_health_sha256": "687fe1a9c2a0c5e126408ed7841514871adbdf3fffd39bb97bef478dae4c29f9"
+  },
+  "groups": {
+    "baseline": {
+      "sample_count": 200,
+      "success_rate": 1,
+      "batch_sha256": "253e964beaf486bc16014fc3c4fcc25776160f32f2f84c9dec959c6d782bfd02",
+      "restricted_file_sha256": "435fce4325f0320d7e2e97695e1744c9763ecde7ff5ae6050bcb7a6f381f8c17",
+      "ttft_ms": { "p50": 102.71045400000003, "p95": 142.475637, "p99": 143.35720900000024 }
+    },
+    "network_only": {
+      "sample_count": 200,
+      "success_rate": 1,
+      "batch_sha256": "752d4cdf861ef9de6ce9f91610b5c9de4fe0b2312238740afe7586310c891878",
+      "restricted_file_sha256": "2949c5cf35e929fa1928236e2322faeb7044087cf13803af8f9f28b538c6a7c4",
+      "ttft_ms": { "p50": 102.77688500000022, "p95": 139.98142599999983, "p99": 141.54383800000005 }
+    }
+  },
+  "analysis": {
+    "method": "stratified bootstrap",
+    "resamples": 10000,
+    "confidence_level": 0.95,
+    "analysis_sha256": "7506f1972c254c55b471181f097efe339bb650d8be87fdf6d09408b73061e996",
+    "restricted_file_sha256": "9c168ae6d7f13c38c2227b7868e9ee7bdf5a7c7dad86270daca0070a47e4ea03",
+    "relative_improvement_percent": { "p50": -0.06467793434171101, "p95": 1.750622809989737, "p99": 1.2649318528517008 },
+    "confidence_interval_95_percent": {
+      "p50": [-0.2986892459441377, 0.34453844396404987],
+      "p95": [-1.5245675660443812, 3.5048047616139195],
+      "p99": [0.8551685509778152, 2.0747766780299397]
+    }
+  },
+  "claim_gate": "not_passed",
+  "conclusion": "real_path_execution_verified_without_statistically_supported_ttft_improvement",
+  "restricted_fields_published": false,
+  "limitations": [
+    "The result covers one frozen dual-node A10 POC topology.",
+    "The control route is an SSH forward and is not a production service-mesh baseline.",
+    "The experiment isolates network execution and does not include instance scheduling.",
+    "No general latency-reduction or production-availability claim is supported by this run."
+  ]
+}

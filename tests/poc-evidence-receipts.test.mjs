@@ -51,3 +51,22 @@ test("publishes a bounded CT-523 measured claim with confidence intervals", asyn
   assert.equal(treatment.restricted_fields_published, false);
   assert.ok(treatment.limitations.length >= 4);
 });
+
+test("publishes CT-524 execution proof without overstating a negative result", async () => {
+  const environment = await readJson("../evidence/poc/ct-521-a10-dual-node-20261021.json");
+  const receipt = await readJson("../evidence/poc/ct-524-a10-network-path-20261021.json");
+  assert.equal(receipt.environment_fingerprint, environment.environment_fingerprint);
+  assert.equal(receipt.data_origin, "measured");
+  assert.equal(receipt.execution_proof.treatment_ran_without_logical_endpoint_listener, true);
+  assert.match(receipt.execution_proof.bpf_object_sha256, sha256);
+  assert.equal(receipt.groups.baseline.sample_count, 200);
+  assert.equal(receipt.groups.network_only.sample_count, 200);
+  assert.equal(receipt.groups.baseline.success_rate, 1);
+  assert.equal(receipt.groups.network_only.success_rate, 1);
+  assert.equal(receipt.claim_gate, "not_passed");
+  assert.equal(receipt.conclusion, "real_path_execution_verified_without_statistically_supported_ttft_improvement");
+  assert.ok(receipt.analysis.confidence_interval_95_percent.p50[0] <= 0);
+  assert.ok(receipt.analysis.confidence_interval_95_percent.p95[0] <= 0);
+  assert.equal(receipt.restricted_fields_published, false);
+  assert.ok(receipt.limitations.length >= 4);
+});

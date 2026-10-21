@@ -30,3 +30,10 @@ test("rejects cross-environment and unpaired comparisons", () => {
   treatment.assignments[0].concurrency = 8;
   assert.throws(() => compareExperimentGroups({ baselineBatches: [batch("baseline", [100, 100])], treatmentBatch: treatment }), { code: "comparison_strata_mismatch" });
 });
+
+test("compares an explicitly declared network-only treatment", () => {
+  const treatment = batch("connector_only", [50, 55, 60, 65]);
+  treatment.group = "network_only";
+  const result = compareExperimentGroups({ baselineBatches: [batch("baseline", [100, 110, 120, 130])], treatmentBatch: treatment, treatmentGroup: "network_only", resamples: 100 });
+  assert.equal(result.treatment_group, "network_only");
+});
