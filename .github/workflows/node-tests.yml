@@ -1,6 +1,7 @@
 name: Node tests
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - "packages/**"
