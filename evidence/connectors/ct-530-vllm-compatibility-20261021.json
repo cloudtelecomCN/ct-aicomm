@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0.0",
+  "task": "CT-530",
+  "evidence_type": "vllm_connector_compatibility_receipt",
+  "status": "passed",
+  "matrix_revision": "2026-10-13",
+  "matrix_verification": {
+    "primary": ["0.31.x"],
+    "compatible": ["0.30.x"],
+    "probe_only": ["0.29.x"],
+    "unsupported_boundaries_tested": ["0.28.x", "0.32.x", "1.x", "unknown"],
+    "degraded_conditions_tested": ["required_metrics_missing", "version_probe_only", "version_unavailable"],
+    "incompatible_conditions_tested": ["version_outside_support_policy", "streaming_contract_failed"]
+  },
+  "measured_primary_validation": {
+    "data_origin": "measured",
+    "vllm_version": "0.31.0",
+    "endpoint_count": 2,
+    "ready_count": 2,
+    "required_metrics_complete_count": 2,
+    "model_discovery_pass_count": 2,
+    "streaming_endpoint_pass_count": 2,
+    "valid_stream_framing_count": 2,
+    "first_non_empty_delta_count": 2,
+    "automatic_execution_allowed_count": 2
+  },
+  "fail_static_rule": "Only ready targets in the primary or compatible range may receive automatic route changes. All other outcomes preserve the original route.",
+  "restricted_fields_published": false,
+  "limitations": [
+    "The measured validation covers two vLLM 0.31.0 endpoints in one frozen POC environment.",
+    "vLLM 0.30.x and 0.29.x are contract-fixture tested but were not deployed on the measured endpoints.",
+    "Endpoint identities, addresses, raw metrics, credentials, and topology remain restricted."
+  ]
+}

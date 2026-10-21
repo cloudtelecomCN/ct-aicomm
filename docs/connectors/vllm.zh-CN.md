@@ -25,6 +25,16 @@
 
 指标缺失时不得虚构数值。目标状态降级为 `degraded`，省略不可用字段，保持原路由，并禁用自动执行。
 
+## 可复现探针
+
+在能够访问推理端点的主机上运行：
+
+```bash
+node scripts/probe-vllm-compatibility.mjs --endpoint http://127.0.0.1:8000 --model Qwen/Qwen2.5-7B-Instruct
+```
+
+探针核验 `/version`、`/metrics`、`/v1/models`、有效的 SSE 分帧和首个非空流式增量。输出只包含端点 SHA-256 身份，不披露端点本身。只有 `ready` 状态允许自动执行。
+
 ## 官方依据
 
 - [vLLM 生产指标](https://docs.vllm.ai/en/latest/usage/metrics/)

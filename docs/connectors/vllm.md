@@ -25,6 +25,16 @@ The minimum aggregate metric set is:
 
 Missing metrics do not produce invented values. The target becomes `degraded`, unavailable fields are omitted, the original route remains active, and automatic execution is disabled.
 
+## Reproducible probe
+
+Run the compatibility probe from a host that can reach the inference endpoint:
+
+```bash
+node scripts/probe-vllm-compatibility.mjs --endpoint http://127.0.0.1:8000 --model Qwen/Qwen2.5-7B-Instruct
+```
+
+The probe verifies `/version`, `/metrics`, `/v1/models`, valid server-sent event framing, and a first non-empty streamed delta. It emits only a SHA-256 endpoint identity, not the endpoint itself. `ready` is the only state that permits automatic execution.
+
 ## Source references
 
 - [vLLM production metrics](https://docs.vllm.ai/en/latest/usage/metrics/)

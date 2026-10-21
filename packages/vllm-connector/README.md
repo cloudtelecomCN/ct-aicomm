@@ -14,3 +14,5 @@ The ledger rejects identity changes, time regression, duplicate milestones, out-
 `discoverStatic` and `discoverEndpointSlices` normalize operator-managed manifests and labeled Kubernetes EndpointSlices. Only explicitly labeled, Ready Kubernetes endpoints are returned. Duplicate identities, conflicting endpoints, missing region/model metadata, and unsupported protocols are rejected before an instance can become a routing candidate.
 
 `ConnectorCircuitBreaker` fails closed on missing metrics, fetch failures, and unsuccessful recovery probes. Any degraded observation immediately preserves the original route and disables automatic route changes. Repeated failures open the circuit; after cooldown, exactly a probe-only half-open state can recover it. Every degradation, open, and recovery transition produces a structured alert.
+
+`evaluateVllmCompatibility` applies the frozen version matrix together with metrics and streaming-interface checks. Primary and compatible versions become `ready` only when every required check passes. Probe-only, unknown, incomplete, and unsupported targets preserve the original route and cannot receive automatic execution.
