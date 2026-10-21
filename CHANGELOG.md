@@ -9,6 +9,7 @@ All notable public changes to CT-AIComm are recorded in this file. The project f
 - Truthful bootstrap governance, a machine-readable role roster, and a public external reviewer or maintainer admission, permission, review, and exit process.
 - CT-556 execution evidence binding v1 with tenant, execution, component-version, and fingerprint locks for policy, Agent, route, trace, and environment evidence.
 - CT-557 data path declaration v1 with stable region, directed-boundary, encryption, processor, JSON/YAML, and authoritative-context validation contracts.
+- CT-558 audit package v1 with a closed declaration, approval, execution, and rollback artifact set, deterministic SHA-256 manifests, offline builder and verifier CLIs, and explicit authenticity boundaries.
 
 ## [0.1.0] - 2026-10-22
 

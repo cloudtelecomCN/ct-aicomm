@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0.0",
+  "package_id": "audit-package-synthetic-001",
+  "tenant_id": "tenant-synthetic-alpha",
+  "workload_id": "workload-inference-synthetic",
+  "execution_id": "execution-synthetic-001",
+  "created_at": "2026-10-22T12:00:00.000Z",
+  "artifacts": [
+    {
+      "kind": "declaration",
+      "artifact_id": "data-path-audit-synthetic-001",
+      "source": "declaration.json",
+      "path": "artifacts/declaration.json",
+      "media_type": "application/json",
+      "schema_version": "1.0.0",
+      "fingerprint_field": "declaration_fingerprint",
+      "evidence_origin": "synthetic"
+    },
+    {
+      "kind": "approval",
+      "artifact_id": "approval-synthetic-001",
+      "source": "approval.json",
+      "path": "artifacts/approval.json",
+      "media_type": "application/json",
+      "schema_version": "1.0.0",
+      "fingerprint_field": "approval_fingerprint",
+      "evidence_origin": "synthetic"
+    },
+    {
+      "kind": "execution",
+      "artifact_id": "binding-synthetic-001",
+      "source": "execution.json",
+      "path": "artifacts/execution.json",
+      "media_type": "application/json",
+      "schema_version": "1.0.0",
+      "fingerprint_field": "binding_fingerprint",
+      "evidence_origin": "synthetic"
+    },
+    {
+      "kind": "rollback",
+      "artifact_id": "rollback-synthetic-001",
+      "source": "rollback.json",
+      "path": "artifacts/rollback.json",
+      "media_type": "application/json",
+      "schema_version": "1.0.0",
+      "fingerprint_field": "rollback_fingerprint",
+      "evidence_origin": "synthetic"
+    }
+  ]
+}

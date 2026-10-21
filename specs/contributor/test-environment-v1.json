@@ -39,6 +39,7 @@
   },
   "contract_tests": [
     "tests/agent-protocol-sdk.test.mjs",
+    "tests/compliance-audit-package.test.mjs",
     "tests/compliance-data-path-declaration.test.mjs",
     "tests/compliance-evidence-binding.test.mjs",
     "tests/connector-sdk-contract.test.mjs",
@@ -90,6 +91,29 @@
           "artifacts_verified": true,
           "data_origin": "synthetic",
           "performance_claim_allowed": false
+        }
+      }
+    },
+    {
+      "id": "audit-package-verification",
+      "entrypoint": "scripts/verify-audit-package.mjs",
+      "arguments": [
+        "examples/compliance/synthetic-audit-package",
+        "--tenant",
+        "tenant-synthetic-alpha",
+        "--workload",
+        "workload-inference-synthetic",
+        "--execution",
+        "execution-synthetic-001"
+      ],
+      "expect": {
+        "equals": {
+          "integrity_verified": true,
+          "context_verified": true,
+          "evidence_origin": "synthetic",
+          "authenticity_verified": false,
+          "authorization_verified": false,
+          "legal_or_certification_conclusion": false
         }
       }
     }

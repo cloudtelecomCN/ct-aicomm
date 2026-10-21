@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0.0",
+  "rollback_id": "rollback-synthetic-001",
+  "tenant_id": "tenant-synthetic-alpha",
+  "workload_id": "workload-inference-synthetic",
+  "execution_id": "execution-synthetic-001",
+  "evidence_origin": "synthetic",
+  "occurred": true,
+  "triggered_at": "2026-10-22T11:30:00.000Z",
+  "trigger": "synthetic-circuit-breaker-exercise",
+  "from_policy_revision": "8",
+  "restored_policy_revision": "7",
+  "verification_status": "synthetic-restored",
+  "note": "Synthetic fixture only; no production traffic was changed.",
+  "rollback_fingerprint": "sha256:438e9bca53a228ab7a7f83779dcb00892cfaba827e274cbb0725b24a0012dcdf"
+}

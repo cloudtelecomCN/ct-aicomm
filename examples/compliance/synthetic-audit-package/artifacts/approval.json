@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0.0",
+  "approval_id": "approval-synthetic-001",
+  "tenant_id": "tenant-synthetic-alpha",
+  "workload_id": "workload-inference-synthetic",
+  "execution_id": "execution-synthetic-001",
+  "evidence_origin": "synthetic",
+  "decided_at": "2026-10-22T11:00:00.000Z",
+  "decision": "approved-for-synthetic-demonstration",
+  "reviewer_role": "synthetic-reviewer",
+  "subject_fingerprint": "sha256:64bd34c9893c418dc5442bde90fcf5f49b4d5df1e3859b2332fab9429a368273",
+  "note": "Synthetic fixture only; this is not a production authorization.",
+  "approval_fingerprint": "sha256:5684516863251375f835d8502f9f406821bc0ce4ee5c946a4c2046118e8939ec"
+}

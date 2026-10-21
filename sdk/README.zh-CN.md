@@ -6,7 +6,7 @@
 import { normalizeNetworkTelemetry, validateControlMessage } from "./sdk/index.mjs";
 ```
 
-SDK 只校验并规范化调用方提供的证据，不包含凭据、不发现私有基础设施、不授权执行、不挂载 eBPF 程序，也不会把合成数据表述为实测数据。版本 `0.6.0` 新增 CT-557 数据路径声明，冻结地域、边界、加密和处理者字段语义。租户查询、法律审批、签名和生产证据读取能力仍明确排除；当前以源码分发，尚未发布到 npm Registry。
+SDK 只校验并规范化调用方提供的证据，不包含凭据、不发现私有基础设施、不授权执行、不挂载 eBPF 程序，也不会把合成数据表述为实测数据。版本 `0.7.0` 新增 CT-558 确定性审计包，精确包含一份声明、审批、执行和回滚制品。租户查询、法律审批、可信签名和生产证据读取能力仍明确排除；当前以源码分发，尚未发布到 npm Registry。
 
 使用 `node examples/sdk/validate-public-evidence.mjs` 运行示例。使用 `node packages/ttft-collector/cli.mjs --endpoint=URL --model=MODEL --prompt=TEXT --environment-fingerprint=sha256:...` 采集一次客户端可观测 TTFT；凭据只能通过 `VLLM_API_KEY` 提供。
 
@@ -19,3 +19,5 @@ Registry 使用方可以运行 `node scripts/verify-registry-history.mjs` 验证
 合规集成方可以导入 `createExecutionEvidenceBinding` 和 `verifyExecutionEvidenceBinding`。验证器不接受绑定文件自证，期望上下文必须来自 SDK 外部、经过身份认证的租户和执行记录查询。
 
 数据治理集成方可以导入 `createDataPathDeclaration`、`validateDataPathDeclaration` 和 `verifyDataPathDeclaration`。结构验证不认证上下文；权威验证必须提供期望租户、工作负载和声明修订号。
+
+审计工具可以导入 `createAuditPackage` 和 `verifyAuditPackage`，也可以运行离线生成与验证 CLI。审计包验证能够发现证据缺失和篡改，并可将标识符绑定到调用方提供的上下文；仅通过校验和验证不能认证审批人，也不能授权执行。

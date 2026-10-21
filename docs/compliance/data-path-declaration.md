@@ -45,4 +45,4 @@ Validation without expected context returns `context_verified: false`. The secon
 
 ## Assurance boundary
 
-Passing validation proves that the declaration is closed, internally consistent, untampered, and, when expected context is supplied, bound to the requested tenant, workload, and revision. It does not prove network observation, processor identity, legal sufficiency, approval, regulatory compliance, or certification. CT-558 packages declarations with independent approval, execution, rollback, and checksum evidence.
+Passing validation proves that the declaration is closed, internally consistent, untampered, and, when expected context is supplied, bound to the requested tenant, workload, and revision. It does not prove network observation, processor identity, legal sufficiency, approval, regulatory compliance, or certification. CT-558 now packages declarations with independent approval, execution, rollback, and checksum evidence in the [audit package v1](audit-package.md).

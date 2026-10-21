@@ -52,6 +52,17 @@ test("public API exposes the CT-557 data path declaration without legal authorit
   for (const forbidden of ["approveTransferBasis", "certifyDataPath", "lookupProcessorAgreement"]) assert.equal(Object.hasOwn(sdk, forbidden), false);
 });
 
+test("public API exposes the CT-558 audit package without signing or approval authority", async () => {
+  const manifest = JSON.parse(await readFile(new URL("../specs/public-api-v1.json", import.meta.url), "utf8"));
+  assert.ok(manifest.public_contracts.includes("specs/compliance/audit-package-manifest-v1.schema.json"));
+  assert.ok(manifest.public_tools.includes("packages/compliance/audit-package.mjs"));
+  assert.ok(manifest.public_tools.includes("packages/compliance/audit-package.d.ts"));
+  assert.ok(manifest.public_tools.includes("scripts/build-audit-package.mjs"));
+  assert.ok(manifest.public_tools.includes("scripts/verify-audit-package.mjs"));
+  for (const symbol of ["AUDIT_PACKAGE_KINDS", "AUDIT_PACKAGE_VERSION", "createAuditPackage", "renderAuditPackageChecksums", "serializeAuditPackageManifest", "verifyAuditPackage"]) assert.ok(manifest.exports.includes(symbol));
+  for (const forbidden of ["signAuditPackage", "approveAuditPackage", "issueAuditorCredential"]) assert.equal(Object.hasOwn(sdk, forbidden), false);
+});
+
 test("public API manifest includes Agent protocol SDK 1.0 without credential APIs", async () => {
   const manifest = JSON.parse(await readFile(new URL("../specs/public-api-v1.json", import.meta.url), "utf8"));
   assert.ok(manifest.public_contracts.includes("specs/agent/control-protocol-v1.schema.json"));

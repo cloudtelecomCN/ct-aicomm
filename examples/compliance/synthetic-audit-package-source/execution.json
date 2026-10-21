@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "binding_id": "binding-synthetic-001",
+  "tenant_id": "tenant-synthetic-alpha",
+  "execution_id": "execution-synthetic-001",
+  "evidence_origin": "synthetic",
+  "created_at": "2026-10-22T08:00:00.000Z",
+  "components": {
+    "policy": {
+      "tenant_id": "tenant-synthetic-alpha",
+      "policy_id": "policy-low-latency",
+      "policy_version": "8",
+      "policy_fingerprint": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "agent": {
+      "tenant_id": "tenant-synthetic-alpha",
+      "agent_id": "agent-synthetic-01",
+      "agent_version": "0.1.0",
+      "agent_fingerprint": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    },
+    "route": {
+      "tenant_id": "tenant-synthetic-alpha",
+      "execution_id": "execution-synthetic-001",
+      "route_id": "route-synthetic-east",
+      "route_version": "17",
+      "route_fingerprint": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    },
+    "trace": {
+      "tenant_id": "tenant-synthetic-alpha",
+      "execution_id": "execution-synthetic-001",
+      "trace_id": "trace-synthetic-001",
+      "trace_version": "1.0.0",
+      "trace_fingerprint": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
+    },
+    "environment": {
+      "tenant_id": "tenant-synthetic-alpha",
+      "environment_id": "environment-synthetic-01",
+      "environment_version": "2.0.0",
+      "environment_fingerprint": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    }
+  },
+  "lock_fingerprint": "sha256:b7769bec2de1fe26993f8db4818f9ba6aa8eaa6dc187459213c853c877de6042",
+  "binding_fingerprint": "sha256:64bd34c9893c418dc5442bde90fcf5f49b4d5df1e3859b2332fab9429a368273"
+}

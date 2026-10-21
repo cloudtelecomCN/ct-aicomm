@@ -9,3 +9,4 @@ export { collectTtft } from "../packages/ttft-collector/collector.mjs";
 export { REGISTRY_ENTRY_INTEGRITY_VERSION, canonicalizeRegistryValue, digestRegistryArtifact, verifyRegistryEntryHistory, verifyRegistryEntryRecord } from "../packages/registry-entry-integrity/index.mjs";
 export { EXECUTION_EVIDENCE_BINDING_VERSION, createExecutionEvidenceBinding, verifyExecutionEvidenceBinding } from "../packages/compliance/evidence-binding.mjs";
 export { DATA_PATH_DECLARATION_VERSION, createDataPathDeclaration, validateDataPathDeclaration, verifyDataPathDeclaration } from "../packages/compliance/data-path-declaration.mjs";
+export { AUDIT_PACKAGE_KINDS, AUDIT_PACKAGE_VERSION, createAuditPackage, renderAuditPackageChecksums, serializeAuditPackageManifest, verifyAuditPackage } from "../packages/compliance/audit-package.mjs";

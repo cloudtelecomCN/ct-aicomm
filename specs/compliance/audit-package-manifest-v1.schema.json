@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/compliance/audit-package-manifest-v1.json",
+  "title": "CT-AIComm audit package manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "package_id",
+    "tenant_id",
+    "workload_id",
+    "execution_id",
+    "evidence_origin",
+    "created_at",
+    "checksum_manifest_path",
+    "artifacts",
+    "package_fingerprint"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "package_id": { "$ref": "#/$defs/id" },
+    "tenant_id": { "$ref": "#/$defs/id" },
+    "workload_id": { "$ref": "#/$defs/id" },
+    "execution_id": { "$ref": "#/$defs/id" },
+    "evidence_origin": { "enum": ["declared", "measured", "synthetic", "mixed"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "checksum_manifest_path": { "const": "SHA256SUMS" },
+    "artifacts": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "prefixItems": [
+        { "$ref": "#/$defs/declaration" },
+        { "$ref": "#/$defs/approval" },
+        { "$ref": "#/$defs/execution" },
+        { "$ref": "#/$defs/rollback" }
+      ],
+      "items": false
+    },
+    "package_fingerprint": { "$ref": "#/$defs/fingerprint" }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$"
+    },
+    "fingerprint": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "path": {
+      "type": "string",
+      "pattern": "^artifacts/[A-Za-z0-9][A-Za-z0-9._-]{0,127}\\.json$"
+    },
+    "descriptor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "artifact_id",
+        "path",
+        "media_type",
+        "schema_version",
+        "fingerprint_field",
+        "evidence_origin",
+        "source_fingerprint",
+        "sha256",
+        "bytes"
+      ],
+      "properties": {
+        "kind": { "enum": ["declaration", "approval", "execution", "rollback"] },
+        "artifact_id": { "$ref": "#/$defs/id" },
+        "path": { "$ref": "#/$defs/path" },
+        "media_type": { "const": "application/json" },
+        "schema_version": { "$ref": "#/$defs/id" },
+        "fingerprint_field": {
+          "enum": [
+            "declaration_fingerprint",
+            "approval_fingerprint",
+            "authorization_fingerprint",
+            "binding_fingerprint",
+            "trace_fingerprint",
+            "record_hash",
+            "rollback_fingerprint"
+          ]
+        },
+        "evidence_origin": { "enum": ["declared", "measured", "synthetic"] },
+        "source_fingerprint": { "$ref": "#/$defs/fingerprint" },
+        "sha256": { "$ref": "#/$defs/fingerprint" },
+        "bytes": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "declaration": {
+      "allOf": [
+        { "$ref": "#/$defs/descriptor" },
+        {
+          "properties": {
+            "kind": { "const": "declaration" },
+            "fingerprint_field": { "const": "declaration_fingerprint" }
+          }
+        }
+      ]
+    },
+    "approval": {
+      "allOf": [
+        { "$ref": "#/$defs/descriptor" },
+        {
+          "properties": {
+            "kind": { "const": "approval" },
+            "fingerprint_field": { "enum": ["approval_fingerprint", "authorization_fingerprint"] }
+          }
+        }
+      ]
+    },
+    "execution": {
+      "allOf": [
+        { "$ref": "#/$defs/descriptor" },
+        {
+          "properties": {
+            "kind": { "const": "execution" },
+            "fingerprint_field": { "enum": ["binding_fingerprint", "trace_fingerprint", "record_hash"] }
+          }
+        }
+      ]
+    },
+    "rollback": {
+      "allOf": [
+        { "$ref": "#/$defs/descriptor" },
+        {
+          "properties": {
+            "kind": { "const": "rollback" },
+            "fingerprint_field": { "const": "rollback_fingerprint" }
+          }
+        }
+      ]
+    }
+  }
+}
