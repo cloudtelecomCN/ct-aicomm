@@ -89,3 +89,20 @@ test("publishes a bounded CT-525 joint result and labels interaction uncertainty
   assert.equal(receipt.restricted_fields_published, false);
   assert.ok(receipt.limitations.length >= 4);
 });
+
+test("publishes measured CT-526 recovery and integrity evidence", async () => {
+  const environment = await readJson("../evidence/poc/ct-521-a10-dual-node-20261021.json");
+  const receipt = await readJson("../evidence/poc/ct-526-a10-stability-rollback-20261021.json");
+  assert.equal(receipt.environment_fingerprint, environment.environment_fingerprint);
+  assert.equal(receipt.data_origin, "measured");
+  assert.equal(receipt.aggregate.scenario_count, 5);
+  assert.equal(receipt.aggregate.requests_attempted, 50);
+  assert.equal(receipt.aggregate.error_count_during_injection_and_recovery, 15);
+  assert.equal(receipt.aggregate.data_integrity_preserved, true);
+  assert.ok(receipt.aggregate.maximum_recovery_time_ms >= Math.max(...receipt.scenarios.map(({ recovery_time_ms }) => recovery_time_ms)));
+  assert.deepEqual(receipt.scenarios.map(({ name }) => name), ["agent_disconnect", "target_failure", "version_conflict", "stale_metrics", "network_jitter"]);
+  assert.ok(receipt.scenarios.every(({ contained }) => contained));
+  assert.equal(receipt.claim_gate, "passed_for_this_poc_environment");
+  assert.equal(receipt.restricted_fields_published, false);
+  assert.ok(receipt.limitations.length >= 4);
+});

@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0.0",
+  "task": "CT-526",
+  "evidence_type": "measured_stability_and_rollback_receipt",
+  "data_origin": "measured",
+  "environment_fingerprint": "sha256:57bda3ca3327fbee49a35e974b0f11e0135f6543cfa8361085964b93b1734c5b",
+  "suite_id": "ct-526-a10-poc-20261021",
+  "report_fingerprint": "sha256:4b1c87ebbffd1d05e285e34e9534e6864e7cc4bd4c713ee7d6a1fcbc5c461fff",
+  "restricted_report_sha256": "71a8dd0f07351d8c3a5fe3f9c51941a6126877f1016d4b68845a9187ebccf03a",
+  "execution_proof": {
+    "restricted_cgroup_attach_sha256": "3115baca30a5b775dfb73204443e447920d1c0ec2e6eca8a8f4aca1fc20bd769",
+    "restricted_program_sha256": "78c90e99ae94306c1362af018271187daeed9866451d4c66f06089cd9e122f94",
+    "restricted_final_route_sha256": "37139e89e0124e91a8f13aafc8060bde981260b3c6d01e70243c681333362427",
+    "restricted_target_recovery_sha256": "45df5ad5e0ecfa54d3226343e0e6857337494ba6e32f189d1174070665d8c659"
+  },
+  "aggregate": {
+    "scenario_count": 5,
+    "requests_attempted": 50,
+    "error_count_during_injection_and_recovery": 15,
+    "error_rate_during_injection_and_recovery": 0.3,
+    "maximum_recovery_time_ms": 780.9785669999983,
+    "data_integrity_preserved": true
+  },
+  "scenarios": [
+    { "name": "agent_disconnect", "contained": true, "error_rate": 0.5, "recovery_time_ms": 22.257673999999994, "automatic_execution_allowed": false },
+    { "name": "target_failure", "contained": true, "error_rate": 0.5, "recovery_time_ms": 14.688130000000001, "rollback_confirmed": true },
+    { "name": "version_conflict", "contained": true, "error_rate": 0, "recovery_time_ms": 1.0564680000024964, "rejection_code": "policy_revision_stale" },
+    { "name": "stale_metrics", "contained": true, "error_rate": 0, "recovery_time_ms": 0.0011819999999715947, "elimination_reason": "metrics_stale" },
+    { "name": "network_jitter", "contained": true, "error_rate": 0.5, "recovery_time_ms": 780.9785669999983, "rollback_confirmed": true, "injected_jitter_ms": [300, 400] }
+  ],
+  "claim_gate": "passed_for_this_poc_environment",
+  "conclusion": "all_required_faults_contained_with_integrity_preserved",
+  "restricted_fields_published": false,
+  "limitations": [
+    "Recovery time includes the local control action and a successful health probe, not WAN control-plane transport.",
+    "The network-jitter scenario used an in-path delayed TCP proxy rather than physical network impairment.",
+    "The result covers one frozen dual-node NVIDIA A10 POC topology.",
+    "This run does not establish five-nines availability or production SLO compliance."
+  ]
+}
