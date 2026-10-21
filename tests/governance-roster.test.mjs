@@ -6,13 +6,14 @@ import { promisify } from "node:util";
 import { validateGovernanceRoster } from "../scripts/validate-governance-roster.mjs";
 
 const exec = promisify(execFile);
-const [roster, schema, governance, governanceChinese, owners, nomination] = await Promise.all([
+const [roster, schema, governance, governanceChinese, owners, nomination, nodeWorkflow] = await Promise.all([
   readFile("governance/roles.json", "utf8").then(JSON.parse),
   readFile("specs/governance/project-role-roster-v1.schema.json", "utf8").then(JSON.parse),
   readFile("GOVERNANCE.md", "utf8"),
   readFile("GOVERNANCE.zh-CN.md", "utf8"),
   readFile(".github/CODEOWNERS", "utf8"),
-  readFile(".github/ISSUE_TEMPLATE/external-role-nomination.yml", "utf8")
+  readFile(".github/ISSUE_TEMPLATE/external-role-nomination.yml", "utf8"),
+  readFile(".github/workflows/node-tests.yml", "utf8")
 ]);
 
 const clone = () => structuredClone(roster);
@@ -72,6 +73,13 @@ test("ships a public nomination form without requesting sensitive identity mater
   assert.match(nomination, /public evidence/i);
   assert.match(nomination, /Do not include credentials/i);
   assert.doesNotMatch(nomination, /passport|identity card|government ID/i);
+});
+
+test("runs the required public test context for every pull request", () => {
+  assert.match(nodeWorkflow, /^\s*pull_request:\s*$/m);
+  assert.match(nodeWorkflow, /^\s*push:\s*$/m);
+  assert.doesNotMatch(nodeWorkflow, /^\s+paths:\s*$/m);
+  assert.match(nodeWorkflow, /^\s{2}test:\s*$/m);
 });
 
 test("runs the standalone roster validator", async () => {
