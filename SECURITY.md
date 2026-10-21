@@ -20,15 +20,15 @@ Do not include live credentials or personal, customer, or partner data. If a cre
 
 ## Supported versions
 
-This repository has not published a tagged release yet. Until the signed release process is introduced, only the current `main` branch head is supported.
+The current `main` branch head and the latest signed `v0.1.x` release are supported. Security fixes land on `main` first and are included in a new signed patch release when they affect the release line.
 
 | Source line | Security support |
 | --- | --- |
 | Current `main` branch head | Supported |
-| Latest signed release | Supported after one is published |
+| Latest signed `v0.1.x` release | Supported |
 | Older commits, untagged snapshots, forks, and modified builds | Not supported |
 
-Security fixes land on `main`. Once signed releases exist, this table will name every supported release line and its end-of-support date. A downstream fork must publish and operate its own security policy.
+The `v0.1.x` line is pre-stable. Its support ends when a successor line is published and this table is updated. A downstream fork must publish and operate its own security policy.
 
 ## Response and remediation SLA
 

@@ -22,8 +22,8 @@ test("routes vulnerability reports away from public issues", () => {
 });
 
 test("defines the supported source line and bounded response targets", () => {
-  assert.match(english, /only the current `main` branch head is supported/i);
-  assert.match(chinese, /只支持当前 `main` 分支最新提交/);
+  assert.match(english, /latest signed `v0\.1\.x` release are supported/i);
+  assert.match(chinese, /最新签名 `v0\.1\.x` 版本均受支持/);
   for (const target of [
     "1 business day",
     "7 calendar days",

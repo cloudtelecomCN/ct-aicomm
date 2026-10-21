@@ -19,6 +19,8 @@ CT-AIComm is CloudTelecom's open, evidence-first operating system initiative for
 - [Registry entry signatures and version history](docs/registry/entry-integrity.md)
 - [Public SDK boundary](sdk/README.md)
 - [Open-source release manifest](docs/governance/open-source-release-manifest.md)
+- [Release verification and SBOM](docs/release/verification.md)
+- [Changelog](CHANGELOG.md)
 - [Agent control and telemetry schemas](specs/agent/)
 - [POC environment freeze contract](docs/poc/environment-freeze.md)
 - [Measured baseline collection gate](docs/poc/baseline-collection.md)
@@ -42,6 +44,7 @@ The public SDK, Agent protocol, telemetry schemas, CT-Bench collector, CT-DSL, R
 - Chinese documentation: [README.zh-CN.md](README.zh-CN.md)
 - Security reports: see [SECURITY.md](SECURITY.md)
 - Contributing: see [CONTRIBUTING.md](CONTRIBUTING.md)
+- Releases: [signed GitHub releases](https://github.com/cloudtelecomCN/ct-aicomm/releases)
 
 ## License
 

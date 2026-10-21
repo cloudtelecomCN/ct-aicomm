@@ -42,3 +42,7 @@ The external pull-request preflight checks metadata, public provenance, rights a
 Signed entry histories are maintainer-generated release artifacts. Contributors must not add signing private keys or self-sign a contribution as proof of approval. Public verification keys, signed records, and declared artifacts must follow the [Registry entry integrity contract](docs/registry/entry-integrity.md).
 
 By contributing, you agree that code contributions are licensed under Apache-2.0 and documentation contributions under CC BY 4.0, unless explicitly stated otherwise.
+
+## Releases
+
+Only maintainers create release tags. A release change updates `VERSION`, `CHANGELOG.md`, `CHANGELOG.zh-CN.md`, and the supported-version table together. The tag must be exactly `v<VERSION>` and pass the signed release workflow. See [release verification](docs/release/verification.md); never add a long-lived signing private key to this repository or its CI secrets.

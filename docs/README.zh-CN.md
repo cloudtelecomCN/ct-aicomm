@@ -6,6 +6,7 @@
 
 - [公开工作白皮书](whitepaper/README.zh-CN.md)
 - [离线贡献者测试环境](contributor/test-environment.zh-CN.md)
+- [版本验证与 SBOM](release/verification.zh-CN.md)
 - [CT-Bench 复现与证据规范](bench-reproduction/README.zh-CN.md)
 - [CT-DataPlane Agent 威胁模型](security/agent-threat-model.zh-CN.md)
 - [CT-DataPlane Agent 安装与运维手册](agent/operations.zh-CN.md)
