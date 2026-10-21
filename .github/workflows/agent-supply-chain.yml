@@ -37,3 +37,5 @@ jobs:
         run: agent/install/test-supply-chain.sh
       - name: Verify installation lifecycle
         run: agent/install/test-install.sh
+      - name: Verify diagnostics and emergency recovery
+        run: agent/install/test-operations.sh

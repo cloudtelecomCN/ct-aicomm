@@ -29,6 +29,14 @@ openssl pkey -in "$work/release-private-key.pem" -pubout -out "$work/dist/releas
 sign_bundle "$work/ct-aicomm-agent" "$work/dist"
 
 bash "$script_dir/verify-release.sh" "$work/ct-aicomm-agent" "$work/ct_selector.bpf.o" "$work/dist/ct-aicomm-agent.spdx.json" "$work/dist/provenance.json" "$work/dist/SHA256SUMS" "$work/dist/SHA256SUMS.sig" "$work/dist/release-public-key.pem"
+bash "$script_dir/package-release.sh" --agent-binary "$work/ct-aicomm-agent" --bpf-object "$work/ct_selector.bpf.o" --sbom "$work/dist/ct-aicomm-agent.spdx.json" --provenance "$work/dist/provenance.json" --checksums "$work/dist/SHA256SUMS" --signature "$work/dist/SHA256SUMS.sig" --public-key "$work/dist/release-public-key.pem" --output "$work/ct-aicomm-agent-release.tar.gz"
+bash "$script_dir/package-release.sh" --agent-binary "$work/ct-aicomm-agent" --bpf-object "$work/ct_selector.bpf.o" --sbom "$work/dist/ct-aicomm-agent.spdx.json" --provenance "$work/dist/provenance.json" --checksums "$work/dist/SHA256SUMS" --signature "$work/dist/SHA256SUMS.sig" --public-key "$work/dist/release-public-key.pem" --output "$work/ct-aicomm-agent-release-repeat.tar.gz"
+cmp "$work/ct-aicomm-agent-release.tar.gz" "$work/ct-aicomm-agent-release-repeat.tar.gz"
+tar -tzf "$work/ct-aicomm-agent-release.tar.gz" | grep -q '^ct-aicomm-agent-release/install/install-package.sh$'
+mkdir -p "$work/extracted"
+tar -xzf "$work/ct-aicomm-agent-release.tar.gz" -C "$work/extracted"
+bash "$work/extracted/ct-aicomm-agent-release/install/install-package.sh" --root "$work/package-root"
+test -f "$work/package-root/usr/local/lib/ct-aicomm-agent/share/provenance.json"
 bash "$script_dir/install.sh" --root "$work/root" --agent-binary "$work/ct-aicomm-agent" --bpf-object "$work/ct_selector.bpf.o" --sbom "$work/dist/ct-aicomm-agent.spdx.json" --provenance "$work/dist/provenance.json" --checksums "$work/dist/SHA256SUMS" --signature "$work/dist/SHA256SUMS.sig" --public-key "$work/dist/release-public-key.pem"
 test -f "$work/root/usr/local/lib/ct-aicomm-agent/share/ct-aicomm-agent.spdx.json"
 grep -q '^release_manifest_sha256=' "$work/root/var/lib/ct-aicomm-agent/install.manifest"

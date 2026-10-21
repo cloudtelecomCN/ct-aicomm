@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0.0",
+  "task": "CT-531",
+  "evidence_type": "agent_release_and_operations_receipt",
+  "status": "passed",
+  "deliverables": {
+    "deterministic_signed_archive": "ct-aicomm-agent-release.tar.gz",
+    "one_command_install": "install/install-package.sh",
+    "verified_upgrade_with_restore": "install/upgrade-package.sh",
+    "credential_safe_diagnostics": "install/diagnose.sh",
+    "latched_emergency_recovery": "install/emergency-recover.sh",
+    "normal_and_purge_removal": "install/uninstall.sh",
+    "english_runbook": "docs/agent/operations.md",
+    "chinese_runbook": "docs/agent/operations.zh-CN.md"
+  },
+  "verification": {
+    "signed_archive_build": "passed",
+    "repeat_build_byte_equality": "passed",
+    "archive_install_in_isolated_root": "passed",
+    "signature_and_digest_verification": "passed",
+    "failed_upgrade_restores_previous_binary": "passed",
+    "diagnostic_integrity_checks": "passed",
+    "emergency_restore_request": "passed",
+    "automatic_execution_latched_disabled": "passed",
+    "normal_uninstall": "passed",
+    "purge_uninstall": "passed"
+  },
+  "public_release_boundary": "No release private key, credential, host address, topology, raw metric, model path, or customer data is included.",
+  "limitations": [
+    "The public repository provides packaging and lifecycle tooling but does not publish a production signing private key.",
+    "Isolated-root tests do not replace change-window validation on each target kernel and network environment.",
+    "Emergency recovery records a local latch and baseline restoration request; operators must independently verify the resulting network state."
+  ]
+}
