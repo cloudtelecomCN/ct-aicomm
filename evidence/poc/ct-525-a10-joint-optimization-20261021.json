@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0.0",
+  "task": "CT-525",
+  "evidence_type": "joint_optimization_experiment_receipt",
+  "data_origin": "measured",
+  "environment_fingerprint": "sha256:57bda3ca3327fbee49a35e974b0f11e0135f6543cfa8361085964b93b1734c5b",
+  "experiment_controls": {
+    "same_model_and_prompt_plan": true,
+    "repetitions": 3,
+    "concurrency_levels": [1, 8, 32],
+    "score_policy_version": "1.0.0",
+    "data_plane_policy_revision": 2,
+    "network_evidence": "measured ping plus iperf3"
+  },
+  "execution_proof": {
+    "mechanism": "deterministic joint score plus isolated cgroup connect4 routes",
+    "logical_routes_had_no_listeners": true,
+    "bpf_object_sha256": "0b58460ac620d011977e3e3b0db4bede1c4b816160024189e5cf633eab252865",
+    "restricted_cgroup_attach_sha256": "e2c06aa3445c69dccfb951918c08cd4c6f2f2beef02ef9c1c185d6be3e839f9e",
+    "restricted_redirect_map_sha256": "287791576bacb0b3f222a8ccf8f8986925ad955a49021e718b44dc2b959818d5",
+    "restricted_no_listener_sha256": "14f4ea5bdea2bd6f8d856ec28619243555e53de100d4bca155a751876e97a843",
+    "restricted_private_bandwidth_sha256": "5ad5652d938491c5fc480ca1cf7fb10a429fb39c4127cbffdee855bb3496c5f3",
+    "restricted_local_bandwidth_sha256": "548b9452d6af94033a21a69b44d18e03ab94b9fd83f159f45d7d68b202edc86a"
+  },
+  "joint_group": {
+    "sample_count": 200,
+    "success_rate": 1,
+    "decision_count": 200,
+    "selection_distribution": { "candidate_a": 101, "candidate_b": 99 },
+    "batch_sha256": "2684787afd48e71fc7e35b4029748a095cbdb01b88ae5ce498b450186597b99e",
+    "restricted_file_sha256": "4bd55b12d907911283acd20e87f85bc13a0fe8b81f09c9dd95eda69fb452d863",
+    "ttft_ms": { "p50": 73.52647199999774, "p95": 90.99944900000264, "p99": 91.40961299999617 }
+  },
+  "baseline_comparison": {
+    "baseline_sample_count": 400,
+    "baseline_success_rate": 1,
+    "relative_improvement_percent": { "p50": 70.39652681008472, "p95": 66.62060196257285, "p99": 67.53773589931207 },
+    "confidence_interval_95_percent": {
+      "p50": [68.86821401434929, 77.7434065194532],
+      "p95": [66.1985736847376, 67.4085218499533],
+      "p99": [67.27484788603168, 67.98351955111744]
+    },
+    "analysis_sha256": "060202a8a734791d6c62fbe09d2b97b3870df0de5453ff85661c40880813e3de",
+    "restricted_file_sha256": "2ace9b360629835f029560faab3450ed3b3615a6e080f87a8f89994d0b9ebc96",
+    "claim_gate": "passed_for_this_poc_environment"
+  },
+  "interaction_analysis": {
+    "status": "exploratory_only_non_identical_control_routes",
+    "point_estimate_percent": { "p50": 28.009123966911538, "p95": 52.57509862954309, "p99": 53.4057464767475 },
+    "limitation": "CT-523 and CT-524 used different control-route constructions, so the difference-in-improvements is descriptive and not a causal factorial estimate."
+  },
+  "conclusion": "statistically_supported_joint_improvement_in_frozen_poc_environment",
+  "restricted_fields_published": false,
+  "limitations": [
+    "The result covers one frozen dual-node NVIDIA A10 POC topology.",
+    "The baseline and joint groups used different route constructions.",
+    "The interaction estimate is exploratory and not a causal factorial result.",
+    "The run does not establish production availability, capacity, or a general improvement percentage."
+  ]
+}

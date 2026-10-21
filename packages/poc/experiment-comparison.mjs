@@ -68,7 +68,7 @@ export function compareExperimentGroups({ baselineBatches, treatmentBatch, treat
   if (!(confidenceLevel > 0 && confidenceLevel < 1)) fail("comparison_confidence_invalid", "confidence level must be between zero and one");
   const fingerprint = treatmentBatch.environment_fingerprint;
   if (!fingerprint || baselineBatches.some((batch) => batch.environment_fingerprint !== fingerprint)) fail("comparison_environment_mismatch", "all groups must use one environment fingerprint");
-  if (!["connector_only", "network_only"].includes(treatmentGroup)) fail("comparison_treatment_invalid", "treatment group must be connector_only or network_only");
+  if (!["connector_only", "network_only", "joint_optimization"].includes(treatmentGroup)) fail("comparison_treatment_invalid", "treatment group must be connector_only, network_only, or joint_optimization");
   if (treatmentBatch.group !== treatmentGroup || baselineBatches.some((batch) => batch.group !== "baseline")) fail("comparison_group_invalid", `baseline and ${treatmentGroup} groups are required`);
 
   const baselineStrata = strataFor(baselineBatches);

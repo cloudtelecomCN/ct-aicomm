@@ -70,3 +70,22 @@ test("publishes CT-524 execution proof without overstating a negative result", a
   assert.equal(receipt.restricted_fields_published, false);
   assert.ok(receipt.limitations.length >= 4);
 });
+
+test("publishes a bounded CT-525 joint result and labels interaction uncertainty", async () => {
+  const environment = await readJson("../evidence/poc/ct-521-a10-dual-node-20261021.json");
+  const receipt = await readJson("../evidence/poc/ct-525-a10-joint-optimization-20261021.json");
+  assert.equal(receipt.environment_fingerprint, environment.environment_fingerprint);
+  assert.equal(receipt.data_origin, "measured");
+  assert.equal(receipt.joint_group.sample_count, 200);
+  assert.equal(receipt.joint_group.success_rate, 1);
+  assert.equal(receipt.joint_group.decision_count, 200);
+  assert.equal(receipt.baseline_comparison.claim_gate, "passed_for_this_poc_environment");
+  for (const metric of ["p50", "p95", "p99"]) {
+    assert.ok(receipt.baseline_comparison.relative_improvement_percent[metric] > 0);
+    assert.ok(receipt.baseline_comparison.confidence_interval_95_percent[metric][0] > 0);
+  }
+  assert.equal(receipt.interaction_analysis.status, "exploratory_only_non_identical_control_routes");
+  assert.match(receipt.interaction_analysis.limitation, /not a causal factorial estimate/);
+  assert.equal(receipt.restricted_fields_published, false);
+  assert.ok(receipt.limitations.length >= 4);
+});

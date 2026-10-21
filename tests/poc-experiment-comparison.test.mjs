@@ -37,3 +37,11 @@ test("compares an explicitly declared network-only treatment", () => {
   const result = compareExperimentGroups({ baselineBatches: [batch("baseline", [100, 110, 120, 130])], treatmentBatch: treatment, treatmentGroup: "network_only", resamples: 100 });
   assert.equal(result.treatment_group, "network_only");
 });
+
+test("compares an explicitly declared joint treatment", () => {
+  const treatment = batch("connector_only", [45, 50, 55, 60]);
+  treatment.group = "joint_optimization";
+  const result = compareExperimentGroups({ baselineBatches: [batch("baseline", [100, 110, 120, 130])], treatmentBatch: treatment, treatmentGroup: "joint_optimization", resamples: 100 });
+  assert.equal(result.treatment_group, "joint_optimization");
+  assert.equal(result.claim_gate.allowed, true);
+});
