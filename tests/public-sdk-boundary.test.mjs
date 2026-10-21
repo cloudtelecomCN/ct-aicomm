@@ -42,6 +42,20 @@ test("public API manifest includes Agent protocol SDK 1.0 without credential API
   for (const forbidden of ["AgentCredentialAuthority", "issueAgentCredential", "connectAgentControlPlane"]) assert.equal(manifest.exports.includes(forbidden), false);
 });
 
+test("public API manifest exposes Registry verification without signing authority", async () => {
+  const manifest = JSON.parse(await readFile(new URL("../specs/public-api-v1.json", import.meta.url), "utf8"));
+  assert.ok(manifest.public_contracts.includes("specs/registry/registry-entry-record-v1.schema.json"));
+  assert.ok(manifest.public_tools.includes("packages/registry-entry-integrity/index.mjs"));
+  assert.ok(manifest.public_tools.includes("packages/registry-entry-integrity/index.d.ts"));
+  assert.ok(manifest.public_tools.includes("scripts/validate-registry-contribution.mjs"));
+  assert.ok(manifest.public_tools.includes("scripts/verify-registry-history.mjs"));
+  for (const symbol of ["REGISTRY_ENTRY_INTEGRITY_VERSION", "canonicalizeRegistryValue", "digestRegistryArtifact", "verifyRegistryEntryRecord", "verifyRegistryEntryHistory"]) assert.ok(manifest.exports.includes(symbol));
+  for (const forbidden of ["createRegistryEntryRecord", "signRegistryEntry", "issueRegistrySigningKey"]) {
+    assert.equal(manifest.exports.includes(forbidden), false);
+    assert.equal(Object.hasOwn(sdk, forbidden), false);
+  }
+});
+
 test("public telemetry example is accepted and receives a stable route identity", async () => {
   const example = JSON.parse(await readFile(new URL("../examples/agent/network-telemetry.json", import.meta.url), "utf8"));
   const event = sdk.normalizeNetworkTelemetry(example);

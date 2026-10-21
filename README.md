@@ -15,6 +15,7 @@ CT-AIComm is CloudTelecom's open, evidence-first operating system initiative for
 - [Connector SDK contract v1](docs/connectors/sdk.md)
 - [Agent protocol SDK v1](docs/agent/protocol-sdk.md)
 - [Registry contribution specification v2](docs/registry/contributing.md)
+- [Registry entry signatures and version history](docs/registry/entry-integrity.md)
 - [Public SDK boundary](sdk/README.md)
 - [Open-source release manifest](docs/governance/open-source-release-manifest.md)
 - [Agent control and telemetry schemas](specs/agent/)
@@ -31,7 +32,7 @@ CT-AIComm is CloudTelecom's open, evidence-first operating system initiative for
 
 Catalog records are not benchmark results. Synthetic demonstrations are not measured runs. Recommendations are not execution authorization. Readiness artifacts are not external certification. Synthetic data in this repository is always labeled and must not be presented as measured production performance.
 
-The public SDK, Agent protocol, telemetry schemas, CT-Bench collector, CT-DSL, examples, and validation tools are source-released under the repository licenses. Registry components and other modules will be added progressively after public review. Website deployment configuration, credentials, signing private keys, customer data, private topology, restricted raw POC samples, and internal operational material are outside the public release boundary.
+The public SDK, Agent protocol, telemetry schemas, CT-Bench collector, CT-DSL, Registry contribution and signed-history verification, examples, and validation tools are source-released under the repository licenses. Other modules will be added progressively after public review. Website deployment configuration, credentials, signing private keys, customer data, private topology, restricted raw POC samples, and internal operational material are outside the public release boundary.
 
 ## Project links
 

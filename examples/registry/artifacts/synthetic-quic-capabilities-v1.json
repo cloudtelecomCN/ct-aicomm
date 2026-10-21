@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0.0",
+  "data_origin": "synthetic",
+  "protocol_id": "synthetic-quic-example",
+  "protocol_version": "1.0.0-example",
+  "capabilities": [
+    "multiplexed-streams",
+    "tls-1.3",
+    "udp-transport"
+  ],
+  "performance_claim_allowed": false
+}

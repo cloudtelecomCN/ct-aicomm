@@ -1,0 +1,129 @@
+{
+  "schema_version": "1.0.0",
+  "data_origin": "synthetic",
+  "entry_id": "synthetic-quic-example",
+  "performance_claim_allowed": false,
+  "records": [
+    {
+      "entry": {
+        "schema_version": "1.0.0",
+        "entry_id": "synthetic-quic-example",
+        "entry_version": "1.0.0",
+        "sequence": 1,
+        "status": "published",
+        "published_at": "2026-10-21T10:30:00.000Z",
+        "source_contribution": {
+          "id": "synthetic-quic-example-v1",
+          "digest": "sha256:594a700f5632e2fe89333552d20ea9bdf22e14f74bae9d2821a0e37535058e51"
+        },
+        "review_receipt_digest": "sha256:a892c97fea0642a3fa9ad4e81d338a78b8a86a0d0881f42080ed78be077934cf",
+        "previous_version_digest": null,
+        "protocol": {
+          "id": "synthetic-quic-example",
+          "name": "Synthetic QUIC metadata example",
+          "version": "1.0.0-example",
+          "category": "transport",
+          "summary": "Synthetic contribution fixture showing the required metadata and review boundary without making a performance claim.",
+          "specification_urls": [
+            "https://www.rfc-editor.org/rfc/rfc9000"
+          ],
+          "implementation_urls": [],
+          "interoperability_tags": [
+            "quic",
+            "tls-1.3",
+            "udp"
+          ]
+        },
+        "artifacts": [
+          {
+            "path": "examples/registry/artifacts/synthetic-quic-capabilities-v1.json",
+            "media_type": "application/json",
+            "sha256": "sha256:8eac416a7d2d63e9a480bd2b467fd911786f2673607e5b147565f247cf48e2e4"
+          },
+          {
+            "path": "examples/registry/reviews/synthetic-quic-example-v1-review.json",
+            "media_type": "application/json",
+            "sha256": "sha256:a892c97fea0642a3fa9ad4e81d338a78b8a86a0d0881f42080ed78be077934cf"
+          },
+          {
+            "path": "examples/registry/synthetic-quic-example-v1.json",
+            "media_type": "application/json",
+            "sha256": "sha256:594a700f5632e2fe89333552d20ea9bdf22e14f74bae9d2821a0e37535058e51"
+          }
+        ]
+      },
+      "integrity": {
+        "canonicalization": "ct-aicomm-json-v1",
+        "entry_digest": "sha256:cd3cecae960c43e0a99176e4b6392b83ad8165d039bcabc49fa8f77030564579"
+      },
+      "signature": {
+        "schema_version": "1.0.0",
+        "algorithm": "Ed25519",
+        "key_id": "synthetic-fixture-2026-10",
+        "signed_at": "2026-10-21T10:30:00.000Z",
+        "value": "base64:URQ8NVmEfxgeGREbd8TJds9kCEzH78ep3Nl/TiqwB5Vho/2SApCQF8GOLG27BDm0et1aFvOU0Ji4H9a5tvmbBQ=="
+      }
+    },
+    {
+      "entry": {
+        "schema_version": "1.0.0",
+        "entry_id": "synthetic-quic-example",
+        "entry_version": "1.1.0",
+        "sequence": 2,
+        "status": "published",
+        "published_at": "2026-10-21T11:30:00.000Z",
+        "source_contribution": {
+          "id": "synthetic-quic-example-v2",
+          "digest": "sha256:d42480028c8969b269a9739083cc58af6e028aa033019f6062bd0da75588380f"
+        },
+        "review_receipt_digest": "sha256:07938c09b4b62caa52002fbf37e904198beb587ce95b01312eb5e705642ba1dd",
+        "previous_version_digest": "sha256:cd3cecae960c43e0a99176e4b6392b83ad8165d039bcabc49fa8f77030564579",
+        "protocol": {
+          "id": "synthetic-quic-example",
+          "name": "Synthetic QUIC metadata example",
+          "version": "1.1.0-example",
+          "category": "transport",
+          "summary": "Synthetic update fixture adding a connection-migration tag without making a performance or production claim.",
+          "specification_urls": [
+            "https://www.rfc-editor.org/rfc/rfc9000"
+          ],
+          "implementation_urls": [],
+          "interoperability_tags": [
+            "connection-migration",
+            "quic",
+            "tls-1.3",
+            "udp"
+          ]
+        },
+        "artifacts": [
+          {
+            "path": "examples/registry/artifacts/synthetic-quic-capabilities-v2.json",
+            "media_type": "application/json",
+            "sha256": "sha256:d9980e33f31dd7bc3723547e979fc39633c5cba0dd9ee040c93458759a46f99f"
+          },
+          {
+            "path": "examples/registry/reviews/synthetic-quic-example-v2-review.json",
+            "media_type": "application/json",
+            "sha256": "sha256:07938c09b4b62caa52002fbf37e904198beb587ce95b01312eb5e705642ba1dd"
+          },
+          {
+            "path": "examples/registry/synthetic-quic-example-v2.json",
+            "media_type": "application/json",
+            "sha256": "sha256:d42480028c8969b269a9739083cc58af6e028aa033019f6062bd0da75588380f"
+          }
+        ]
+      },
+      "integrity": {
+        "canonicalization": "ct-aicomm-json-v1",
+        "entry_digest": "sha256:b01bdd7d670cb699f43a579864562642e46683ad5a83f25bb523bd8cb8737e4e"
+      },
+      "signature": {
+        "schema_version": "1.0.0",
+        "algorithm": "Ed25519",
+        "key_id": "synthetic-fixture-2026-10",
+        "signed_at": "2026-10-21T11:30:00.000Z",
+        "value": "base64:exo8GaRku3tzMo/QrjVf9TttWGWsOP8kfAcRXWPBoxEef2GBktgfX/l/PcD2jz4beYoOZdOEB4x81hcpzPoLBQ=="
+      }
+    }
+  ]
+}

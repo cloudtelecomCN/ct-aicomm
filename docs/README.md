@@ -13,6 +13,7 @@
 - [vLLM connector compatibility v1](connectors/vllm.md)
 - [Agent protocol SDK v1](agent/protocol-sdk.md)
 - [Registry contribution specification v2](registry/contributing.md)
+- [Registry entry signatures and version history](registry/entry-integrity.md)
 - [Public API manifest](../specs/public-api-v1.json)
 - [Enterprise pilot acceptance package](pilot/enterprise-acceptance.md)
 - [Phase 2 expansion decision](architecture/phase2-expansion-decision.md)

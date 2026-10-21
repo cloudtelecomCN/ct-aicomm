@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0.0",
+  "keys": [
+    {
+      "key_id": "synthetic-fixture-2026-10",
+      "algorithm": "Ed25519",
+      "purpose": "synthetic-fixture-verification-only",
+      "public_key_pem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEA0r4kAf0+Nj3hKqGvkTrCkDt/j18XMAFS/dMLUxuensY=\n-----END PUBLIC KEY-----\n",
+      "private_key_committed": false
+    }
+  ]
+}

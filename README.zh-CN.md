@@ -15,6 +15,7 @@ CT-AIComm 是 CloudTelecom 面向 AI 训练与推理通信场景构建的开放�
 - [Connector SDK 契约 v1](docs/connectors/sdk.zh-CN.md)
 - [Agent 协议 SDK v1](docs/agent/protocol-sdk.zh-CN.md)
 - [Registry 贡献规范 v2](docs/registry/contributing.zh-CN.md)
+- [Registry 条目签名与版本历史](docs/registry/entry-integrity.zh-CN.md)
 - [公开 SDK 边界](sdk/README.zh-CN.md)
 - [开源发布清单](docs/governance/open-source-release-manifest.zh-CN.md)
 - [Agent 控制与遥测 Schema](specs/agent/)
@@ -31,7 +32,7 @@ CT-AIComm 是 CloudTelecom 面向 AI 训练与推理通信场景构建的开放�
 
 目录记录不等于基准结果，合成演示不等于真实测量，策略建议不等于执行授权，准备材料也不等于外部认证。仓库中的合成数据始终使用明确标记，不得作为真实生产性能声明。
 
-公开 SDK、Agent 协议、遥测 Schema、CT-Bench 采集器、CT-DSL、示例和校验工具已按仓库许可证以源码发布。Registry 组件及其他模块将在公开评审后继续加入。网站部署配置、凭证、签名私钥、客户数据、私有拓扑、受限 POC 原始样本和内部运营材料不属于公开范围。
+公开 SDK、Agent 协议、遥测 Schema、CT-Bench 采集器、CT-DSL、Registry 贡献与签名历史验证、示例和校验工具已按仓库许可证以源码发布。其他模块将在公开评审后继续加入。网站部署配置、凭证、签名私钥、客户数据、私有拓扑、受限 POC 原始样本和内部运营材料不属于公开范围。
 
 ## 项目链接
 

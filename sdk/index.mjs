@@ -6,3 +6,4 @@ export { createVllmConnectorAdapter } from "../packages/vllm-connector/adapter.m
 export { classifyVllmVersion, evaluateVllmCompatibility } from "../packages/vllm-connector/compatibility.mjs";
 export { normalizeVllmMetrics, parsePrometheus } from "../packages/vllm-connector/metrics.mjs";
 export { collectTtft } from "../packages/ttft-collector/collector.mjs";
+export { REGISTRY_ENTRY_INTEGRITY_VERSION, canonicalizeRegistryValue, digestRegistryArtifact, verifyRegistryEntryHistory, verifyRegistryEntryRecord } from "../packages/registry-entry-integrity/index.mjs";

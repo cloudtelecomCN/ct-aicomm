@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0.0",
+  "data_origin": "synthetic",
+  "contribution_id": "synthetic-quic-example-v2",
+  "decision": "approved-for-synthetic-fixture",
+  "reviewed_at": "2026-10-21T11:00:00.000Z",
+  "review_roles": [
+    "registry-maintainer",
+    "independent-domain-reviewer"
+  ],
+  "performance_claim_allowed": false
+}
