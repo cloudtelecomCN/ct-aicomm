@@ -1,0 +1,238 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/evidence/evidence-query-record-v1.schema.json",
+  "title": "CT-AIComm public evidence query record v1",
+  "description": "Strict public projection for read-only Evidence Core queries. Conformance does not establish authenticity, authorization, measurement validity, independent review, or certification.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_type",
+    "visibility",
+    "evidence_id",
+    "version",
+    "content_fingerprint",
+    "published_at",
+    "lifecycle_state",
+    "status",
+    "boundary",
+    "scope",
+    "method",
+    "metrics",
+    "links",
+    "certification_issued"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "record_type": { "const": "evidence_query_record" },
+    "visibility": { "const": "public" },
+    "evidence_id": { "$ref": "#/$defs/id" },
+    "version": { "$ref": "#/$defs/version" },
+    "content_fingerprint": { "$ref": "#/$defs/fingerprint" },
+    "published_at": { "$ref": "#/$defs/instant" },
+    "lifecycle_state": { "enum": ["published", "expired", "superseded", "revoked"] },
+    "status": { "$ref": "#/$defs/status" },
+    "boundary": { "$ref": "#/$defs/boundary" },
+    "scope": { "$ref": "#/$defs/scope" },
+    "method": { "$ref": "#/$defs/method" },
+    "metrics": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 64,
+      "items": { "$ref": "#/$defs/metric" }
+    },
+    "links": { "$ref": "#/$defs/links" },
+    "certification_issued": { "const": false }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "boundary": {
+            "properties": { "data_origin": { "enum": ["synthetic", "hybrid"] } },
+            "required": ["data_origin"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "boundary": {
+            "properties": { "performance_claim_allowed": { "const": false } }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": { "lifecycle_state": { "const": "expired" } },
+        "required": ["lifecycle_state"]
+      },
+      "then": {
+        "properties": {
+          "status": {
+            "properties": { "freshness": { "const": "expired" } }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "boundary": {
+            "properties": { "data_origin": { "const": "synthetic" } },
+            "required": ["data_origin"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "metrics": {
+            "items": {
+              "properties": { "origin": { "const": "synthetic" } }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "boundary": {
+            "properties": { "data_origin": { "const": "measured" } },
+            "required": ["data_origin"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "metrics": {
+            "items": {
+              "properties": { "origin": { "const": "measured" } }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@-]{0,127}$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-(?:(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+(?:[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
+    },
+    "fingerprint": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "instant": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["measurement_validity", "content_integrity", "independent_review", "freshness", "policy_decision"],
+      "properties": {
+        "measurement_validity": { "enum": ["sufficient", "partial", "invalid", "unknown"] },
+        "content_integrity": { "enum": ["passed", "failed", "unverifiable"] },
+        "independent_review": { "enum": ["not-reviewed", "in-progress", "consistent", "deviation", "uncertain"] },
+        "freshness": { "enum": ["valid", "expiring", "expired", "unknown"] },
+        "policy_decision": { "enum": ["accepted", "rejected", "manual-review"] }
+      }
+    },
+    "boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["statement", "data_origin", "limitations", "performance_claim_allowed"],
+      "properties": {
+        "statement": { "type": "string", "minLength": 10, "maxLength": 1000 },
+        "data_origin": { "enum": ["synthetic", "hybrid", "measured"] },
+        "limitations": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 3, "maxLength": 500 }
+        },
+        "performance_claim_allowed": { "type": "boolean" }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["site_labels", "direction", "workload_class", "protocol"],
+      "properties": {
+        "site_labels": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 64,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{1,63}$"
+          }
+        },
+        "direction": { "enum": ["unidirectional", "bidirectional"] },
+        "workload_class": { "enum": ["network-transfer", "inference", "training", "other"] },
+        "protocol": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "version"],
+          "properties": {
+            "name": { "type": "string", "minLength": 1, "maxLength": 96 },
+            "version": { "type": "string", "minLength": 1, "maxLength": 96 }
+          }
+        }
+      }
+    },
+    "method": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method_id", "version", "content_fingerprint", "tool"],
+      "properties": {
+        "method_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/version" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" },
+        "tool": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "version"],
+          "properties": {
+            "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+            "version": { "type": "string", "minLength": 1, "maxLength": 120 }
+          }
+        }
+      }
+    },
+    "metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["metric", "aggregation", "unit", "value", "sample_count", "origin", "quality"],
+      "properties": {
+        "metric": { "type": "string", "minLength": 1, "maxLength": 96 },
+        "aggregation": { "enum": ["raw", "count", "mean", "min", "max", "p50", "p95", "p99"] },
+        "unit": { "type": "string", "minLength": 1, "maxLength": 48 },
+        "value": { "type": "number" },
+        "sample_count": { "type": "integer", "minimum": 1 },
+        "origin": { "enum": ["measured", "synthetic", "inferred", "declared"] },
+        "quality": { "enum": ["valid", "partial", "invalid", "unknown"] }
+      }
+    },
+    "links": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["self", "status", "manifest"],
+      "properties": {
+        "self": { "type": "string", "format": "uri", "pattern": "^https://", "maxLength": 1000 },
+        "status": { "type": "string", "format": "uri", "pattern": "^https://", "maxLength": 1000 },
+        "manifest": { "type": ["string", "null"], "format": "uri", "pattern": "^https://", "maxLength": 1000 }
+      }
+    }
+  }
+}

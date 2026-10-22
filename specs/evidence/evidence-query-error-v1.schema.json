@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/evidence/evidence-query-error-v1.schema.json",
+  "title": "CT-AIComm Evidence Query error v1",
+  "description": "Stable public error envelope without stack traces, storage details, tenant context, or customer data.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "response_type", "error"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "response_type": { "const": "evidence_query_error" },
+    "error": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message", "request_id", "retryable", "field"],
+      "properties": {
+        "code": {
+          "enum": [
+            "invalid_request",
+            "invalid_cursor",
+            "version_required",
+            "not_found",
+            "rate_limited",
+            "temporarily_unavailable",
+            "response_invalid",
+            "private_field_forbidden",
+            "field_unknown"
+          ]
+        },
+        "message": { "type": "string", "minLength": 3, "maxLength": 300 },
+        "request_id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@-]{0,127}$" },
+        "retryable": { "type": "boolean" },
+        "field": {
+          "type": ["string", "null"],
+          "pattern": "^/(?:[^~/]|~0|~1)+(?:/(?:[^~/]|~0|~1)+)*$",
+          "maxLength": 160
+        }
+      }
+    }
+  }
+}

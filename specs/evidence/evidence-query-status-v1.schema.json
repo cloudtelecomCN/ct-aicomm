@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/evidence/evidence-query-status-v1.schema.json",
+  "title": "CT-AIComm public evidence query status v1",
+  "description": "Point-in-time public status projection. Cache freshness is not evidence validity, authorization, or certification.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "response_type", "evidence_id", "version", "content_fingerprint", "lifecycle_state", "status", "boundary", "checked_at", "event_cursor", "cache_freshness_only", "certification_issued"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "response_type": { "const": "evidence_query_status" },
+    "evidence_id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@-]{0,127}$" },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-(?:(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+(?:[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
+    },
+    "content_fingerprint": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "lifecycle_state": { "enum": ["published", "expired", "superseded", "revoked"] },
+    "status": { "$ref": "evidence-query-record-v1.schema.json#/$defs/status" },
+    "boundary": { "$ref": "evidence-query-record-v1.schema.json#/$defs/boundary" },
+    "checked_at": { "type": "string", "format": "date-time", "pattern": "Z$" },
+    "event_cursor": { "type": ["string", "null"], "maxLength": 2048 },
+    "cache_freshness_only": { "const": true },
+    "certification_issued": { "const": false }
+  }
+}

@@ -48,6 +48,7 @@
     "tests/evidence-derivation.test.mjs",
     "tests/evidence-export-authorization.test.mjs",
     "tests/evidence-invalidation.test.mjs",
+    "tests/evidence-query.test.mjs",
     "tests/evidence-content-integrity.test.mjs",
     "tests/evidence-import.test.mjs",
     "tests/evidence-object-schema.test.mjs",
@@ -250,6 +251,27 @@
           "replacement_version": "1.1.0",
           "delivery_semantics": "at-least-once",
           "fail_closed_on_ttl_expiry": true,
+          "certification_issued": false
+        }
+      }
+    },
+    {
+      "id": "evidence-query-api",
+      "entrypoint": "examples/evidence/query-api-synthetic.mjs",
+      "expect": {
+        "equals": {
+          "data_origin": "synthetic",
+          "performance_claim_allowed": false,
+          "public_record_count": 2,
+          "first_page_count": 1,
+          "pagination_cursor_issued": true,
+          "second_page_count": 1,
+          "exact_version_required": true,
+          "status_cache_freshness_only": true,
+          "read_only_methods_only": true,
+          "credentials_attached": false,
+          "private_fields_returned": false,
+          "stable_error_code": "not_found",
           "certification_issued": false
         }
       }

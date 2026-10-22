@@ -1,0 +1,323 @@
+{
+  "openapi": "3.1.0",
+  "jsonSchemaDialect": "https://json-schema.org/draft/2020-12/schema",
+  "info": {
+    "title": "CT-AIComm Evidence Query API",
+    "version": "1.0.0",
+    "summary": "Portable read-only query contract for public Evidence Core projections.",
+    "description": "This contract defines public projections only and intentionally declares no production server. It does not expose tenant records, authenticate callers, authorize private evidence, return storage locators, or issue certification. Implementations choose their own host, deployment controls, and private authenticated APIs."
+  },
+  "tags": [
+    {
+      "name": "Evidence Query",
+      "description": "Read-only access to exact, public EvidenceVersion projections."
+    }
+  ],
+  "paths": {
+    "/evidence-versions": {
+      "get": {
+        "operationId": "listEvidenceVersions",
+        "summary": "List public evidence versions",
+        "description": "Returns immutable public projections in a stable order. A cursor is bound to the full filter set and page size.",
+        "tags": ["Evidence Query"],
+        "security": [],
+        "parameters": [
+          { "$ref": "#/components/parameters/Cursor" },
+          { "$ref": "#/components/parameters/Limit" },
+          { "$ref": "#/components/parameters/DataOrigin" },
+          { "$ref": "#/components/parameters/LifecycleState" },
+          { "$ref": "#/components/parameters/MeasurementValidity" },
+          { "$ref": "#/components/parameters/ContentIntegrity" },
+          { "$ref": "#/components/parameters/IndependentReview" },
+          { "$ref": "#/components/parameters/Freshness" },
+          { "$ref": "#/components/parameters/PolicyDecision" },
+          { "$ref": "#/components/parameters/WorkloadClass" },
+          { "$ref": "#/components/parameters/Protocol" },
+          { "$ref": "#/components/parameters/Site" },
+          { "$ref": "#/components/parameters/IfNoneMatch" }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of public evidence projections.",
+            "headers": {
+              "Cache-Control": { "$ref": "#/components/headers/CacheControl" },
+              "ETag": { "$ref": "#/components/headers/ETag" },
+              "X-Request-ID": { "$ref": "#/components/headers/RequestId" }
+            },
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/EvidenceQueryList" }
+              }
+            }
+          },
+          "304": { "$ref": "#/components/responses/NotModified" },
+          "400": { "$ref": "#/components/responses/InvalidRequest" },
+          "429": { "$ref": "#/components/responses/RateLimited" },
+          "503": { "$ref": "#/components/responses/Unavailable" }
+        }
+      }
+    },
+    "/evidence-versions/{evidenceId}/versions/{version}": {
+      "get": {
+        "operationId": "getEvidenceVersion",
+        "summary": "Get one exact public evidence version",
+        "description": "The version path parameter is mandatory. A mutable latest alias is deliberately not defined.",
+        "tags": ["Evidence Query"],
+        "security": [],
+        "parameters": [
+          { "$ref": "#/components/parameters/EvidenceId" },
+          { "$ref": "#/components/parameters/Version" },
+          { "$ref": "#/components/parameters/IfNoneMatch" }
+        ],
+        "responses": {
+          "200": {
+            "description": "One exact public evidence projection.",
+            "headers": {
+              "Cache-Control": { "$ref": "#/components/headers/CacheControl" },
+              "ETag": { "$ref": "#/components/headers/ETag" },
+              "X-Request-ID": { "$ref": "#/components/headers/RequestId" }
+            },
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "./evidence-query-record-v1.schema.json" }
+              }
+            }
+          },
+          "304": { "$ref": "#/components/responses/NotModified" },
+          "400": { "$ref": "#/components/responses/InvalidRequest" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "429": { "$ref": "#/components/responses/RateLimited" },
+          "503": { "$ref": "#/components/responses/Unavailable" }
+        }
+      }
+    },
+    "/evidence-versions/{evidenceId}/versions/{version}/status": {
+      "get": {
+        "operationId": "getEvidenceVersionStatus",
+        "summary": "Get the point-in-time public status of one exact version",
+        "description": "The response separates lifecycle and five status axes. HTTP cache freshness must not be treated as evidence validity.",
+        "tags": ["Evidence Query"],
+        "security": [],
+        "parameters": [
+          { "$ref": "#/components/parameters/EvidenceId" },
+          { "$ref": "#/components/parameters/Version" },
+          { "$ref": "#/components/parameters/IfNoneMatch" }
+        ],
+        "responses": {
+          "200": {
+            "description": "A point-in-time public status projection.",
+            "headers": {
+              "Cache-Control": { "$ref": "#/components/headers/StatusCacheControl" },
+              "ETag": { "$ref": "#/components/headers/ETag" },
+              "X-Request-ID": { "$ref": "#/components/headers/RequestId" }
+            },
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "./evidence-query-status-v1.schema.json" }
+              }
+            }
+          },
+          "304": { "$ref": "#/components/responses/NotModified" },
+          "400": { "$ref": "#/components/responses/InvalidRequest" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "429": { "$ref": "#/components/responses/RateLimited" },
+          "503": { "$ref": "#/components/responses/Unavailable" }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "Cursor": {
+        "in": "query",
+        "name": "cursor",
+        "required": false,
+        "description": "Opaque cursor bound to the complete normalized query.",
+        "schema": { "type": "string", "minLength": 1, "maxLength": 2048, "pattern": "^[A-Za-z0-9_-]+$" }
+      },
+      "Limit": {
+        "in": "query",
+        "name": "limit",
+        "required": false,
+        "schema": { "type": "integer", "minimum": 1, "maximum": 100, "default": 50 }
+      },
+      "DataOrigin": {
+        "in": "query",
+        "name": "data_origin",
+        "required": false,
+        "schema": { "type": "string", "enum": ["synthetic", "hybrid", "measured"] }
+      },
+      "LifecycleState": {
+        "in": "query",
+        "name": "lifecycle_state",
+        "required": false,
+        "schema": { "type": "string", "enum": ["published", "expired", "superseded", "revoked"] }
+      },
+      "MeasurementValidity": {
+        "in": "query",
+        "name": "measurement_validity",
+        "required": false,
+        "schema": { "type": "string", "enum": ["sufficient", "partial", "invalid", "unknown"] }
+      },
+      "ContentIntegrity": {
+        "in": "query",
+        "name": "content_integrity",
+        "required": false,
+        "schema": { "type": "string", "enum": ["passed", "failed", "unverifiable"] }
+      },
+      "IndependentReview": {
+        "in": "query",
+        "name": "independent_review",
+        "required": false,
+        "schema": { "type": "string", "enum": ["not-reviewed", "in-progress", "consistent", "deviation", "uncertain"] }
+      },
+      "Freshness": {
+        "in": "query",
+        "name": "freshness",
+        "required": false,
+        "schema": { "type": "string", "enum": ["valid", "expiring", "expired", "unknown"] }
+      },
+      "PolicyDecision": {
+        "in": "query",
+        "name": "policy_decision",
+        "required": false,
+        "schema": { "type": "string", "enum": ["accepted", "rejected", "manual-review"] }
+      },
+      "WorkloadClass": {
+        "in": "query",
+        "name": "workload_class",
+        "required": false,
+        "schema": { "type": "string", "enum": ["network-transfer", "inference", "training", "other"] }
+      },
+      "Protocol": {
+        "in": "query",
+        "name": "protocol",
+        "required": false,
+        "schema": { "type": "string", "minLength": 1, "maxLength": 96 }
+      },
+      "Site": {
+        "in": "query",
+        "name": "site",
+        "required": false,
+        "description": "Exact public site label; private endpoint and topology identifiers are not accepted.",
+        "schema": { "type": "string", "minLength": 2, "maxLength": 64 }
+      },
+      "EvidenceId": {
+        "in": "path",
+        "name": "evidenceId",
+        "required": true,
+        "schema": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@-]{0,127}$" }
+      },
+      "Version": {
+        "in": "path",
+        "name": "version",
+        "required": true,
+        "description": "Exact semantic version; latest is not supported.",
+        "schema": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-(?:(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+(?:[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
+        }
+      },
+      "IfNoneMatch": {
+        "in": "header",
+        "name": "If-None-Match",
+        "required": false,
+        "schema": { "type": "string", "maxLength": 133 }
+      }
+    },
+    "headers": {
+      "CacheControl": {
+        "description": "Implementation-selected public cache policy. Freshness is not evidence validity.",
+        "schema": { "type": "string" }
+      },
+      "StatusCacheControl": {
+        "description": "Short bounded status-cache policy. Downstream fail-closed TTL remains a separate CT-607 contract.",
+        "schema": { "type": "string" }
+      },
+      "ETag": {
+        "description": "Validator bound to the exact public representation.",
+        "schema": { "type": "string" }
+      },
+      "RequestId": {
+        "description": "Opaque request correlation identifier without tenant or customer data.",
+        "schema": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@-]{0,127}$" }
+      },
+      "RetryAfter": {
+        "description": "Seconds before retrying a rate-limited request.",
+        "schema": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "schemas": {
+      "EvidenceQueryRecord": { "$ref": "./evidence-query-record-v1.schema.json" },
+      "EvidenceQueryStatus": { "$ref": "./evidence-query-status-v1.schema.json" },
+      "EvidenceQueryError": { "$ref": "./evidence-query-error-v1.schema.json" },
+      "EvidenceQueryList": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["schema_version", "response_type", "query_fingerprint", "items", "page", "boundary"],
+        "properties": {
+          "schema_version": { "const": "1.0.0" },
+          "response_type": { "const": "evidence_query_list" },
+          "query_fingerprint": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+          "items": {
+            "type": "array",
+            "maxItems": 100,
+            "items": { "$ref": "./evidence-query-record-v1.schema.json" }
+          },
+          "page": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["limit", "returned", "next_cursor"],
+            "properties": {
+              "limit": { "type": "integer", "minimum": 1, "maximum": 100 },
+              "returned": { "type": "integer", "minimum": 0, "maximum": 100 },
+              "next_cursor": { "type": ["string", "null"], "maxLength": 2048, "pattern": "^[A-Za-z0-9_-]+$" }
+            }
+          },
+          "boundary": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["public_projection_only", "private_data_returned", "certification_issued"],
+            "properties": {
+              "public_projection_only": { "const": true },
+              "private_data_returned": { "const": false },
+              "certification_issued": { "const": false }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "NotModified": {
+        "description": "The exact public representation is unchanged.",
+        "headers": {
+          "ETag": { "$ref": "#/components/headers/ETag" },
+          "X-Request-ID": { "$ref": "#/components/headers/RequestId" }
+        }
+      },
+      "InvalidRequest": {
+        "description": "A filter, path value, or cursor is invalid.",
+        "headers": { "X-Request-ID": { "$ref": "#/components/headers/RequestId" } },
+        "content": { "application/json": { "schema": { "$ref": "./evidence-query-error-v1.schema.json" } } }
+      },
+      "NotFound": {
+        "description": "The exact public evidence version was not found.",
+        "headers": { "X-Request-ID": { "$ref": "#/components/headers/RequestId" } },
+        "content": { "application/json": { "schema": { "$ref": "./evidence-query-error-v1.schema.json" } } }
+      },
+      "RateLimited": {
+        "description": "The public read quota was exceeded.",
+        "headers": {
+          "Retry-After": { "$ref": "#/components/headers/RetryAfter" },
+          "X-Request-ID": { "$ref": "#/components/headers/RequestId" }
+        },
+        "content": { "application/json": { "schema": { "$ref": "./evidence-query-error-v1.schema.json" } } }
+      },
+      "Unavailable": {
+        "description": "The public projection is temporarily unavailable; no private fallback is returned.",
+        "headers": { "X-Request-ID": { "$ref": "#/components/headers/RequestId" } },
+        "content": { "application/json": { "schema": { "$ref": "./evidence-query-error-v1.schema.json" } } }
+      }
+    }
+  }
+}
