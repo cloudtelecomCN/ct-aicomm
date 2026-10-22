@@ -1,5 +1,7 @@
 export const PASSPORT_FREEZE_VERSION: "1.0.0";
 export const PASSPORT_CHANGE_POLICY: "new-run-required-after-start";
+export const PASSPORT_PREFLIGHT_VERSION: "1.0.0";
+export const PASSPORT_PREFLIGHT_POLICY: "all-gates-must-pass-before-start";
 export const PASSPORT_FREEZE_ERROR_CODES: Readonly<{
   inputInvalid: "passport_freeze_input_invalid";
   fieldUnknown: "passport_freeze_field_unknown";
@@ -11,6 +13,11 @@ export const PASSPORT_FREEZE_ERROR_CODES: Readonly<{
   newRunRequired: "passport_new_run_required";
   newRunIdRequired: "passport_new_run_id_required";
   runStateInvalid: "passport_run_state_invalid";
+  localImportRequired: "passport_local_import_required";
+  preflightRequired: "passport_preflight_required";
+  preflightFailed: "passport_preflight_failed";
+  preflightExpired: "passport_preflight_expired";
+  preflightMismatch: "passport_preflight_mismatch";
 }>;
 
 export type PassportWorkloadClass = "network-transfer" | "inference" | "training" | "other";
@@ -120,11 +127,171 @@ export interface PassportRunPlanInput {
   supersedes_run_ref?: PassportRunReference | null;
 }
 
+export interface PassportLocalRunImport {
+  schema_version: "1.0.0";
+  record_type: "passport_local_run_import";
+  import_id: string;
+  version: string;
+  tenant_id: string;
+  imported_by: string;
+  imported_at: string;
+  source: {
+    kind: "local-file" | "stdin" | "local-process";
+    media_type: string;
+    payload_fingerprint: `sha256:${string}`;
+  };
+  run_ref: PassportRunReference;
+  freeze_ref: PassportFreezeReference;
+  boundary: {
+    mode: "local-offline";
+    network_accessed: false;
+    raw_payload_retained: false;
+    credentials_retained: false;
+  };
+  content_fingerprint: `sha256:${string}`;
+}
+
+export interface PassportExecutionAuthorizationCheck {
+  authorization_id: string;
+  version: string;
+  tenant_id: string;
+  principal_id: string;
+  action: string;
+  decision: "allow" | "deny";
+  valid_from: string;
+  valid_until: string;
+  revoked_at: string | null;
+  run_ref: PassportRunReference;
+  freeze_ref: PassportFreezeReference;
+  source_fingerprint: `sha256:${string}`;
+}
+
+export interface PassportClockCheck {
+  source: "system-utc" | "ntp" | "ptp" | "declared";
+  checked_at: string;
+  maximum_age_ms: number;
+  maximum_skew_ms: number;
+  observed_skew_ms: number;
+  synchronized: boolean;
+  source_fingerprint: `sha256:${string}`;
+}
+
+export interface PassportBudgetCheck {
+  budget_id: string;
+  version: string;
+  tenant_id: string;
+  run_ref: PassportRunReference;
+  currency: string;
+  limit_minor: number;
+  committed_minor: number;
+  estimated_run_minor: number;
+  valid_until: string;
+  source_fingerprint: `sha256:${string}`;
+}
+
+export interface PassportConcurrencyCheck {
+  scope_id: string;
+  tenant_id: string;
+  run_ref: PassportRunReference;
+  checked_at: string;
+  maximum_age_ms: number;
+  maximum: number;
+  active: number;
+  requested: number;
+  source_fingerprint: `sha256:${string}`;
+}
+
+export interface PassportStopCondition {
+  condition_id: string;
+  kind: "max-duration" | "max-failures" | "budget-exhausted" | "manual-cancel" | "custom";
+  metric: string;
+  operator: "gte" | "gt" | "eq";
+  threshold: number;
+  unit: string;
+  action: "stop" | "warn";
+}
+
+export type PassportPreflightGate = "authorization" | "clock" | "budget" | "concurrency" | "stop_conditions";
+
+export interface PassportRunPreflight {
+  schema_version: "1.0.0";
+  record_type: "passport_run_preflight";
+  preflight_id: string;
+  version: string;
+  tenant_id: string;
+  evaluated_by: string;
+  execution_principal_id: string;
+  evaluated_at: string;
+  valid_until: string;
+  policy: "all-gates-must-pass-before-start";
+  import_ref: {
+    import_id: string;
+    version: string;
+    tenant_id: string;
+    content_fingerprint: `sha256:${string}`;
+  };
+  run_ref: PassportRunReference;
+  freeze_ref: PassportFreezeReference;
+  planned_window: { starts_at: string; ends_at: string };
+  authorization: PassportExecutionAuthorizationCheck;
+  clock: PassportClockCheck;
+  budget: PassportBudgetCheck;
+  concurrency: PassportConcurrencyCheck;
+  stop_conditions: PassportStopCondition[];
+  gate_results: Record<PassportPreflightGate, { status: "passed" | "failed"; codes: string[] }>;
+  decision: "passed" | "failed";
+  blockers: Array<{ gate: PassportPreflightGate; code: string }>;
+  boundary: {
+    preflight_only: true;
+    execution_performed: false;
+    performance_claim_allowed: false;
+  };
+  content_fingerprint: `sha256:${string}`;
+}
+
+export interface PassportRunPreflightInput {
+  preflight_id: string;
+  version: string;
+  tenant_id: string;
+  evaluated_by: string;
+  execution_principal_id: string;
+  evaluated_at: string;
+  local_import: PassportLocalRunImport;
+  plan: PassportRunBinding;
+  freeze: PassportScenarioMethodFreeze;
+  authorization: PassportExecutionAuthorizationCheck;
+  clock: PassportClockCheck;
+  budget: PassportBudgetCheck;
+  concurrency: PassportConcurrencyCheck;
+  stop_conditions: PassportStopCondition[];
+}
+
 export function createPassportScenarioMethodFreeze(input: PassportScenarioMethodFreezeInput): PassportScenarioMethodFreeze;
 export function verifyPassportScenarioMethodFreeze(record: unknown): PassportScenarioMethodFreeze;
 export function createPassportRunPlan(input: PassportRunPlanInput): PassportRunBinding & { state: "planned"; started_at: null };
 export function verifyPassportRunBinding(record: unknown): PassportRunBinding;
-export function startPassportRun(input: { plan: PassportRunBinding; version: string; started_at: string }): PassportRunBinding & { state: "started"; started_at: string };
+export function createPassportLocalRunImport(input: {
+  import_id: string;
+  version: string;
+  tenant_id: string;
+  imported_by: string;
+  imported_at: string;
+  source: PassportLocalRunImport["source"];
+  plan: PassportRunBinding;
+  freeze: PassportScenarioMethodFreeze;
+}): PassportLocalRunImport;
+export function verifyPassportLocalRunImport(record: unknown): PassportLocalRunImport;
+export function createPassportRunPreflight(input: PassportRunPreflightInput): PassportRunPreflight;
+export function verifyPassportRunPreflight(record: unknown): PassportRunPreflight;
+export function startPassportRun(input: {
+  plan: PassportRunBinding;
+  freeze: PassportScenarioMethodFreeze;
+  local_import: PassportLocalRunImport;
+  preflight: PassportRunPreflight;
+  execution_principal_id: string;
+  version: string;
+  started_at: string;
+}): PassportRunBinding & { state: "started"; started_at: string };
 export function assertPassportRunFreeze(input: { run: PassportRunBinding; freeze: PassportScenarioMethodFreeze }): Readonly<{
   matched: true;
   run_id: string;

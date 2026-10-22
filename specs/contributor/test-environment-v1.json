@@ -53,6 +53,7 @@
     "tests/evidence-import.test.mjs",
     "tests/evidence-object-schema.test.mjs",
     "tests/evidence-lifecycle.test.mjs",
+    "tests/passport-local-import-preflight.test.mjs",
     "tests/passport-scenario-method-freeze.test.mjs",
     "tests/public-sdk-boundary.test.mjs",
     "tests/registry-entry-integrity.test.mjs"
@@ -295,6 +296,27 @@
           "site_direction_protocol_workload_frozen": true,
           "method_template_frozen": true,
           "external_network_used": false,
+          "certification_issued": false
+        }
+      }
+    },
+    {
+      "id": "passport-local-import-preflight",
+      "entrypoint": "examples/passport/local-import-preflight-synthetic.mjs",
+      "expect": {
+        "equals": {
+          "data_origin": "synthetic",
+          "local_import_verified": true,
+          "passed_preflight_verified": true,
+          "all_five_gates_passed": true,
+          "started_after_passed_preflight": true,
+          "failed_preflight_recorded": true,
+          "failed_preflight_blocked_start": true,
+          "failed_run_remained_planned": true,
+          "raw_payload_retained": false,
+          "credentials_retained": false,
+          "external_network_used": false,
+          "performance_claim_allowed": false,
           "certification_issued": false
         }
       }

@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "sdk_version": "0.15.0",
+  "sdk_version": "0.16.0",
   "runtime": "Node.js >=22 ESM",
   "entrypoint": "sdk/index.mjs",
   "exports": [
@@ -38,6 +38,8 @@
     "PASSPORT_CHANGE_POLICY",
     "PASSPORT_FREEZE_ERROR_CODES",
     "PASSPORT_FREEZE_VERSION",
+    "PASSPORT_PREFLIGHT_POLICY",
+    "PASSPORT_PREFLIGHT_VERSION",
     "REGISTRY_ENTRY_INTEGRITY_VERSION",
     "NetworkTelemetryReporter",
     "NonceReplayGuard",
@@ -66,8 +68,10 @@
     "createEvidenceQueryStatus",
     "createEvidenceTtlContract",
     "createPreparePolicyMessage",
+    "createPassportLocalRunImport",
     "createPassportReplacementRun",
     "createPassportRunPlan",
+    "createPassportRunPreflight",
     "createPassportScenarioMethodFreeze",
     "createRegistrationMessage",
     "createReceipt",
@@ -120,7 +124,9 @@
     "verifyEvidenceImportLedger",
     "verifyEvidenceInvalidationEvent",
     "verifyEvidenceTtlContract",
+    "verifyPassportLocalRunImport",
     "verifyPassportRunBinding",
+    "verifyPassportRunPreflight",
     "verifyPassportScenarioMethodFreeze",
     "verifyRegistryEntryHistory",
     "verifyRegistryEntryRecord"
@@ -152,7 +158,9 @@
     "specs/evidence/evidence-import-record-v1.schema.json",
     "specs/evidence/evidence-lifecycle-event-v1.schema.json",
     "specs/evidence/evidence-status-ttl-contract-v1.schema.json",
+    "specs/passport/local-run-import-v1.schema.json",
     "specs/passport/run-freeze-binding-v1.schema.json",
+    "specs/passport/run-preflight-v1.schema.json",
     "specs/passport/scenario-method-freeze-v1.schema.json",
     "specs/registry/registry-entry-record-v1.schema.json",
     "docs/bench-reproduction/ttft-sample.schema.json"

@@ -72,8 +72,9 @@ rule IDs, statistics, and prerequisites are rejected.
 
 CT-609 does not replace the Evidence Core `Scope`, `Method`, or `Run` objects.
 It adds a passport-specific freeze and run binding around exact Scope and Method
-references. CT-610 can later attach authorization, clock, budget, concurrency,
-and stop-condition preflight evidence without redefining the frozen question.
+references. CT-610 now attaches authorization, clock, budget, concurrency, and
+stop-condition preflight evidence without redefining the frozen question. The
+public start transition requires that passed preflight.
 
 ## Public and private boundary
 

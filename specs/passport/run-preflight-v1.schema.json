@@ -1,0 +1,307 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/passport/run-preflight-v1.schema.json",
+  "title": "CT-AIComm link evidence passport run preflight v1",
+  "description": "Immutable local preflight evidence for authorization, clock, budget, concurrency, and hard stop conditions. A failed or expired preflight cannot transition a run to started.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_type",
+    "preflight_id",
+    "version",
+    "tenant_id",
+    "evaluated_by",
+    "execution_principal_id",
+    "evaluated_at",
+    "valid_until",
+    "policy",
+    "import_ref",
+    "run_ref",
+    "freeze_ref",
+    "planned_window",
+    "authorization",
+    "clock",
+    "budget",
+    "concurrency",
+    "stop_conditions",
+    "gate_results",
+    "decision",
+    "blockers",
+    "boundary",
+    "content_fingerprint"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "record_type": { "const": "passport_run_preflight" },
+    "preflight_id": { "$ref": "#/$defs/id" },
+    "version": { "$ref": "#/$defs/version" },
+    "tenant_id": { "$ref": "#/$defs/id" },
+    "evaluated_by": { "$ref": "#/$defs/id" },
+    "execution_principal_id": { "$ref": "#/$defs/id" },
+    "evaluated_at": { "$ref": "#/$defs/instant" },
+    "valid_until": { "$ref": "#/$defs/instant" },
+    "policy": { "const": "all-gates-must-pass-before-start" },
+    "import_ref": { "$ref": "#/$defs/importReference" },
+    "run_ref": { "$ref": "#/$defs/runReference" },
+    "freeze_ref": { "$ref": "#/$defs/freezeReference" },
+    "planned_window": { "$ref": "#/$defs/timeWindow" },
+    "authorization": { "$ref": "#/$defs/authorization" },
+    "clock": { "$ref": "#/$defs/clock" },
+    "budget": { "$ref": "#/$defs/budget" },
+    "concurrency": { "$ref": "#/$defs/concurrency" },
+    "stop_conditions": {
+      "type": "array",
+      "minItems": 0,
+      "maxItems": 32,
+      "items": { "$ref": "#/$defs/stopCondition" }
+    },
+    "gate_results": { "$ref": "#/$defs/gateResults" },
+    "decision": { "enum": ["passed", "failed"] },
+    "blockers": {
+      "type": "array",
+      "maxItems": 32,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/blocker" }
+    },
+    "boundary": { "$ref": "#/$defs/boundary" },
+    "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "decision": { "const": "passed" } }, "required": ["decision"] },
+      "then": {
+        "properties": {
+          "blockers": { "maxItems": 0 },
+          "stop_conditions": { "minItems": 3 },
+          "gate_results": {
+            "properties": {
+              "authorization": { "$ref": "#/$defs/passedGate" },
+              "clock": { "$ref": "#/$defs/passedGate" },
+              "budget": { "$ref": "#/$defs/passedGate" },
+              "concurrency": { "$ref": "#/$defs/passedGate" },
+              "stop_conditions": { "$ref": "#/$defs/passedGate" }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "decision": { "const": "failed" } }, "required": ["decision"] },
+      "then": { "properties": { "blockers": { "minItems": 1 } } }
+    }
+  ],
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-(?:(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+(?:[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
+    },
+    "fingerprint": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "instant": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "importReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["import_id", "version", "tenant_id", "content_fingerprint"],
+      "properties": {
+        "import_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/version" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "runReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["run_id", "version", "tenant_id", "content_fingerprint"],
+      "properties": {
+        "run_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/version" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "freezeReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["freeze_id", "version", "tenant_id", "content_fingerprint"],
+      "properties": {
+        "freeze_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/version" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "timeWindow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["starts_at", "ends_at"],
+      "properties": {
+        "starts_at": { "$ref": "#/$defs/instant" },
+        "ends_at": { "$ref": "#/$defs/instant" }
+      }
+    },
+    "authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorization_id",
+        "version",
+        "tenant_id",
+        "principal_id",
+        "action",
+        "decision",
+        "valid_from",
+        "valid_until",
+        "revoked_at",
+        "run_ref",
+        "freeze_ref",
+        "source_fingerprint"
+      ],
+      "properties": {
+        "authorization_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/version" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "principal_id": { "$ref": "#/$defs/id" },
+        "action": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "decision": { "enum": ["allow", "deny"] },
+        "valid_from": { "$ref": "#/$defs/instant" },
+        "valid_until": { "$ref": "#/$defs/instant" },
+        "revoked_at": {
+          "oneOf": [
+            { "$ref": "#/$defs/instant" },
+            { "type": "null" }
+          ]
+        },
+        "run_ref": { "$ref": "#/$defs/runReference" },
+        "freeze_ref": { "$ref": "#/$defs/freezeReference" },
+        "source_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "clock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "checked_at", "maximum_age_ms", "maximum_skew_ms", "observed_skew_ms", "synchronized", "source_fingerprint"],
+      "properties": {
+        "source": { "enum": ["system-utc", "ntp", "ptp", "declared"] },
+        "checked_at": { "$ref": "#/$defs/instant" },
+        "maximum_age_ms": { "type": "integer", "minimum": 1 },
+        "maximum_skew_ms": { "type": "number", "minimum": 0 },
+        "observed_skew_ms": { "type": "number", "minimum": 0 },
+        "synchronized": { "type": "boolean" },
+        "source_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["budget_id", "version", "tenant_id", "run_ref", "currency", "limit_minor", "committed_minor", "estimated_run_minor", "valid_until", "source_fingerprint"],
+      "properties": {
+        "budget_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/version" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "run_ref": { "$ref": "#/$defs/runReference" },
+        "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+        "limit_minor": { "type": "integer", "minimum": 0 },
+        "committed_minor": { "type": "integer", "minimum": 0 },
+        "estimated_run_minor": { "type": "integer", "minimum": 0 },
+        "valid_until": { "$ref": "#/$defs/instant" },
+        "source_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "concurrency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scope_id", "tenant_id", "run_ref", "checked_at", "maximum_age_ms", "maximum", "active", "requested", "source_fingerprint"],
+      "properties": {
+        "scope_id": { "$ref": "#/$defs/id" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "run_ref": { "$ref": "#/$defs/runReference" },
+        "checked_at": { "$ref": "#/$defs/instant" },
+        "maximum_age_ms": { "type": "integer", "minimum": 1 },
+        "maximum": { "type": "integer", "minimum": 1 },
+        "active": { "type": "integer", "minimum": 0 },
+        "requested": { "type": "integer", "minimum": 1 },
+        "source_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "stopCondition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["condition_id", "kind", "metric", "operator", "threshold", "unit", "action"],
+      "properties": {
+        "condition_id": { "$ref": "#/$defs/id" },
+        "kind": { "enum": ["max-duration", "max-failures", "budget-exhausted", "manual-cancel", "custom"] },
+        "metric": { "type": "string", "minLength": 1, "maxLength": 96 },
+        "operator": { "enum": ["gte", "gt", "eq"] },
+        "threshold": { "type": "number", "minimum": 0 },
+        "unit": { "type": "string", "minLength": 1, "maxLength": 48 },
+        "action": { "enum": ["stop", "warn"] }
+      }
+    },
+    "gateResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "codes"],
+      "properties": {
+        "status": { "enum": ["passed", "failed"] },
+        "codes": {
+          "type": "array",
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1, "maxLength": 96 }
+        }
+      }
+    },
+    "passedGate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "codes"],
+      "properties": {
+        "status": { "const": "passed" },
+        "codes": { "type": "array", "maxItems": 0 }
+      }
+    },
+    "gateResults": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authorization", "clock", "budget", "concurrency", "stop_conditions"],
+      "properties": {
+        "authorization": { "$ref": "#/$defs/gateResult" },
+        "clock": { "$ref": "#/$defs/gateResult" },
+        "budget": { "$ref": "#/$defs/gateResult" },
+        "concurrency": { "$ref": "#/$defs/gateResult" },
+        "stop_conditions": { "$ref": "#/$defs/gateResult" }
+      }
+    },
+    "blocker": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["gate", "code"],
+      "properties": {
+        "gate": { "enum": ["authorization", "clock", "budget", "concurrency", "stop_conditions"] },
+        "code": { "type": "string", "minLength": 1, "maxLength": 96 }
+      }
+    },
+    "boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["preflight_only", "execution_performed", "performance_claim_allowed"],
+      "properties": {
+        "preflight_only": { "const": true },
+        "execution_performed": { "const": false },
+        "performance_claim_allowed": { "const": false }
+      }
+    }
+  }
+}

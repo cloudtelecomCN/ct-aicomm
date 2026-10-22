@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/passport/local-run-import-v1.schema.json",
+  "title": "CT-AIComm link evidence passport local run import v1",
+  "description": "Content-addressed local, offline import of one planned run and its exact scenario-method freeze. The record retains neither source paths, payload bytes, nor credentials.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_type",
+    "import_id",
+    "version",
+    "tenant_id",
+    "imported_by",
+    "imported_at",
+    "source",
+    "run_ref",
+    "freeze_ref",
+    "boundary",
+    "content_fingerprint"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "record_type": { "const": "passport_local_run_import" },
+    "import_id": { "$ref": "#/$defs/id" },
+    "version": { "$ref": "#/$defs/version" },
+    "tenant_id": { "$ref": "#/$defs/id" },
+    "imported_by": { "$ref": "#/$defs/id" },
+    "imported_at": { "$ref": "#/$defs/instant" },
+    "source": { "$ref": "#/$defs/source" },
+    "run_ref": { "$ref": "#/$defs/runReference" },
+    "freeze_ref": { "$ref": "#/$defs/freezeReference" },
+    "boundary": { "$ref": "#/$defs/boundary" },
+    "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-(?:(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+(?:[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
+    },
+    "fingerprint": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "instant": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "media_type", "payload_fingerprint"],
+      "properties": {
+        "kind": { "enum": ["local-file", "stdin", "local-process"] },
+        "media_type": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 96,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9!#$&^_.+-]+/[A-Za-z0-9][A-Za-z0-9!#$&^_.+-]+$"
+        },
+        "payload_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "runReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["run_id", "version", "tenant_id", "content_fingerprint"],
+      "properties": {
+        "run_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/version" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "freezeReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["freeze_id", "version", "tenant_id", "content_fingerprint"],
+      "properties": {
+        "freeze_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/version" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "network_accessed", "raw_payload_retained", "credentials_retained"],
+      "properties": {
+        "mode": { "const": "local-offline" },
+        "network_accessed": { "const": false },
+        "raw_payload_retained": { "const": false },
+        "credentials_retained": { "const": false }
+      }
+    }
+  }
+}

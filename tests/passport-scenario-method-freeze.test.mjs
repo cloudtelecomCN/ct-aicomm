@@ -8,7 +8,9 @@ import {
   PASSPORT_FREEZE_ERROR_CODES,
   PASSPORT_FREEZE_VERSION,
   assertPassportRunFreeze,
+  createPassportLocalRunImport,
   createPassportReplacementRun,
+  createPassportRunPreflight,
   createPassportRunPlan,
   createPassportScenarioMethodFreeze,
   startPassportRun,
@@ -104,12 +106,113 @@ function runPlan(freeze = createPassportScenarioMethodFreeze(freezeInput())) {
   });
 }
 
-function startedRun(freeze = createPassportScenarioMethodFreeze(freezeInput())) {
+function startGate(plan, freeze) {
+  const localImport = createPassportLocalRunImport({
+    import_id: `import-${plan.run_id}`,
+    version: "1.0.0",
+    tenant_id: plan.tenant_id,
+    imported_by: plan.created_by,
+    imported_at: "2026-10-23T08:09:00.000Z",
+    source: {
+      kind: "local-process",
+      media_type: "application/json",
+      payload_fingerprint: hash("9")
+    },
+    plan,
+    freeze
+  });
+  const runRef = {
+    run_id: plan.run_id,
+    version: plan.version,
+    tenant_id: plan.tenant_id,
+    content_fingerprint: plan.content_fingerprint
+  };
+  const freezeRef = {
+    freeze_id: freeze.freeze_id,
+    version: freeze.version,
+    tenant_id: freeze.tenant_id,
+    content_fingerprint: freeze.content_fingerprint
+  };
+  const preflight = createPassportRunPreflight({
+    preflight_id: `preflight-${plan.run_id}`,
+    version: "1.0.0",
+    tenant_id: plan.tenant_id,
+    evaluated_by: "principal-synthetic-preflight",
+    execution_principal_id: plan.created_by,
+    evaluated_at: "2026-10-23T08:09:30.000Z",
+    local_import: localImport,
+    plan,
+    freeze,
+    authorization: {
+      authorization_id: `authorization-${plan.run_id}`,
+      version: "1.0.0",
+      tenant_id: plan.tenant_id,
+      principal_id: plan.created_by,
+      action: "execute-passport-run",
+      decision: "allow",
+      valid_from: "2026-10-23T08:00:00.000Z",
+      valid_until: "2026-10-23T08:30:00.000Z",
+      revoked_at: null,
+      run_ref: runRef,
+      freeze_ref: freezeRef,
+      source_fingerprint: hash("8")
+    },
+    clock: {
+      source: "declared",
+      checked_at: "2026-10-23T08:09:30.000Z",
+      maximum_age_ms: 600000,
+      maximum_skew_ms: 100,
+      observed_skew_ms: 5,
+      synchronized: true,
+      source_fingerprint: hash("6")
+    },
+    budget: {
+      budget_id: "budget-synthetic-passport",
+      version: "1.0.0",
+      tenant_id: plan.tenant_id,
+      run_ref: runRef,
+      currency: "USD",
+      limit_minor: 1000,
+      committed_minor: 100,
+      estimated_run_minor: 200,
+      valid_until: "2026-10-23T08:30:00.000Z",
+      source_fingerprint: hash("7")
+    },
+    concurrency: {
+      scope_id: "concurrency-synthetic-passport",
+      tenant_id: plan.tenant_id,
+      run_ref: runRef,
+      checked_at: "2026-10-23T08:09:30.000Z",
+      maximum_age_ms: 600000,
+      maximum: 4,
+      active: 1,
+      requested: 1,
+      source_fingerprint: hash("5")
+    },
+    stop_conditions: [
+      { condition_id: "stop-budget", kind: "budget-exhausted", metric: "spent_minor", operator: "gte", threshold: 900, unit: "USD:minor", action: "stop" },
+      { condition_id: "stop-duration", kind: "max-duration", metric: "elapsed_ms", operator: "gte", threshold: 600000, unit: "ms", action: "stop" },
+      { condition_id: "stop-failures", kind: "max-failures", metric: "failure_count", operator: "gte", threshold: 3, unit: "count", action: "stop" }
+    ]
+  });
+  return { localImport, preflight };
+}
+
+function startPlan(plan, freeze, version = "1.0.1") {
+  const { localImport, preflight } = startGate(plan, freeze);
   return startPassportRun({
-    plan: runPlan(freeze),
-    version: "1.0.1",
+    plan,
+    freeze,
+    local_import: localImport,
+    preflight,
+    execution_principal_id: plan.created_by,
+    version,
     started_at: "2026-10-23T08:10:00.000Z"
   });
+}
+
+function startedRun(freeze = createPassportScenarioMethodFreeze(freezeInput())) {
+  return startPlan(runPlan(freeze), freeze);
 }
 
 function assertCode(code) {
@@ -176,7 +279,7 @@ test("rejects floating versions, unknown fields, cross-tenant references, and fa
 test("binds a started run to one exact freeze and protects both fingerprints", () => {
   const freeze = createPassportScenarioMethodFreeze(freezeInput());
   const plan = runPlan(freeze);
-  const started = startPassportRun({ plan, version: "1.0.1", started_at: "2026-10-23T08:10:00.000Z" });
+  const started = startPlan(plan, freeze);
 
   assert.equal(plan.state, "planned");
   assert.equal(plan.started_at, null);
@@ -186,7 +289,7 @@ test("binds a started run to one exact freeze and protects both fingerprints", (
   assert.equal(assertPassportRunFreeze({ run: started, freeze }).matched, true);
   assert.equal(verifyPassportRunBinding(started).content_fingerprint, started.content_fingerprint);
   assert.throws(
-    () => startPassportRun({ plan, version: plan.version, started_at: "2026-10-23T08:10:00.000Z" }),
+    () => startPlan(plan, freeze, plan.version),
     assertCode(PASSPORT_FREEZE_ERROR_CODES.inputInvalid)
   );
 
@@ -293,7 +396,7 @@ test("publishes strict schemas, bilingual guidance, SDK exports, and an offline 
     assert.match(document, /synthetic|合成/iu);
     assert.match(document, /certification|认证/iu);
   }
-  assert.equal(publicApi.sdk_version, "0.15.0");
+  assert.equal(publicApi.sdk_version, "0.16.0");
   for (const contract of [
     "specs/passport/scenario-method-freeze-v1.schema.json",
     "specs/passport/run-freeze-binding-v1.schema.json"

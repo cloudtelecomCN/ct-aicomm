@@ -23,6 +23,7 @@
 - [Downstream invalidation and TTL v1](evidence/downstream-invalidation-and-ttl-v1.md)
 - [Evidence Query API and SDK v1](evidence/query-api-and-sdk-v1.md)
 - [Link Evidence Passport scenario and method freeze v1](passport/scenario-and-method-freeze-v1.md)
+- [Link Evidence Passport local import and run preflight v1](passport/local-import-and-run-preflight-v1.md)
 - [CT-Bench reproduction and evidence contract](bench-reproduction/README.md)
 - [CT-DataPlane Agent threat model](security/agent-threat-model.md)
 - [CT-DataPlane Agent operations runbook](agent/operations.md)

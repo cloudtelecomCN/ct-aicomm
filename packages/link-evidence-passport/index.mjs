@@ -5,6 +5,8 @@ import {
 
 export const PASSPORT_FREEZE_VERSION = "1.0.0";
 export const PASSPORT_CHANGE_POLICY = "new-run-required-after-start";
+export const PASSPORT_PREFLIGHT_VERSION = "1.0.0";
+export const PASSPORT_PREFLIGHT_POLICY = "all-gates-must-pass-before-start";
 
 export const PASSPORT_FREEZE_ERROR_CODES = Object.freeze({
   inputInvalid: "passport_freeze_input_invalid",
@@ -16,7 +18,12 @@ export const PASSPORT_FREEZE_ERROR_CODES = Object.freeze({
   freezeMismatch: "passport_freeze_mismatch",
   newRunRequired: "passport_new_run_required",
   newRunIdRequired: "passport_new_run_id_required",
-  runStateInvalid: "passport_run_state_invalid"
+  runStateInvalid: "passport_run_state_invalid",
+  localImportRequired: "passport_local_import_required",
+  preflightRequired: "passport_preflight_required",
+  preflightFailed: "passport_preflight_failed",
+  preflightExpired: "passport_preflight_expired",
+  preflightMismatch: "passport_preflight_mismatch"
 });
 
 const ID = /^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$/;
@@ -30,6 +37,13 @@ const DATA_ORIGINS = new Set(["synthetic", "hybrid", "measured"]);
 const AGGREGATIONS = new Set(["raw", "count", "mean", "min", "max", "p50", "p95", "p99"]);
 const AGGREGATION_ORDER = Object.freeze(["raw", "count", "mean", "min", "max", "p50", "p95", "p99"]);
 const RUN_STATES = new Set(["planned", "started"]);
+const LOCAL_IMPORT_SOURCE_KINDS = new Set(["local-file", "stdin", "local-process"]);
+const CLOCK_SOURCES = new Set(["system-utc", "ntp", "ptp", "declared"]);
+const AUTHORIZATION_DECISIONS = new Set(["allow", "deny"]);
+const STOP_CONDITION_KINDS = new Set(["max-duration", "max-failures", "budget-exhausted", "manual-cancel", "custom"]);
+const STOP_CONDITION_OPERATORS = new Set(["gte", "gt", "eq"]);
+const REQUIRED_STOP_CONDITIONS = Object.freeze(["max-duration", "max-failures", "budget-exhausted"]);
+const PREFLIGHT_GATES = Object.freeze(["authorization", "clock", "budget", "concurrency", "stop_conditions"]);
 
 function fail(code, message) {
   const error = new TypeError(message);
@@ -105,6 +119,18 @@ function canonicalInstant(value, label) {
 
 function requireInteger(value, label, minimum = 0) {
   if (!Number.isInteger(value) || value < minimum) fail(PASSPORT_FREEZE_ERROR_CODES.inputInvalid, `${label} is invalid`);
+  return value;
+}
+
+function requireFiniteNumber(value, label, minimum = -Infinity) {
+  if (typeof value !== "number" || !Number.isFinite(value) || value < minimum) {
+    fail(PASSPORT_FREEZE_ERROR_CODES.inputInvalid, `${label} is invalid`);
+  }
+  return value;
+}
+
+function requireBoolean(value, label) {
+  if (typeof value !== "boolean") fail(PASSPORT_FREEZE_ERROR_CODES.inputInvalid, `${label} must be a boolean`);
   return value;
 }
 
@@ -471,10 +497,577 @@ export function verifyPassportRunBinding(record) {
   return deepFreeze({ ...body, content_fingerprint: expectedFingerprint });
 }
 
-export function startPassportRun({ plan, version, started_at: startedAt }) {
-  const verifiedPlan = verifyPassportRunBinding(plan);
+function normalizeLocalImportSource(value, label = "source") {
+  exactObject(value, ["kind", "media_type", "payload_fingerprint"], [], label);
+  return {
+    kind: requireEnum(value.kind, LOCAL_IMPORT_SOURCE_KINDS, `${label}.kind`),
+    media_type: requireString(value.media_type, `${label}.media_type`, {
+      max: 96,
+      pattern: /^[a-z0-9][a-z0-9!#$&^_.+-]+\/[a-z0-9][a-z0-9!#$&^_.+-]+$/i
+    }),
+    payload_fingerprint: requireHash(value.payload_fingerprint, `${label}.payload_fingerprint`)
+  };
+}
+
+function normalizeImportReference(value, tenantId, label) {
+  exactObject(value, ["import_id", "version", "tenant_id", "content_fingerprint"], [], label);
+  const reference = {
+    import_id: requireId(value.import_id, `${label}.import_id`),
+    version: requireSemver(value.version, `${label}.version`),
+    tenant_id: requireId(value.tenant_id, `${label}.tenant_id`),
+    content_fingerprint: requireHash(value.content_fingerprint, `${label}.content_fingerprint`)
+  };
+  if (reference.tenant_id !== tenantId) fail(PASSPORT_FREEZE_ERROR_CODES.referenceMismatch, `${label}.tenant_id must match the preflight tenant`);
+  return reference;
+}
+
+function importReference(record) {
+  return {
+    import_id: record.import_id,
+    version: record.version,
+    tenant_id: record.tenant_id,
+    content_fingerprint: record.content_fingerprint
+  };
+}
+
+function normalizeLocalImportBody(value, label = "record") {
+  exactObject(value, [
+    "schema_version", "record_type", "import_id", "version", "tenant_id", "imported_by", "imported_at",
+    "source", "run_ref", "freeze_ref", "boundary"
+  ], [], label);
+  if (value.schema_version !== PASSPORT_PREFLIGHT_VERSION || value.record_type !== "passport_local_run_import") {
+    fail(PASSPORT_FREEZE_ERROR_CODES.inputInvalid, `${label} has an unsupported contract version or record type`);
+  }
+  const tenantId = requireId(value.tenant_id, `${label}.tenant_id`);
+  exactObject(value.boundary, ["mode", "network_accessed", "raw_payload_retained", "credentials_retained"], [], `${label}.boundary`);
+  if (value.boundary.mode !== "local-offline"
+      || value.boundary.network_accessed !== false
+      || value.boundary.raw_payload_retained !== false
+      || value.boundary.credentials_retained !== false) {
+    fail(PASSPORT_FREEZE_ERROR_CODES.inputInvalid, `${label}.boundary must preserve the local offline import boundary`);
+  }
+  const runRef = normalizeRunReference(value.run_ref, tenantId, `${label}.run_ref`);
+  if (runRef === null) fail(PASSPORT_FREEZE_ERROR_CODES.fieldMissing, `${label}.run_ref is required`);
+  return {
+    schema_version: PASSPORT_PREFLIGHT_VERSION,
+    record_type: "passport_local_run_import",
+    import_id: requireId(value.import_id, `${label}.import_id`),
+    version: requireSemver(value.version, `${label}.version`),
+    tenant_id: tenantId,
+    imported_by: requireId(value.imported_by, `${label}.imported_by`),
+    imported_at: canonicalInstant(value.imported_at, `${label}.imported_at`),
+    source: normalizeLocalImportSource(value.source, `${label}.source`),
+    run_ref: runRef,
+    freeze_ref: normalizeFreezeReference(value.freeze_ref, tenantId, `${label}.freeze_ref`),
+    boundary: {
+      mode: "local-offline",
+      network_accessed: false,
+      raw_payload_retained: false,
+      credentials_retained: false
+    }
+  };
+}
+
+export function createPassportLocalRunImport(input) {
+  exactObject(input, [
+    "import_id", "version", "tenant_id", "imported_by", "imported_at", "source", "plan", "freeze"
+  ], [], "input");
+  const plan = verifyPassportRunBinding(input.plan);
+  const freeze = verifyPassportScenarioMethodFreeze(input.freeze);
+  const tenantId = requireId(input.tenant_id, "input.tenant_id");
+  if (plan.state !== "planned") fail(PASSPORT_FREEZE_ERROR_CODES.runStateInvalid, "Only a planned run can be imported for preflight");
+  if (plan.tenant_id !== tenantId || freeze.tenant_id !== tenantId) {
+    fail(PASSPORT_FREEZE_ERROR_CODES.referenceMismatch, "The imported plan, freeze, and tenant must match");
+  }
+  assertPassportRunFreeze({ run: plan, freeze });
+  const body = normalizeLocalImportBody({
+    schema_version: PASSPORT_PREFLIGHT_VERSION,
+    record_type: "passport_local_run_import",
+    import_id: input.import_id,
+    version: input.version,
+    tenant_id: tenantId,
+    imported_by: input.imported_by,
+    imported_at: input.imported_at,
+    source: input.source,
+    run_ref: runReference(plan),
+    freeze_ref: freezeReference(freeze),
+    boundary: {
+      mode: "local-offline",
+      network_accessed: false,
+      raw_payload_retained: false,
+      credentials_retained: false
+    }
+  });
+  return deepFreeze({ ...body, content_fingerprint: fingerprintBody(body) });
+}
+
+export function verifyPassportLocalRunImport(record) {
+  exactObject(record, [
+    "schema_version", "record_type", "import_id", "version", "tenant_id", "imported_by", "imported_at",
+    "source", "run_ref", "freeze_ref", "boundary", "content_fingerprint"
+  ], [], "record");
+  const { content_fingerprint: suppliedFingerprint, ...candidate } = record;
+  const body = normalizeLocalImportBody(candidate);
+  const expectedFingerprint = fingerprintBody(body);
+  if (requireHash(suppliedFingerprint, "record.content_fingerprint") !== expectedFingerprint) {
+    fail(PASSPORT_FREEZE_ERROR_CODES.fingerprintMismatch, "record.content_fingerprint does not match the local import record");
+  }
+  return deepFreeze({ ...body, content_fingerprint: expectedFingerprint });
+}
+
+function normalizeUnboundRunReference(value, label) {
+  exactObject(value, ["run_id", "version", "tenant_id", "content_fingerprint"], [], label);
+  return {
+    run_id: requireId(value.run_id, `${label}.run_id`),
+    version: requireSemver(value.version, `${label}.version`),
+    tenant_id: requireId(value.tenant_id, `${label}.tenant_id`),
+    content_fingerprint: requireHash(value.content_fingerprint, `${label}.content_fingerprint`)
+  };
+}
+
+function normalizeUnboundFreezeReference(value, label) {
+  exactObject(value, ["freeze_id", "version", "tenant_id", "content_fingerprint"], [], label);
+  return {
+    freeze_id: requireId(value.freeze_id, `${label}.freeze_id`),
+    version: requireSemver(value.version, `${label}.version`),
+    tenant_id: requireId(value.tenant_id, `${label}.tenant_id`),
+    content_fingerprint: requireHash(value.content_fingerprint, `${label}.content_fingerprint`)
+  };
+}
+
+function normalizeExecutionAuthorization(value, label = "authorization") {
+  exactObject(value, [
+    "authorization_id", "version", "tenant_id", "principal_id", "action", "decision", "valid_from",
+    "valid_until", "revoked_at", "run_ref", "freeze_ref", "source_fingerprint"
+  ], [], label);
+  return {
+    authorization_id: requireId(value.authorization_id, `${label}.authorization_id`),
+    version: requireSemver(value.version, `${label}.version`),
+    tenant_id: requireId(value.tenant_id, `${label}.tenant_id`),
+    principal_id: requireId(value.principal_id, `${label}.principal_id`),
+    action: requireString(value.action, `${label}.action`, { max: 64 }),
+    decision: requireEnum(value.decision, AUTHORIZATION_DECISIONS, `${label}.decision`),
+    valid_from: canonicalInstant(value.valid_from, `${label}.valid_from`),
+    valid_until: canonicalInstant(value.valid_until, `${label}.valid_until`),
+    revoked_at: value.revoked_at === null ? null : canonicalInstant(value.revoked_at, `${label}.revoked_at`),
+    run_ref: normalizeUnboundRunReference(value.run_ref, `${label}.run_ref`),
+    freeze_ref: normalizeUnboundFreezeReference(value.freeze_ref, `${label}.freeze_ref`),
+    source_fingerprint: requireHash(value.source_fingerprint, `${label}.source_fingerprint`)
+  };
+}
+
+function normalizeClockCheck(value, label = "clock") {
+  exactObject(value, ["source", "checked_at", "maximum_age_ms", "maximum_skew_ms", "observed_skew_ms", "synchronized", "source_fingerprint"], [], label);
+  return {
+    source: requireEnum(value.source, CLOCK_SOURCES, `${label}.source`),
+    checked_at: canonicalInstant(value.checked_at, `${label}.checked_at`),
+    maximum_age_ms: requireInteger(value.maximum_age_ms, `${label}.maximum_age_ms`, 1),
+    maximum_skew_ms: requireFiniteNumber(value.maximum_skew_ms, `${label}.maximum_skew_ms`, 0),
+    observed_skew_ms: requireFiniteNumber(value.observed_skew_ms, `${label}.observed_skew_ms`, 0),
+    synchronized: requireBoolean(value.synchronized, `${label}.synchronized`),
+    source_fingerprint: requireHash(value.source_fingerprint, `${label}.source_fingerprint`)
+  };
+}
+
+function normalizeBudgetCheck(value, label = "budget") {
+  exactObject(value, [
+    "budget_id", "version", "tenant_id", "run_ref", "currency", "limit_minor", "committed_minor", "estimated_run_minor", "valid_until", "source_fingerprint"
+  ], [], label);
+  return {
+    budget_id: requireId(value.budget_id, `${label}.budget_id`),
+    version: requireSemver(value.version, `${label}.version`),
+    tenant_id: requireId(value.tenant_id, `${label}.tenant_id`),
+    run_ref: normalizeUnboundRunReference(value.run_ref, `${label}.run_ref`),
+    currency: requireString(value.currency, `${label}.currency`, { min: 3, max: 3, pattern: /^[A-Z]{3}$/ }),
+    limit_minor: requireInteger(value.limit_minor, `${label}.limit_minor`, 0),
+    committed_minor: requireInteger(value.committed_minor, `${label}.committed_minor`, 0),
+    estimated_run_minor: requireInteger(value.estimated_run_minor, `${label}.estimated_run_minor`, 0),
+    valid_until: canonicalInstant(value.valid_until, `${label}.valid_until`),
+    source_fingerprint: requireHash(value.source_fingerprint, `${label}.source_fingerprint`)
+  };
+}
+
+function normalizeConcurrencyCheck(value, label = "concurrency") {
+  exactObject(value, ["scope_id", "tenant_id", "run_ref", "checked_at", "maximum_age_ms", "maximum", "active", "requested", "source_fingerprint"], [], label);
+  return {
+    scope_id: requireId(value.scope_id, `${label}.scope_id`),
+    tenant_id: requireId(value.tenant_id, `${label}.tenant_id`),
+    run_ref: normalizeUnboundRunReference(value.run_ref, `${label}.run_ref`),
+    checked_at: canonicalInstant(value.checked_at, `${label}.checked_at`),
+    maximum_age_ms: requireInteger(value.maximum_age_ms, `${label}.maximum_age_ms`, 1),
+    maximum: requireInteger(value.maximum, `${label}.maximum`, 1),
+    active: requireInteger(value.active, `${label}.active`, 0),
+    requested: requireInteger(value.requested, `${label}.requested`, 1),
+    source_fingerprint: requireHash(value.source_fingerprint, `${label}.source_fingerprint`)
+  };
+}
+
+function normalizeStopConditions(value, label = "stop_conditions") {
+  const conditions = uniqueSorted(value, label, (condition, location) => {
+    exactObject(condition, ["condition_id", "kind", "metric", "operator", "threshold", "unit", "action"], [], location);
+    const action = requireString(condition.action, `${location}.action`, { max: 16 });
+    if (action !== "stop" && action !== "warn") fail(PASSPORT_FREEZE_ERROR_CODES.inputInvalid, `${location}.action is invalid`);
+    return {
+      condition_id: requireId(condition.condition_id, `${location}.condition_id`),
+      kind: requireEnum(condition.kind, STOP_CONDITION_KINDS, `${location}.kind`),
+      metric: requireString(condition.metric, `${location}.metric`, { max: 96 }),
+      operator: requireEnum(condition.operator, STOP_CONDITION_OPERATORS, `${location}.operator`),
+      threshold: requireFiniteNumber(condition.threshold, `${location}.threshold`, 0),
+      unit: requireString(condition.unit, `${location}.unit`, { max: 48 }),
+      action
+    };
+  });
+  if (new Set(conditions.map(({ condition_id: conditionId }) => conditionId)).size !== conditions.length) {
+    fail(PASSPORT_FREEZE_ERROR_CODES.inputInvalid, `${label} contains duplicate condition_id values`);
+  }
+  const fixedKinds = conditions.filter(({ kind }) => kind !== "custom").map(({ kind }) => kind);
+  if (new Set(fixedKinds).size !== fixedKinds.length) {
+    fail(PASSPORT_FREEZE_ERROR_CODES.inputInvalid, `${label} contains duplicate fixed condition kinds`);
+  }
+  return conditions;
+}
+
+function referenceMatches(left, right) {
+  return canonicalizeEvidenceValue(left) === canonicalizeEvidenceValue(right);
+}
+
+function addBlocker(blockers, gate, code) {
+  if (!blockers.some((blocker) => blocker.gate === gate && blocker.code === code)) blockers.push({ gate, code });
+}
+
+function expiryFromCheck(checkedAt, maximumAgeMs) {
+  return new Date(Date.parse(checkedAt) + maximumAgeMs).toISOString();
+}
+
+function evaluatePreflightSemantics({
+  evaluatedAt,
+  executionPrincipalId,
+  plannedWindow,
+  runRef,
+  freezeRef,
+  authorization,
+  clock,
+  budget,
+  concurrency,
+  stopConditions
+}) {
+  const blockers = [];
+  const evaluatedMs = Date.parse(evaluatedAt);
+  const plannedStartMs = Date.parse(plannedWindow.starts_at);
+  const plannedEndMs = Date.parse(plannedWindow.ends_at);
+  const plannedDurationMs = Date.parse(plannedWindow.ends_at) - Date.parse(plannedWindow.starts_at);
+  const availableMinor = budget.limit_minor - budget.committed_minor;
+
+  if (authorization.decision !== "allow") addBlocker(blockers, "authorization", "authorization_denied");
+  if (authorization.tenant_id !== runRef.tenant_id
+      || authorization.principal_id !== executionPrincipalId
+      || authorization.action !== "execute-passport-run"
+      || !referenceMatches(authorization.run_ref, runRef)
+      || !referenceMatches(authorization.freeze_ref, freezeRef)) {
+    addBlocker(blockers, "authorization", "authorization_scope_mismatch");
+  }
+  if (Date.parse(authorization.valid_from) > evaluatedMs) addBlocker(blockers, "authorization", "authorization_not_yet_valid");
+  if (Date.parse(authorization.valid_until) < plannedEndMs) addBlocker(blockers, "authorization", "authorization_expired");
+  if (authorization.revoked_at !== null && Date.parse(authorization.revoked_at) <= plannedEndMs) {
+    addBlocker(blockers, "authorization", "authorization_revoked");
+  }
+
+  if (!clock.synchronized) addBlocker(blockers, "clock", "clock_unsynchronized");
+  if (plannedEndMs < evaluatedMs) addBlocker(blockers, "clock", "run_window_elapsed");
+  if (Date.parse(clock.checked_at) > evaluatedMs
+      || Math.max(evaluatedMs, plannedStartMs) > Date.parse(expiryFromCheck(clock.checked_at, clock.maximum_age_ms))) {
+    addBlocker(blockers, "clock", "clock_stale");
+  }
+  if (clock.observed_skew_ms > clock.maximum_skew_ms) addBlocker(blockers, "clock", "clock_skew_exceeded");
+
+  if (budget.tenant_id !== runRef.tenant_id || !referenceMatches(budget.run_ref, runRef)) {
+    addBlocker(blockers, "budget", "budget_scope_mismatch");
+  }
+  if (Date.parse(budget.valid_until) < Date.parse(plannedWindow.ends_at)) addBlocker(blockers, "budget", "budget_expired");
+  if (availableMinor < 0 || budget.estimated_run_minor > availableMinor) addBlocker(blockers, "budget", "budget_exceeded");
+
+  if (concurrency.tenant_id !== runRef.tenant_id || !referenceMatches(concurrency.run_ref, runRef)) {
+    addBlocker(blockers, "concurrency", "concurrency_scope_mismatch");
+  }
+  if (Date.parse(concurrency.checked_at) > evaluatedMs
+      || Math.max(evaluatedMs, plannedStartMs) > Date.parse(expiryFromCheck(concurrency.checked_at, concurrency.maximum_age_ms))) {
+    addBlocker(blockers, "concurrency", "concurrency_stale");
+  }
+  if (concurrency.active + concurrency.requested > concurrency.maximum) {
+    addBlocker(blockers, "concurrency", "concurrency_exceeded");
+  }
+
+  const conditionByKind = new Map(stopConditions.map((condition) => [condition.kind, condition]));
+  for (const requiredKind of REQUIRED_STOP_CONDITIONS) {
+    if (!conditionByKind.has(requiredKind)) addBlocker(blockers, "stop_conditions", "stop_conditions_incomplete");
+  }
+  if (stopConditions.some(({ action }) => action !== "stop")) {
+    addBlocker(blockers, "stop_conditions", "stop_condition_unsafe");
+  }
+  const maxDuration = conditionByKind.get("max-duration");
+  if (maxDuration && (maxDuration.metric !== "elapsed_ms" || maxDuration.operator !== "gte" || maxDuration.unit !== "ms"
+      || maxDuration.threshold <= 0 || maxDuration.threshold > plannedDurationMs)) {
+    addBlocker(blockers, "stop_conditions", "stop_condition_unsafe");
+  }
+  const maxFailures = conditionByKind.get("max-failures");
+  if (maxFailures && (maxFailures.metric !== "failure_count" || maxFailures.operator !== "gte" || maxFailures.unit !== "count"
+      || !Number.isInteger(maxFailures.threshold) || maxFailures.threshold < 1)) {
+    addBlocker(blockers, "stop_conditions", "stop_condition_unsafe");
+  }
+  const budgetExhausted = conditionByKind.get("budget-exhausted");
+  if (budgetExhausted && (budgetExhausted.metric !== "spent_minor" || budgetExhausted.operator !== "gte"
+      || budgetExhausted.unit !== `${budget.currency}:minor` || budgetExhausted.threshold > Math.max(availableMinor, 0))) {
+    addBlocker(blockers, "stop_conditions", "stop_condition_unsafe");
+  }
+
+  blockers.sort((left, right) => canonicalizeEvidenceValue(left).localeCompare(canonicalizeEvidenceValue(right)));
+  const gateResults = Object.fromEntries(PREFLIGHT_GATES.map((gate) => {
+    const codes = blockers.filter((blocker) => blocker.gate === gate).map(({ code }) => code);
+    return [gate, { status: codes.length === 0 ? "passed" : "failed", codes }];
+  }));
+  const validUntil = [
+    plannedWindow.ends_at,
+    authorization.valid_until,
+    ...(authorization.revoked_at === null ? [] : [authorization.revoked_at]),
+    budget.valid_until,
+    expiryFromCheck(clock.checked_at, clock.maximum_age_ms),
+    expiryFromCheck(concurrency.checked_at, concurrency.maximum_age_ms)
+  ].sort((left, right) => Date.parse(left) - Date.parse(right))[0];
+
+  return {
+    valid_until: validUntil,
+    gate_results: gateResults,
+    decision: blockers.length === 0 ? "passed" : "failed",
+    blockers
+  };
+}
+
+function normalizeGateResults(value, label) {
+  exactObject(value, PREFLIGHT_GATES, [], label);
+  return Object.fromEntries(PREFLIGHT_GATES.map((gate) => {
+    const result = value[gate];
+    exactObject(result, ["status", "codes"], [], `${label}.${gate}`);
+    const status = requireEnum(result.status, new Set(["passed", "failed"]), `${label}.${gate}.status`);
+    const codes = uniqueSorted(result.codes, `${label}.${gate}.codes`, (code, location) => requireString(code, location, { max: 96 }));
+    if ((status === "passed") !== (codes.length === 0)) {
+      fail(PASSPORT_FREEZE_ERROR_CODES.inputInvalid, `${label}.${gate} status and codes are inconsistent`);
+    }
+    return [gate, { status, codes }];
+  }));
+}
+
+function normalizeBlockers(value, label) {
+  return uniqueSorted(value, label, (blocker, location) => {
+    exactObject(blocker, ["gate", "code"], [], location);
+    return {
+      gate: requireEnum(blocker.gate, new Set(PREFLIGHT_GATES), `${location}.gate`),
+      code: requireString(blocker.code, `${location}.code`, { max: 96 })
+    };
+  });
+}
+
+function normalizePreflightBody(value, label = "record") {
+  exactObject(value, [
+    "schema_version", "record_type", "preflight_id", "version", "tenant_id", "evaluated_by", "execution_principal_id",
+    "evaluated_at", "valid_until", "policy", "import_ref", "run_ref", "freeze_ref", "planned_window", "authorization",
+    "clock", "budget", "concurrency", "stop_conditions", "gate_results", "decision", "blockers", "boundary"
+  ], [], label);
+  if (value.schema_version !== PASSPORT_PREFLIGHT_VERSION || value.record_type !== "passport_run_preflight") {
+    fail(PASSPORT_FREEZE_ERROR_CODES.inputInvalid, `${label} has an unsupported contract version or record type`);
+  }
+  if (value.policy !== PASSPORT_PREFLIGHT_POLICY) fail(PASSPORT_FREEZE_ERROR_CODES.inputInvalid, `${label}.policy is unsupported`);
+  const tenantId = requireId(value.tenant_id, `${label}.tenant_id`);
+  const runRef = normalizeRunReference(value.run_ref, tenantId, `${label}.run_ref`);
+  if (runRef === null) fail(PASSPORT_FREEZE_ERROR_CODES.fieldMissing, `${label}.run_ref is required`);
+  const freezeRef = normalizeFreezeReference(value.freeze_ref, tenantId, `${label}.freeze_ref`);
+  const evaluatedAt = canonicalInstant(value.evaluated_at, `${label}.evaluated_at`);
+  const plannedWindow = normalizeTimeWindow(value.planned_window, `${label}.planned_window`);
+  const executionPrincipalId = requireId(value.execution_principal_id, `${label}.execution_principal_id`);
+  const authorization = normalizeExecutionAuthorization(value.authorization, `${label}.authorization`);
+  const clock = normalizeClockCheck(value.clock, `${label}.clock`);
+  const budget = normalizeBudgetCheck(value.budget, `${label}.budget`);
+  const concurrency = normalizeConcurrencyCheck(value.concurrency, `${label}.concurrency`);
+  const stopConditions = normalizeStopConditions(value.stop_conditions, `${label}.stop_conditions`);
+  const expected = evaluatePreflightSemantics({
+    evaluatedAt,
+    executionPrincipalId,
+    plannedWindow,
+    runRef,
+    freezeRef,
+    authorization,
+    clock,
+    budget,
+    concurrency,
+    stopConditions
+  });
+  const gateResults = normalizeGateResults(value.gate_results, `${label}.gate_results`);
+  const blockers = normalizeBlockers(value.blockers, `${label}.blockers`);
+  const decision = requireEnum(value.decision, new Set(["passed", "failed"]), `${label}.decision`);
+  const validUntil = canonicalInstant(value.valid_until, `${label}.valid_until`);
+  if (canonicalizeEvidenceValue(gateResults) !== canonicalizeEvidenceValue(expected.gate_results)
+      || canonicalizeEvidenceValue(blockers) !== canonicalizeEvidenceValue(expected.blockers)
+      || decision !== expected.decision
+      || validUntil !== expected.valid_until) {
+    fail(PASSPORT_FREEZE_ERROR_CODES.preflightMismatch, `${label} decision does not match its gate evidence`);
+  }
+  exactObject(value.boundary, ["preflight_only", "execution_performed", "performance_claim_allowed"], [], `${label}.boundary`);
+  if (value.boundary.preflight_only !== true
+      || value.boundary.execution_performed !== false
+      || value.boundary.performance_claim_allowed !== false) {
+    fail(PASSPORT_FREEZE_ERROR_CODES.inputInvalid, `${label}.boundary must remain preflight-only`);
+  }
+  return {
+    schema_version: PASSPORT_PREFLIGHT_VERSION,
+    record_type: "passport_run_preflight",
+    preflight_id: requireId(value.preflight_id, `${label}.preflight_id`),
+    version: requireSemver(value.version, `${label}.version`),
+    tenant_id: tenantId,
+    evaluated_by: requireId(value.evaluated_by, `${label}.evaluated_by`),
+    execution_principal_id: executionPrincipalId,
+    evaluated_at: evaluatedAt,
+    valid_until: validUntil,
+    policy: PASSPORT_PREFLIGHT_POLICY,
+    import_ref: normalizeImportReference(value.import_ref, tenantId, `${label}.import_ref`),
+    run_ref: runRef,
+    freeze_ref: freezeRef,
+    planned_window: plannedWindow,
+    authorization,
+    clock,
+    budget,
+    concurrency,
+    stop_conditions: stopConditions,
+    gate_results: gateResults,
+    decision,
+    blockers,
+    boundary: {
+      preflight_only: true,
+      execution_performed: false,
+      performance_claim_allowed: false
+    }
+  };
+}
+
+export function createPassportRunPreflight(input) {
+  exactObject(input, [
+    "preflight_id", "version", "tenant_id", "evaluated_by", "execution_principal_id", "evaluated_at", "local_import",
+    "plan", "freeze", "authorization", "clock", "budget", "concurrency", "stop_conditions"
+  ], [], "input");
+  const localImport = verifyPassportLocalRunImport(input.local_import);
+  const plan = verifyPassportRunBinding(input.plan);
+  const freeze = verifyPassportScenarioMethodFreeze(input.freeze);
+  const tenantId = requireId(input.tenant_id, "input.tenant_id");
+  if (plan.state !== "planned") fail(PASSPORT_FREEZE_ERROR_CODES.runStateInvalid, "Only a planned run can pass preflight");
+  if (plan.tenant_id !== tenantId || freeze.tenant_id !== tenantId || localImport.tenant_id !== tenantId) {
+    fail(PASSPORT_FREEZE_ERROR_CODES.preflightMismatch, "The import, plan, freeze, and preflight tenant must match");
+  }
+  assertPassportRunFreeze({ run: plan, freeze });
+  if (!referenceMatches(localImport.run_ref, runReference(plan))
+      || !referenceMatches(localImport.freeze_ref, freezeReference(freeze))) {
+    fail(PASSPORT_FREEZE_ERROR_CODES.preflightMismatch, "The local import does not bind this exact plan and freeze");
+  }
+  const evaluatedAt = canonicalInstant(input.evaluated_at, "input.evaluated_at");
+  const executionPrincipalId = requireId(input.execution_principal_id, "input.execution_principal_id");
+  const authorization = normalizeExecutionAuthorization(input.authorization, "input.authorization");
+  const clock = normalizeClockCheck(input.clock, "input.clock");
+  const budget = normalizeBudgetCheck(input.budget, "input.budget");
+  const concurrency = normalizeConcurrencyCheck(input.concurrency, "input.concurrency");
+  const stopConditions = normalizeStopConditions(input.stop_conditions, "input.stop_conditions");
+  const runRef = runReference(plan);
+  const freezeRef = freezeReference(freeze);
+  const evaluated = evaluatePreflightSemantics({
+    evaluatedAt,
+    executionPrincipalId,
+    plannedWindow: plan.planned_window,
+    runRef,
+    freezeRef,
+    authorization,
+    clock,
+    budget,
+    concurrency,
+    stopConditions
+  });
+  const body = normalizePreflightBody({
+    schema_version: PASSPORT_PREFLIGHT_VERSION,
+    record_type: "passport_run_preflight",
+    preflight_id: input.preflight_id,
+    version: input.version,
+    tenant_id: tenantId,
+    evaluated_by: input.evaluated_by,
+    execution_principal_id: executionPrincipalId,
+    evaluated_at: evaluatedAt,
+    valid_until: evaluated.valid_until,
+    policy: PASSPORT_PREFLIGHT_POLICY,
+    import_ref: importReference(localImport),
+    run_ref: runRef,
+    freeze_ref: freezeRef,
+    planned_window: plan.planned_window,
+    authorization,
+    clock,
+    budget,
+    concurrency,
+    stop_conditions: stopConditions,
+    gate_results: evaluated.gate_results,
+    decision: evaluated.decision,
+    blockers: evaluated.blockers,
+    boundary: {
+      preflight_only: true,
+      execution_performed: false,
+      performance_claim_allowed: false
+    }
+  });
+  return deepFreeze({ ...body, content_fingerprint: fingerprintBody(body) });
+}
+
+export function verifyPassportRunPreflight(record) {
+  exactObject(record, [
+    "schema_version", "record_type", "preflight_id", "version", "tenant_id", "evaluated_by", "execution_principal_id",
+    "evaluated_at", "valid_until", "policy", "import_ref", "run_ref", "freeze_ref", "planned_window", "authorization",
+    "clock", "budget", "concurrency", "stop_conditions", "gate_results", "decision", "blockers", "boundary", "content_fingerprint"
+  ], [], "record");
+  const { content_fingerprint: suppliedFingerprint, ...candidate } = record;
+  const body = normalizePreflightBody(candidate);
+  const expectedFingerprint = fingerprintBody(body);
+  if (requireHash(suppliedFingerprint, "record.content_fingerprint") !== expectedFingerprint) {
+    fail(PASSPORT_FREEZE_ERROR_CODES.fingerprintMismatch, "record.content_fingerprint does not match the preflight evidence");
+  }
+  return deepFreeze({ ...body, content_fingerprint: expectedFingerprint });
+}
+
+export function startPassportRun(input) {
+  if (!isObject(input)) fail(PASSPORT_FREEZE_ERROR_CODES.inputInvalid, "input must be a plain object");
+  if (!Object.hasOwn(input, "local_import")) {
+    fail(PASSPORT_FREEZE_ERROR_CODES.localImportRequired, "A verified local import is required before a run can start");
+  }
+  if (!Object.hasOwn(input, "preflight")) {
+    fail(PASSPORT_FREEZE_ERROR_CODES.preflightRequired, "A passed preflight is required before a run can start");
+  }
+  exactObject(input, ["plan", "freeze", "local_import", "preflight", "execution_principal_id", "version", "started_at"], [], "input");
+  const verifiedPlan = verifyPassportRunBinding(input.plan);
+  const verifiedFreeze = verifyPassportScenarioMethodFreeze(input.freeze);
+  const verifiedImport = verifyPassportLocalRunImport(input.local_import);
+  const verifiedPreflight = verifyPassportRunPreflight(input.preflight);
   if (verifiedPlan.state !== "planned") fail(PASSPORT_FREEZE_ERROR_CODES.runStateInvalid, "Only a planned run can be started");
-  const nextVersion = requireSemver(version, "version");
+  assertPassportRunFreeze({ run: verifiedPlan, freeze: verifiedFreeze });
+  if (!referenceMatches(verifiedImport.run_ref, runReference(verifiedPlan))
+      || !referenceMatches(verifiedImport.freeze_ref, freezeReference(verifiedFreeze))
+      || !referenceMatches(verifiedPreflight.import_ref, importReference(verifiedImport))
+      || !referenceMatches(verifiedPreflight.run_ref, runReference(verifiedPlan))
+      || !referenceMatches(verifiedPreflight.freeze_ref, freezeReference(verifiedFreeze))
+      || !referenceMatches(verifiedPreflight.planned_window, verifiedPlan.planned_window)) {
+    fail(PASSPORT_FREEZE_ERROR_CODES.preflightMismatch, "The preflight does not bind this exact import, plan, and freeze");
+  }
+  if (verifiedPreflight.decision !== "passed") {
+    fail(PASSPORT_FREEZE_ERROR_CODES.preflightFailed, "A failed preflight cannot enter the started state");
+  }
+  if (requireId(input.execution_principal_id, "input.execution_principal_id") !== verifiedPreflight.execution_principal_id) {
+    fail(PASSPORT_FREEZE_ERROR_CODES.preflightMismatch, "The start principal does not match the authorized execution principal");
+  }
+  const startedAt = canonicalInstant(input.started_at, "input.started_at");
+  if (Date.parse(startedAt) < Date.parse(verifiedPreflight.evaluated_at)
+      || Date.parse(startedAt) > Date.parse(verifiedPreflight.valid_until)) {
+    fail(PASSPORT_FREEZE_ERROR_CODES.preflightExpired, "The preflight is not valid at the requested start time");
+  }
+  const nextVersion = requireSemver(input.version, "input.version");
   if (nextVersion === verifiedPlan.version) fail(PASSPORT_FREEZE_ERROR_CODES.inputInvalid, "Starting a run must create a new binding version");
   const { content_fingerprint: _planFingerprint, ...planBody } = verifiedPlan;
   return buildRunRecord({
