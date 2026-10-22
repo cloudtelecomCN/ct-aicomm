@@ -44,6 +44,7 @@ export async function collectTtft(options) {
     requestId = randomBytes(12).toString("hex"),
     traceId = randomBytes(16).toString("hex")
   } = options;
+  const timeoutMs = options.timeoutMs ?? 60_000;
   const onEvent = typeof options.onEvent === "function" ? options.onEvent : () => {};
 
   if (!endpoint || !model || !prompt || !environmentFingerprint) {
@@ -71,7 +72,8 @@ export async function collectTtft(options) {
         "x-request-id": requestId,
         ...(apiKey ? { authorization: `Bearer ${apiKey}` } : {})
       },
-      body
+      body,
+      signal: AbortSignal.timeout(timeoutMs)
     });
     const headersAt = now();
     emit("response_headers", { http_status: response.status });

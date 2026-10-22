@@ -39,3 +39,5 @@ jobs:
         run: agent/install/test-install.sh
       - name: Verify diagnostics and emergency recovery
         run: agent/install/test-operations.sh
+      - name: Verify Agent runtime lifecycle
+        run: agent/install/test-runtime.sh

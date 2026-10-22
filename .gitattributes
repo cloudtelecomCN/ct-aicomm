@@ -7,6 +7,13 @@
 *.webp binary
 *.zip binary
 *.sh text eol=lf
+*.mjs text eol=lf
+*.py text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.in text eol=lf
+*.example text eol=lf
+agent/bin/* text eol=lf
 examples/registry/**/*.json text eol=lf
 registry/entries/**/*.json text eol=lf
 registry/keys/**/*.json text eol=lf

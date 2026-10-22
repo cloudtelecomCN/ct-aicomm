@@ -24,3 +24,5 @@ jobs:
         run: docker run --rm --network none --read-only --tmpfs /tmp ct-aicomm-contributor:test --profile all
       - name: Run complete test suite
         run: node scripts/run-contributor-tests.mjs --profile full
+      - name: Test long-run host monitor
+        run: python3 -m unittest tests/test_soak_monitor.py

@@ -18,7 +18,7 @@ if ! mountpoint -q /sys/fs/bpf; then
   exit 1
 fi
 
-for command in systemctl sha256sum install; do
+for command in systemctl sha256sum install bpftool stat; do
   command -v "$command" >/dev/null || { echo "preflight: missing command: $command" >&2; exit 1; }
 done
 

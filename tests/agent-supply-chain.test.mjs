@@ -38,7 +38,17 @@ test("requires signed production installs and hardened non-root service settings
   assert.match(install, /verify-release\.sh/);
   assert.match(verify, /openssl pkeyutl -verify/);
   assert.match(verify, /sha256sum --check --strict/);
-  for (const setting of ["User=ct-aicomm-agent", "NoNewPrivileges=true", "ProtectKernelModules=true", "ProtectControlGroups=true", "SystemCallFilter=@system-service bpf", "CapabilityBoundingSet=CAP_BPF CAP_NET_ADMIN CAP_PERFMON"]) assert.match(service, new RegExp(setting));
+  for (const setting of ["User=ct-aicomm-agent", "NoNewPrivileges=true", "ProtectKernelModules=true", "ProtectControlGroups=true", "SystemCallFilter=@system-service bpf", "CapabilityBoundingSet=CAP_BPF CAP_NET_ADMIN CAP_PERFMON", "LimitMEMLOCK=infinity", "ReadWritePaths=/sys/fs/bpf/ct-aicomm-agent /var/lib/ct-aicomm-agent"]) assert.match(service, new RegExp(setting));
+});
+
+test("ships a real observe-only runtime instead of a release placeholder", async () => {
+  const runtime = await readFile(new URL("../agent/bin/ct-aicomm-agent", import.meta.url), "utf8");
+  assert.match(runtime, /bpftool.*prog loadall/s);
+  assert.match(runtime, /cgroup attach.*connect4.*cgroup_connect4/s);
+  assert.match(runtime, /cgroup attach.*sock_ops.*sockops/s);
+  assert.match(runtime, /heartbeat\.jsonl/);
+  assert.match(runtime, /permits only CT_AGENT_MODE=observe_only/);
+  assert.doesNotMatch(runtime, /^exit 0$/m);
 });
 
 test("agent dependency audit rejects undeclared third-party runtime imports", async () => {

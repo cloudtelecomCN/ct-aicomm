@@ -1,0 +1,221 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+command_name=${1:-}
+if [[ -z $command_name ]]; then
+  echo "usage: ct-aicomm-agent <run|health|restore|version>" >&2
+  exit 2
+fi
+shift
+
+bpf_object=
+cgroup_path=${CT_AGENT_CGROUP_PATH:-/sys/fs/cgroup}
+pin_root=${CT_AGENT_PIN_ROOT:-/sys/fs/bpf/ct-aicomm-agent/runtime}
+state_dir=${CT_AGENT_STATE_DIR:-/var/lib/ct-aicomm-agent}
+bpftool=${CT_AGENT_BPFTOOL:-bpftool}
+tc=${CT_AGENT_TC:-tc}
+test_mode=${CT_AGENT_TEST_MODE:-0}
+
+while (($#)); do
+  case "$1" in
+    --bpf-object) bpf_object=${2:?missing BPF object}; shift 2 ;;
+    --cgroup) cgroup_path=${2:?missing cgroup path}; shift 2 ;;
+    --pin-root) pin_root=${2:?missing pin root}; shift 2 ;;
+    --state-dir) state_dir=${2:?missing state directory}; shift 2 ;;
+    --all) shift ;;
+    *) echo "ct-aicomm-agent: unknown argument: $1" >&2; exit 2 ;;
+  esac
+done
+
+fail() {
+  echo "ct-aicomm-agent: $*" >&2
+  exit 1
+}
+
+require_command() {
+  command -v "$1" >/dev/null 2>&1 || fail "missing command: $1"
+}
+
+validate_paths() {
+  if [[ $test_mode == 1 ]]; then
+    [[ $pin_root == /tmp/* || $pin_root == */tmp/* || $pin_root == /sys/fs/bpf/ct-aicomm-agent-test-* || $pin_root == /sys/fs/bpf/ct-aicomm-agent-test-*/* ]] || fail "test pin root must remain under a temporary Agent namespace"
+    return
+  fi
+  [[ $pin_root == /sys/fs/bpf/ct-aicomm-agent/runtime || $pin_root == /sys/fs/bpf/ct-aicomm-agent/runtime/* ]] || fail "pin root escapes the managed Agent namespace"
+  [[ $state_dir == /var/lib/ct-aicomm-agent ]] || fail "state directory must be /var/lib/ct-aicomm-agent"
+  [[ $cgroup_path == /sys/fs/cgroup || $cgroup_path == /sys/fs/cgroup/* ]] || fail "cgroup path escapes cgroup v2"
+}
+
+valid_agent_id() {
+  [[ $1 =~ ^[A-Za-z0-9._:-]{1,128}$ ]]
+}
+
+positive_integer() {
+  [[ $1 =~ ^[0-9]+$ ]] && ((10#$1 > 0))
+}
+
+sha256_file() {
+  sha256sum "$1" | cut -d' ' -f1
+}
+
+little_endian_hex() {
+  local value=$1 width=$2 byte offset
+  for ((offset = 0; offset < width; offset += 1)); do
+    byte=$((value & 255))
+    printf '%02x' "$byte"
+    if ((offset + 1 < width)); then printf ' '; fi
+    value=$((value >> 8))
+  done
+}
+
+write_text_atomic() {
+  local target=$1 value=$2 temporary="${1}.tmp.$$"
+  printf '%s\n' "$value" >"$temporary"
+  chmod 0600 "$temporary"
+  mv -f "$temporary" "$target"
+}
+
+read_runtime_value() {
+  local name=$1 fallback=${2:-}
+  if [[ -f $state_dir/$name ]]; then
+    cat "$state_dir/$name"
+  else
+    printf '%s' "$fallback"
+  fi
+}
+
+detach_runtime() {
+  local saved_cgroup saved_interface programs
+  saved_cgroup=$(read_runtime_value cgroup_path "$cgroup_path")
+  saved_interface=$(read_runtime_value interface "")
+  programs="$pin_root/programs"
+
+  if [[ -e $programs/cgroup_connect4 && -d $saved_cgroup ]]; then
+    "$bpftool" cgroup detach "$saved_cgroup" connect4 pinned "$programs/cgroup_connect4" >/dev/null 2>&1 || true
+  fi
+  if [[ -e $programs/sockops && -d $saved_cgroup ]]; then
+    "$bpftool" cgroup detach "$saved_cgroup" sock_ops pinned "$programs/sockops" >/dev/null 2>&1 || true
+  fi
+  if [[ -n $saved_interface && -e $programs/classifier ]] && command -v "$tc" >/dev/null 2>&1; then
+    "$tc" filter delete dev "$saved_interface" egress pref 49152 >/dev/null 2>&1 || true
+  fi
+  rm -rf -- "$pin_root"
+}
+
+validate_paths
+
+case "$command_name" in
+  version)
+    echo "ct-aicomm-agent 0.1.0"
+    exit 0
+    ;;
+  health)
+    [[ -f $state_dir/heartbeat.json && -f $state_dir/agent.pid ]] || fail "runtime state is unavailable"
+    pid=$(cat "$state_dir/agent.pid")
+    positive_integer "$pid" || fail "runtime PID is invalid"
+    kill -0 "$pid" 2>/dev/null || fail "Agent process is not running"
+    [[ -e $pin_root/programs/cgroup_connect4 ]] || fail "connect4 program is not pinned"
+    [[ -e $pin_root/programs/sockops ]] || fail "sockops program is not pinned"
+    cat "$state_dir/heartbeat.json"
+    exit 0
+    ;;
+  restore)
+    require_command "$bpftool"
+    detach_runtime
+    rm -f -- "$state_dir/agent.pid"
+    write_text_atomic "$state_dir/status" "stopped"
+    echo "ct-aicomm-agent: baseline attachment state restored"
+    exit 0
+    ;;
+  run) ;;
+  *) fail "unsupported command: $command_name" ;;
+esac
+
+[[ -n $bpf_object && -f $bpf_object ]] || fail "run requires --bpf-object"
+require_command "$bpftool"
+require_command sha256sum
+require_command stat
+
+agent_id=${CT_AGENT_ID:-}
+mode=${CT_AGENT_MODE:-observe_only}
+interval=${CT_AGENT_HEARTBEAT_INTERVAL_SECONDS:-30}
+interface=${CT_AGENT_INTERFACE:-}
+cgroup_ids=${CT_AGENT_CGROUP_IDS:-auto}
+destination_ports=${CT_AGENT_DESTINATION_PORTS:-8000}
+
+valid_agent_id "$agent_id" || fail "CT_AGENT_ID is missing or invalid"
+[[ $mode == observe_only ]] || fail "this release permits only CT_AGENT_MODE=observe_only"
+positive_integer "$interval" || fail "heartbeat interval must be a positive integer"
+[[ -d $cgroup_path ]] || fail "cgroup path does not exist: $cgroup_path"
+if [[ -f $state_dir/agent.pid ]]; then
+  previous_pid=$(cat "$state_dir/agent.pid")
+  if positive_integer "$previous_pid" && kill -0 "$previous_pid" 2>/dev/null; then
+    fail "another Agent process is already running"
+  fi
+fi
+
+mkdir -p "$state_dir" "$pin_root/programs" "$pin_root/maps"
+chmod 0700 "$state_dir"
+detach_runtime
+mkdir -p "$pin_root/programs" "$pin_root/maps"
+
+cleanup() {
+  local exit_status=${1:-0}
+  trap - EXIT INT TERM
+  detach_runtime
+  rm -f -- "$state_dir/agent.pid"
+  write_text_atomic "$state_dir/status" "stopped"
+  exit "$exit_status"
+}
+trap 'cleanup $?' EXIT
+trap 'cleanup 0' INT TERM
+
+"$bpftool" prog loadall "$bpf_object" "$pin_root/programs" pinmaps "$pin_root/maps"
+[[ -e $pin_root/programs/cgroup_connect4 ]] || fail "loaded object did not pin cgroup_connect4"
+[[ -e $pin_root/programs/sockops ]] || fail "loaded object did not pin sockops"
+
+if [[ $cgroup_ids == auto ]]; then
+  cgroup_ids=$(stat -Lc '%i' "$cgroup_path")
+fi
+for cgroup_id in ${cgroup_ids//,/ }; do
+  positive_integer "$cgroup_id" || fail "invalid cgroup ID: $cgroup_id"
+  read -r -a key_bytes <<<"$(little_endian_hex "$cgroup_id" 8)"
+  "$bpftool" map update pinned "$pin_root/maps/allowed_cgroups" key hex "${key_bytes[@]}" value hex 01
+done
+for destination_port in ${destination_ports//,/ }; do
+  positive_integer "$destination_port" || fail "invalid destination port: $destination_port"
+  ((destination_port <= 65535)) || fail "destination port exceeds 65535"
+  read -r -a key_bytes <<<"$(little_endian_hex "$destination_port" 2)"
+  "$bpftool" map update pinned "$pin_root/maps/allowed_destination_ports" key hex "${key_bytes[@]}" value hex 01
+done
+
+"$bpftool" cgroup attach "$cgroup_path" connect4 pinned "$pin_root/programs/cgroup_connect4"
+"$bpftool" cgroup attach "$cgroup_path" sock_ops pinned "$pin_root/programs/sockops"
+if [[ -n $interface ]]; then
+  require_command "$tc"
+  [[ $interface =~ ^[A-Za-z0-9_.:-]{1,32}$ ]] || fail "CT_AGENT_INTERFACE is invalid"
+  "$tc" qdisc replace dev "$interface" clsact
+  "$tc" filter replace dev "$interface" egress pref 49152 handle 1 bpf da pinned "$pin_root/programs/classifier"
+fi
+
+write_text_atomic "$state_dir/agent.pid" "$$"
+write_text_atomic "$state_dir/cgroup_path" "$cgroup_path"
+write_text_atomic "$state_dir/interface" "$interface"
+write_text_atomic "$state_dir/status" "running"
+started_epoch=$(date +%s)
+sequence=0
+agent_sha256=$(sha256_file "$0")
+bpf_sha256=$(sha256_file "$bpf_object")
+
+while true; do
+  sequence=$((sequence + 1))
+  now_epoch=$(date +%s)
+  observed_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+  rss_kib=$(awk '/^VmRSS:/ { print $2; found=1 } END { if (!found) print 0 }' "/proc/$$/status")
+  heartbeat=$(printf '{"schema_version":"1.0.0","agent_id":"%s","mode":"%s","status":"running","pid":%d,"sequence":%d,"observed_at":"%s","uptime_seconds":%d,"rss_kib":%d,"agent_sha256":"%s","bpf_sha256":"%s"}' \
+    "$agent_id" "$mode" "$$" "$sequence" "$observed_at" "$((now_epoch - started_epoch))" "$rss_kib" "$agent_sha256" "$bpf_sha256")
+  write_text_atomic "$state_dir/heartbeat.json" "$heartbeat"
+  printf '%s\n' "$heartbeat" >>"$state_dir/heartbeat.jsonl"
+  sleep "$interval" &
+  wait $!
+done

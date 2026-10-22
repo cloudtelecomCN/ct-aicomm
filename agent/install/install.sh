@@ -43,6 +43,7 @@ if [[ $root == / ]]; then
   if ! id -u ct-aicomm-agent >/dev/null 2>&1; then
     useradd --system --home-dir /var/lib/ct-aicomm-agent --shell /usr/sbin/nologin --user-group ct-aicomm-agent
   fi
+  install -d -m 0750 -o ct-aicomm-agent -g ct-aicomm-agent /sys/fs/bpf/ct-aicomm-agent
 fi
 
 root=${root%/}

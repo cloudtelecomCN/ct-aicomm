@@ -17,11 +17,7 @@ sign_bundle() {
   openssl pkeyutl -sign -inkey "$work/release-private-key.pem" -rawin -in "$dist/SHA256SUMS" -out "$dist/SHA256SUMS.sig"
 }
 
-cat >"$work/ct-aicomm-agent" <<'EOF'
-#!/usr/bin/env bash
-exit 0
-EOF
-chmod +x "$work/ct-aicomm-agent"
+install -m 0755 "$repo/agent/bin/ct-aicomm-agent" "$work/ct-aicomm-agent"
 printf 'verified-bpf-object\n' >"$work/ct_selector.bpf.o"
 
 openssl genpkey -algorithm ED25519 -out "$work/release-private-key.pem" >/dev/null 2>&1
