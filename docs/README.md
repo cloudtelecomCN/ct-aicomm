@@ -25,6 +25,7 @@
 - [Link Evidence Passport scenario and method freeze v1](passport/scenario-and-method-freeze-v1.md)
 - [Link Evidence Passport local import and run preflight v1](passport/local-import-and-run-preflight-v1.md)
 - [Link Evidence Passport observation normalization and quality v1](passport/observation-normalization-and-quality-v1.md)
+- [Link Evidence Passport sealing, versioning, and terminal status v1](passport/sealing-versioning-and-terminal-status-v1.md)
 - [CT-Bench reproduction and evidence contract](bench-reproduction/README.md)
 - [CT-DataPlane Agent threat model](security/agent-threat-model.md)
 - [CT-DataPlane Agent operations runbook](agent/operations.md)

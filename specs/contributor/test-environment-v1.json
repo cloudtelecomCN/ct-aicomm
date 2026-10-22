@@ -55,6 +55,7 @@
     "tests/evidence-lifecycle.test.mjs",
     "tests/passport-local-import-preflight.test.mjs",
     "tests/passport-observation-normalization.test.mjs",
+    "tests/passport-sealing-versioning.test.mjs",
     "tests/passport-scenario-method-freeze.test.mjs",
     "tests/public-sdk-boundary.test.mjs",
     "tests/registry-entry-integrity.test.mjs"
@@ -337,6 +338,30 @@
           "sample_accounting_closed": true,
           "quality_status": "partial",
           "origins_strictly_separated": true,
+          "external_network_used": false,
+          "performance_claim_allowed": false,
+          "certification_issued": false
+        }
+      }
+    },
+    {
+      "id": "passport-sealing-versioning",
+      "entrypoint": "examples/passport/sealing-versioning-synthetic.mjs",
+      "expect": {
+        "equals": {
+          "schema_version": "1.0.0",
+          "data_origin": "synthetic",
+          "initial_state": "superseded",
+          "replacement_state": "sealed",
+          "expiry_fail_closed": true,
+          "immutable_versions": true,
+          "exact_supersession_link": true,
+          "review_inherited": false,
+          "freshness_inherited": false,
+          "replacement_review_status": "not-reviewed",
+          "replacement_freshness_status": "valid",
+          "terminal_event_append_only": true,
+          "source_version_mutated": false,
           "external_network_used": false,
           "performance_claim_allowed": false,
           "certification_issued": false

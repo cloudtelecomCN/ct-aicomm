@@ -6,9 +6,9 @@
 import { normalizeNetworkTelemetry, validateControlMessage } from "./sdk/index.mjs";
 ```
 
-SDK 只校验并规范化调用方提供的证据，不包含凭据、不发现私有基础设施、不授权执行、不挂载 eBPF 程序，也不会把合成数据表述为实测数据。版本 `0.17.0` 新增 CT-611 规范观测单位、闭合样本账、派生质量状态，以及实测、合成、推断和声明来源的严格隔离，同时保留 CT-610 预检门禁、CT-609 链路证据护照冻结和既有 Evidence Core 模块。身份认证、私有查询授权、测量执行、消息代理投递、私有制品内容访问、法律审批、可信签名、认证签发和生产证据读取能力仍明确排除；当前以源码分发，尚未发布到 npm Registry。
+SDK 只校验并规范化调用方提供的证据，不包含凭据、不发现私有基础设施、不授权执行、不挂载 eBPF 程序，也不会把合成数据表述为实测数据。版本 `0.18.0` 新增 CT-612 护照不可变封存、精确替代链、默认失效的到期投影，以及追加式替代和撤销，同时保留 CT-611 来源隔离的规范观测、CT-610 预检门禁、CT-609 链路证据护照冻结和既有 Evidence Core 模块。身份认证、私有查询授权、测量执行、消息代理投递、私有制品内容访问、法律审批、可信签名、认证签发和生产证据读取能力仍明确排除；当前以源码分发，尚未发布到 npm Registry。
 
-护照集成方可以导入 `createPassportScenarioMethodFreeze`、`createPassportRunPlan`、`startPassportRun`、`assertPassportRunFreeze`、`createPassportReplacementRun`、`createPassportNormalizedObservation` 和 `verifyPassportNormalizedObservation`。契约会冻结精确站点对、方向、协议、工作负载配置、方法引用、工具指纹、参数、采样、排除规则、统计项和环境前提。观测记录必须绑定精确的已启动运行，对允许的单位做规范化，闭合尝试、成功、失败、纳入和排除样本账，由规则推导质量状态，并且不合并来源类型。运行一旦开始，任何变更都会以 `passport_new_run_required` 默认拒绝，并要求使用新的 `run_id`；SDK 不执行基准测试，也不认证结果。
+护照集成方可以导入 `createPassportScenarioMethodFreeze`、`createPassportRunPlan`、`startPassportRun`、`createPassportNormalizedObservation`、`createPassportEvidenceVersion`、`createPassportReplacementVersion`、`createPassportVersionTerminalEvent` 及相应验证器和投影器。契约冻结精确站点对、方向、协议、工作负载、方法、运行和规范观测。每个新封存版本都把独立复核和策略状态重置，并根据自身封存时间推导新鲜度截止时间，不继承前序版本的复核或新鲜度。运行一旦开始，任何变更仍要求使用新的 `run_id`；SDK 不执行基准测试，也不认证结果。
 
 证据目录消费方可以导入 `queryEvidenceRecords`、`getEvidenceQueryRecord`、`createEvidenceQueryStatus` 和 `buildEvidenceQueryRequest`。记录一旦包含租户、主体、存储、端点、凭据或联系字段就默认拒绝。SDK 不执行网络访问，也不定义生产服务器；私有查询只能由单独的实现完成认证与授权。
 

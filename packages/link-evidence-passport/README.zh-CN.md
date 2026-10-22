@@ -2,7 +2,7 @@
 
 [English](README.md)
 
-本零依赖包实现 CT-609 场景方法冻结、CT-610 本地导入与强制运行预检，以及 CT-611 观测归一与质量标记公开契约。
+本零依赖包实现 CT-609 场景方法冻结、CT-610 本地导入与强制运行预检、CT-611 观测归一与质量标记，以及 CT-612 不可变封存、精确替代链、到期、替代和撤销公开契约。
 
 公开能力包括：
 
@@ -13,6 +13,8 @@
 - 只允许通过仍在有效期内的预检启动运行；
 - 校验运行是否仍绑定原冻结记录，以及用新 `run_id` 创建替代运行；
 - 通过 `observation.mjs` 创建和验证规范观测记录。
+- 通过 `versioning.mjs` 创建和验证封存版本与替代版本；
+- 通过 `versioning.mjs` 创建和验证到期、替代、撤销终态事件，并投影版本状态。
 
 受保护内容包括源站点和目标站点、方向、协议、工作负载配置、精确的 Evidence Core
 Scope 与 Method 引用、工具制品、参数、采样、排除规则、统计项和环境前提。运行进入
@@ -29,10 +31,15 @@ Scope 与 Method 引用、工具制品、参数、采样、排除规则、统计
 规范观测记录使用闭合样本账和 Evidence Core 规范单位，由规则派生质量状态，并为实测、
 合成、推断和声明分别使用专用来源结构；不能仅修改标签来提升或合并来源。
 
+封存护照版本按来源分组绑定精确观测。替代版本把独立复核重置为 `not-reviewed`，根据
+自身封存时间推导新鲜度截止时间，并且不继承策略接受状态。即使终态事件未送达，到期
+投影也会默认失效；替代和撤销使用追加式终态事件，不修改封存源。
+
 运行合成场景：
 
 ```bash
 node examples/passport/scenario-method-freeze-synthetic.mjs
 node examples/passport/local-import-preflight-synthetic.mjs
 node examples/passport/observation-normalization-synthetic.mjs
+node examples/passport/sealing-versioning-synthetic.mjs
 ```

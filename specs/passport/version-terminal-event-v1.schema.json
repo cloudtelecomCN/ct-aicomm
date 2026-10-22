@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/passport/version-terminal-event-v1.schema.json",
+  "title": "CT-AIComm Link Evidence Passport terminal version event v1",
+  "description": "An append-only expiry, supersession, or revocation event for one exact sealed passport version. The event does not mutate the source version or issue certification.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_type",
+    "event_id",
+    "sequence",
+    "passport_ref",
+    "from_state",
+    "to_state",
+    "reason_code",
+    "reason_detail",
+    "occurred_at",
+    "actor",
+    "replacement_ref",
+    "boundary",
+    "content_fingerprint"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "record_type": { "const": "passport_version_terminal_event" },
+    "event_id": { "$ref": "#/$defs/id" },
+    "sequence": { "const": 1 },
+    "passport_ref": { "$ref": "#/$defs/passportReference" },
+    "from_state": { "const": "sealed" },
+    "to_state": { "enum": ["expired", "superseded", "revoked"] },
+    "reason_code": { "enum": ["validity_elapsed", "replacement_published", "revocation_authorized"] },
+    "reason_detail": { "type": "string", "minLength": 3, "maxLength": 500 },
+    "occurred_at": { "$ref": "#/$defs/instant" },
+    "actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["actor_id", "actor_role"],
+      "properties": {
+        "actor_id": { "$ref": "#/$defs/id" },
+        "actor_role": { "enum": ["system", "operator", "publisher"] }
+      }
+    },
+    "replacement_ref": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/passportReference" }
+      ]
+    },
+    "boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["append_only", "source_mutated", "certification_issued"],
+      "properties": {
+        "append_only": { "const": true },
+        "source_mutated": { "const": false },
+        "certification_issued": { "const": false }
+      }
+    },
+    "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "to_state": { "const": "superseded" } } },
+      "then": {
+        "properties": {
+          "reason_code": { "const": "replacement_published" },
+          "replacement_ref": { "$ref": "#/$defs/passportReference" }
+        }
+      },
+      "else": { "properties": { "replacement_ref": { "type": "null" } } }
+    },
+    {
+      "if": { "properties": { "to_state": { "const": "expired" } } },
+      "then": { "properties": { "reason_code": { "const": "validity_elapsed" } } }
+    },
+    {
+      "if": { "properties": { "to_state": { "const": "revoked" } } },
+      "then": { "properties": { "reason_code": { "const": "revocation_authorized" } } }
+    }
+  ],
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-(?:(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+(?:[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
+    },
+    "fingerprint": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "instant": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "passportReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["object_type", "object_id", "version", "tenant_id", "content_fingerprint"],
+      "properties": {
+        "object_type": { "const": "passport_evidence_version" },
+        "object_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/version" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    }
+  }
+}
