@@ -78,6 +78,31 @@ class SoakMonitorTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             self.assertIsNone(monitor.process_observation(999, Path(temporary)))
 
+    def test_sampling_clock_is_initialized_after_waiting_for_stage_start(self):
+        events = []
+
+        def wall_clock():
+            events.append("wall")
+            return 100.0
+
+        def sleeper(delay):
+            events.append(("sleep", delay))
+
+        def monotonic_clock():
+            events.append("monotonic")
+            return 500.0
+
+        next_sample = monitor.sampling_clock_after_start(
+            120.0,
+            once=False,
+            wall_clock=wall_clock,
+            monotonic_clock=monotonic_clock,
+            sleeper=sleeper,
+        )
+
+        self.assertEqual(next_sample, 500.0)
+        self.assertEqual(events, ["wall", ("sleep", 20.0), "monotonic"])
+
 
 if __name__ == "__main__":
     unittest.main()

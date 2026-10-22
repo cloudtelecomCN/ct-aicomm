@@ -215,6 +215,21 @@ def existing_sequence(path: Path) -> int:
     return sequence
 
 
+def sampling_clock_after_start(
+    started_epoch: float,
+    *,
+    once: bool,
+    wall_clock: Callable[[], float] = time.time,
+    monotonic_clock: Callable[[], float] = time.monotonic,
+    sleeper: Callable[[float], None] = time.sleep,
+) -> float:
+    if not once:
+        delay = started_epoch - wall_clock()
+        if delay > 0:
+            sleeper(delay)
+    return monotonic_clock()
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Collect CT-581 long-run node observations")
     parser.add_argument("--output", required=True, type=Path)
@@ -282,9 +297,7 @@ def main() -> int:
         write_json_atomic(state_path, state)
 
     sequence = existing_sequence(samples_path)
-    next_sample = time.monotonic()
-    if not args.once and time.time() < state["started_epoch"]:
-        time.sleep(state["started_epoch"] - time.time())
+    next_sample = sampling_clock_after_start(state["started_epoch"], once=args.once)
     while True:
         if not args.once and time.time() > state["planned_finish_epoch"]:
             write_json_atomic(
