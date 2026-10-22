@@ -1,0 +1,103 @@
+{
+  "schema_version": "1.0.0",
+  "task": "CT-581",
+  "stage": "preflight",
+  "data_origin": "measured",
+  "status": "passed",
+  "started_at": "2026-10-22T07:18:00.000Z",
+  "planned_finish_at": "2026-10-22T07:22:00.000Z",
+  "finished_at": "2026-10-22T07:22:00.025Z",
+  "duration_seconds": 240.025,
+  "source_commit": "9d60a0b18215408d1ad6ac36f3b4ab6d92cf3bf2",
+  "model": "Qwen/Qwen2.5-7B-Instruct",
+  "environment_fingerprint": "sha256:446f8fb1cee65d5a063d664e113a4e4e75060d916604fe6be9b29c7c69533a7d",
+  "manifest_fingerprint": "sha256:658a818665b654380b4e455e23fb44fa04dafc2d9aa388a6aad850b8a09b0ebc",
+  "artifacts": {
+    "agent_sha256": "sha256:230e39681a03cf206796d987a7ebb404ce34a22feb36c86aa4905040fb088317",
+    "bpf_sha256": "sha256:99141bbd9afc15bc9368e304a946d95f8fcef5bb5d48a7cc2951e8565a647504",
+    "prompt_dataset_sha256": "sha256:9a0eae14e4a5a4e0718cdc83bf8067b7f779424108fb8170fbf2ded3f5667ca9",
+    "collector_sha256": "sha256:92fdd82bc433898776013ce75b963e49e294782cf32008fbcf1b129a1bfccda9",
+    "runner_sha256": "sha256:c27601f9401a300e369df42585315a0eec539e8dfa54d0e2ac3ade74331d9371",
+    "monitor_sha256": "sha256:66bd611b1f7789c411929a1a3e45f4781b5cfe260d3e8450399e77a0f4e01f1a"
+  },
+  "workload": {
+    "window_count": 4,
+    "attempt_count": 768,
+    "success_count": 768,
+    "failure_count": 0,
+    "failure_ratio": 0,
+    "maximum_gap_seconds": 60.024,
+    "ttft_p95_ms": {
+      "first_median": 172.8374720000138,
+      "last_median": 175.13483400002588,
+      "absolute": 2.297362000012072,
+      "ratio": 0.013292036578803283,
+      "peak": 175.13483400002588
+    }
+  },
+  "nodes": [
+    {
+      "node_alias": "node-a",
+      "observation_count": 8,
+      "maximum_gap_seconds": 30.025,
+      "maximum_heartbeat_age_seconds": 24,
+      "restart_count": 0,
+      "agent_rss_kib": {
+        "first_median": 5016,
+        "last_median": 5016,
+        "absolute": 0,
+        "ratio": 0,
+        "peak": 5016
+      },
+      "vllm_rss_kib": {
+        "first_median": 1381496,
+        "last_median": 1381496,
+        "absolute": 0,
+        "ratio": 0,
+        "peak": 1381496
+      },
+      "gpu_memory_mib": {
+        "first_median": 19281,
+        "last_median": 19281,
+        "absolute": 0,
+        "ratio": 0,
+        "peak": 19281
+      },
+      "artifact_changed": false
+    },
+    {
+      "node_alias": "node-b",
+      "observation_count": 8,
+      "maximum_gap_seconds": 30.025,
+      "maximum_heartbeat_age_seconds": 15,
+      "restart_count": 0,
+      "agent_rss_kib": {
+        "first_median": 4984,
+        "last_median": 4984,
+        "absolute": 0,
+        "ratio": 0,
+        "peak": 4984
+      },
+      "vllm_rss_kib": {
+        "first_median": 1383652,
+        "last_median": 1383652,
+        "absolute": 0,
+        "ratio": 0,
+        "peak": 1383652
+      },
+      "gpu_memory_mib": {
+        "first_median": 19249,
+        "last_median": 19249,
+        "absolute": 0,
+        "ratio": 0,
+        "peak": 19249
+      },
+      "artifact_changed": false
+    }
+  ],
+  "failure_codes": [],
+  "raw_evidence_visibility": "restricted",
+  "runtime_endpoints_published": false,
+  "claim_gate": "preflight_passed",
+  "receipt_fingerprint": "sha256:e5b40da224fc5d0a8bb18e6ab09d9969ffe98f4bca0fbc97efcab868b40999b2"
+}

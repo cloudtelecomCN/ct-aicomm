@@ -84,4 +84,6 @@ The finalizer verifies completion-record hashes before evaluating the gate. Miss
 
 ## Current status
 
-The first short workload completed 10,240 of 10,240 attempts across 160 topology, repetition, and concurrency strata. Its active request window was approximately 244 seconds; surrounding GPU and process-CPU monitoring covered approximately 485 seconds, and both inference services reported zero restarts. The [public receipt](../../evidence/quality/ct-581-a10-soak-preflight-20261022.json) remains explicitly `partial`: it predates the complete Agent RSS and immutable-completion pipeline, and neither the seven-day nor thirty-day gate has passed.
+The historical first short workload completed 10,240 of 10,240 attempts, but its [public receipt](../../evidence/quality/ct-581-a10-soak-preflight-20261022.json) remains explicitly `partial` because it predates the complete Agent RSS and immutable-completion pipeline.
+
+The formal Agent-enabled [preflight receipt](../../evidence/quality/ct-581-a10-agent-preflight-20261022.json) passed on source commit `9d60a0b18215408d1ad6ac36f3b4ab6d92cf3bf2`. It records 768 of 768 successful requests across four workload windows, eight 30-second observations per node, no service restarts or artifact drift, and no observed Agent RSS, vLLM RSS, or GPU-memory growth during the 240.025-second stage. This passes only the preflight evidence-pipeline gate; neither the seven-day nor thirty-day gate has passed.

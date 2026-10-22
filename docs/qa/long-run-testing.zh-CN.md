@@ -84,4 +84,6 @@ node scripts/finalize-soak-stage.mjs \
 
 ## 当前状态
 
-首轮短时负载完成 10,240/10,240 次请求，覆盖 160 个拓扑、重复轮次与并发分层。有效请求窗口约 244 秒，外围 GPU 与进程 CPU 监控约 485 秒，两端推理服务重启数均为 0。[公开回执](../../evidence/quality/ct-581-a10-soak-preflight-20261022.json)仍明确标记为 `partial`：该轮早于完整的 Agent RSS 与不可变完成记录管道，且 7 天和 30 天门禁均未通过。
+历史首轮短时负载完成 10,240/10,240 次请求，但其[公开回执](../../evidence/quality/ct-581-a10-soak-preflight-20261022.json)仍明确标记为 `partial`，因为该轮早于完整的 Agent RSS 与不可变完成记录管道。
+
+正式启用 Agent 的[预检回执](../../evidence/quality/ct-581-a10-agent-preflight-20261022.json)已在源码提交 `9d60a0b18215408d1ad6ac36f3b4ab6d92cf3bf2` 上通过：4 个负载窗口共完成 768/768 次请求；每个节点记录 8 条、间隔 30 秒的观测；服务无重启、制品无漂移；在 240.025 秒阶段内未观察到 Agent RSS、vLLM RSS 或 GPU 显存增长。该结果只通过了预检证据管道门禁，7 天和 30 天门禁仍未通过。

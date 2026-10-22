@@ -4,6 +4,7 @@ import test from "node:test";
 
 const readJson = async (path) => JSON.parse(await readFile(new URL(path, import.meta.url), "utf8"));
 const sha256 = /^[a-f0-9]{64}$/;
+const prefixedSha256 = /^sha256:[a-f0-9]{64}$/;
 
 test("publishes a bounded CT-534 scale receipt without restricted topology", async () => {
   const environment = await readJson("../evidence/poc/ct-521-a10-dual-node-20261021.json");
@@ -49,5 +50,27 @@ test("records the CT-581 short preflight without claiming the long-run gate", as
   assert.equal(receipt.claim_gate, "not_passed_seven_and_thirty_day_stages_not_run");
   assert.ok(receipt.limitations.some((limitation) => /not a seven-day or thirty-day soak/i.test(limitation)));
   for (const hash of Object.values(receipt.restricted_artifacts)) assert.match(hash, sha256);
+  assert.doesNotMatch(JSON.stringify(receipt), /(?:\d{1,3}\.){3}\d{1,3}|i-[a-z0-9]{8,}|\.pem|private[_ -]?key/iu);
+});
+
+test("publishes the Agent-enabled CT-581 preflight without claiming a long-run gate", async () => {
+  const receipt = await readJson("../evidence/quality/ct-581-a10-agent-preflight-20261022.json");
+  assert.equal(receipt.stage, "preflight");
+  assert.equal(receipt.status, "passed");
+  assert.equal(receipt.claim_gate, "preflight_passed");
+  assert.ok(receipt.duration_seconds >= 240);
+  assert.equal(receipt.workload.window_count, 4);
+  assert.equal(receipt.workload.attempt_count, 768);
+  assert.equal(receipt.workload.success_count, 768);
+  assert.equal(receipt.workload.failure_count, 0);
+  assert.deepEqual(receipt.failure_codes, []);
+  assert.equal(receipt.nodes.length, 2);
+  assert.ok(receipt.nodes.every(({ observation_count, restart_count, artifact_changed }) => observation_count === 8 && restart_count === 0 && artifact_changed === false));
+  assert.ok(Object.values(receipt.artifacts).every((digest) => prefixedSha256.test(digest)));
+  assert.match(receipt.environment_fingerprint, prefixedSha256);
+  assert.match(receipt.manifest_fingerprint, prefixedSha256);
+  assert.match(receipt.receipt_fingerprint, prefixedSha256);
+  assert.equal(receipt.raw_evidence_visibility, "restricted");
+  assert.equal(receipt.runtime_endpoints_published, false);
   assert.doesNotMatch(JSON.stringify(receipt), /(?:\d{1,3}\.){3}\d{1,3}|i-[a-z0-9]{8,}|\.pem|private[_ -]?key/iu);
 });
