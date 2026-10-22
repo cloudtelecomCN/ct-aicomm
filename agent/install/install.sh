@@ -29,16 +29,19 @@ while (($#)); do
   esac
 done
 
+host_root=0
+if [[ $root == / ]]; then host_root=1; fi
+
 [[ -n $agent_binary && -x $agent_binary ]] || { echo "install: --agent-binary must be executable" >&2; exit 1; }
 [[ -f $bpf_object ]] || { echo "install: BPF object not found: $bpf_object" >&2; exit 1; }
 
 if ((allow_unsigned_development)); then
-  [[ $root != / ]] || { echo "install: unsigned development mode is forbidden for the host root" >&2; exit 1; }
+  ((!host_root)) || { echo "install: unsigned development mode is forbidden for the host root" >&2; exit 1; }
 else
   bash "$script_dir/verify-release.sh" "$agent_binary" "$bpf_object" "$sbom" "$provenance" "$checksums" "$signature" "$public_key"
 fi
 
-if [[ $root == / ]]; then
+if ((host_root)); then
   "$script_dir/preflight.sh"
   if ! id -u ct-aicomm-agent >/dev/null 2>&1; then
     useradd --system --home-dir /var/lib/ct-aicomm-agent --shell /usr/sbin/nologin --user-group ct-aicomm-agent
@@ -82,12 +85,12 @@ chmod 0644 "$unit_dir/ct-aicomm-agent.service"
 } >"$state_dir/install.manifest"
 chmod 0600 "$state_dir/install.manifest"
 
-if [[ $root == / ]]; then
+if ((host_root)); then
   chown -R ct-aicomm-agent:ct-aicomm-agent "$state_dir"
   chown root:ct-aicomm-agent "$config_dir" "$config_dir/agent.env"
 fi
 
-if [[ $root == / && $no_start -eq 0 ]]; then
+if ((host_root && no_start == 0)); then
   systemctl daemon-reload
   systemctl enable --now ct-aicomm-agent.service
 fi

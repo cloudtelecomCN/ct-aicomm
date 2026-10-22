@@ -14,11 +14,13 @@ while (($#)); do
 done
 [[ $actor =~ ^[A-Za-z0-9._:@-]{1,128}$ ]] || { echo "emergency-recover: invalid actor" >&2; exit 2; }
 [[ ${#reason} -ge 3 && ${#reason} -le 200 ]] || { echo "emergency-recover: reason must be 3-200 characters" >&2; exit 2; }
+host_root=0
+if [[ $root == / ]]; then host_root=1; fi
 root=${root%/}
 agent="$root/usr/local/lib/ct-aicomm-agent/bin/ct-aicomm-agent"
 state="$root/var/lib/ct-aicomm-agent"
 [[ -x $agent ]] || { echo "emergency-recover: installed Agent not found" >&2; exit 1; }
-if [[ $root == / ]]; then
+if ((host_root)); then
   [[ ${EUID} -eq 0 ]] || { echo "emergency-recover: root is required" >&2; exit 1; }
   if systemctl is-active --quiet ct-aicomm-agent.service; then
     systemctl stop ct-aicomm-agent.service

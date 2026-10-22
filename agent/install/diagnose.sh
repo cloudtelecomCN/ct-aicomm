@@ -8,6 +8,8 @@ while (($#)); do
     *) echo "diagnose: unknown argument: $1" >&2; exit 2 ;;
   esac
 done
+host_root=0
+if [[ $root == / ]]; then host_root=1; fi
 root=${root%/}
 prefix="$root/usr/local/lib/ct-aicomm-agent"
 state="$root/var/lib/ct-aicomm-agent"
@@ -34,14 +36,14 @@ if [[ -f $state/install.manifest ]]; then
   check_hash agent_sha256 "$prefix/bin/ct-aicomm-agent"
   check_hash bpf_sha256 "$prefix/lib/ct_selector.bpf.o"
   if grep -q '^development_unsigned=true$' "$state/install.manifest"; then
-    if [[ $root == / ]]; then echo "FAIL unsigned_host_install"; failures=$((failures + 1)); else echo "PASS isolated_unsigned_test_install"; fi
+    if ((host_root)); then echo "FAIL unsigned_host_install"; failures=$((failures + 1)); else echo "PASS isolated_unsigned_test_install"; fi
   else
     check_hash sbom_sha256 "$prefix/share/ct-aicomm-agent.spdx.json"
     check_hash provenance_sha256 "$prefix/share/provenance.json"
     check_hash release_manifest_sha256 "$prefix/share/SHA256SUMS"
   fi
 fi
-if [[ $root == / ]]; then
+if ((host_root)); then
   id ct-aicomm-agent >/dev/null 2>&1 && echo "PASS service_user" || { echo "FAIL service_user"; failures=$((failures + 1)); }
   systemctl is-active --quiet ct-aicomm-agent.service && echo "PASS service_active" || { echo "FAIL service_active"; failures=$((failures + 1)); }
   mountpoint -q /sys/fs/bpf && echo "PASS bpffs" || { echo "FAIL bpffs"; failures=$((failures + 1)); }

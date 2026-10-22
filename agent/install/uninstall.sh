@@ -13,6 +13,8 @@ while (($#)); do
   esac
 done
 
+host_root=0
+if [[ $root == / ]]; then host_root=1; fi
 root=${root%/}
 prefix="$root/usr/local/lib/ct-aicomm-agent"
 unit="$root/etc/systemd/system/ct-aicomm-agent.service"
@@ -30,7 +32,7 @@ if [[ -x $agent ]]; then
   fi
 fi
 
-if [[ $root == / ]]; then
+if ((host_root)); then
   systemctl disable --now ct-aicomm-agent.service 2>/dev/null || true
 fi
 rm -f "$unit"
@@ -38,7 +40,7 @@ rm -rf "$prefix" "$state_dir"
 if [[ $purge -eq 1 ]]; then
   rm -rf "$config_dir"
 fi
-if [[ $root == / ]]; then
+if ((host_root)); then
   systemctl daemon-reload
 fi
 

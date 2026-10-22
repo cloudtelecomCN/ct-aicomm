@@ -24,6 +24,23 @@ test("diagnostics avoid configuration values and emergency recovery stays latche
   assert.doesNotMatch(recover, /systemctl (?:enable|start)/);
 });
 
+test("host-root lifecycle branches survive path normalization", async () => {
+  const scripts = await Promise.all([
+    "../agent/install/install.sh",
+    "../agent/install/diagnose.sh",
+    "../agent/install/emergency-recover.sh",
+    "../agent/install/uninstall.sh",
+    "../agent/install/upgrade.sh",
+  ].map(source));
+  for (const script of scripts) {
+    assert.match(script, /host_root=0\nif \[\[ \$root == \/ \]\]; then host_root=1; fi/);
+    const normalized = script.slice(script.indexOf("root=${root%/}"));
+    assert.doesNotMatch(normalized, /\[\[ \$root == \/ \]\]/);
+  }
+  assert.match(scripts[0], /if \(\(host_root && no_start == 0\)\); then/);
+  assert.match(scripts[4], /systemctl restart ct-aicomm-agent\.service/);
+});
+
 test("runbooks cover the complete third-party lifecycle in both languages", async () => {
   for (const path of ["../docs/agent/operations.md", "../docs/agent/operations.zh-CN.md"]) {
     const runbook = await source(path);

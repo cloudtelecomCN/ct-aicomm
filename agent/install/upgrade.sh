@@ -16,7 +16,10 @@ while (($#)); do
   esac
 done
 
-if [[ -n $health_check && $root == / ]]; then
+host_root=0
+if [[ $root == / ]]; then host_root=1; fi
+
+if [[ -n $health_check ]] && ((host_root)); then
   echo "upgrade: custom health checks are forbidden for the host root" >&2
   exit 2
 fi
@@ -40,7 +43,7 @@ restore() {
   rm -rf "$prefix"
   cp -a "$backup/prefix" "$prefix"
   [[ -f $backup/install.manifest ]] && cp -a "$backup/install.manifest" "$state_dir/install.manifest"
-  if [[ $root == / ]]; then
+  if ((host_root)); then
     systemctl daemon-reload
     systemctl restart ct-aicomm-agent.service || true
   fi
@@ -48,7 +51,7 @@ restore() {
 trap 'echo "upgrade: failed; restoring previous signed version" >&2; restore' ERR
 
 bash "$script_dir/install.sh" "${install_args[@]}" --no-start
-if [[ $root == / ]]; then
+if ((host_root)); then
   systemctl daemon-reload
   systemctl restart ct-aicomm-agent.service
   systemctl is-active --quiet ct-aicomm-agent.service
