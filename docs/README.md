@@ -18,6 +18,7 @@
 - [Evidence status and lifecycle v1](evidence/status-and-lifecycle-v1.md)
 - [Evidence content integrity v1](evidence/content-integrity-v1.md)
 - [Evidence import and idempotency v1](evidence/import-and-idempotency-v1.md)
+- [Artifact lineage and redacted derivation v1](evidence/artifact-lineage-and-redaction-v1.md)
 - [CT-Bench reproduction and evidence contract](bench-reproduction/README.md)
 - [CT-DataPlane Agent threat model](security/agent-threat-model.md)
 - [CT-DataPlane Agent operations runbook](agent/operations.md)

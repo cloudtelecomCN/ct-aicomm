@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "object_type": "artifact",
+  "artifact_id": "artifact-synthetic-public-link-summary",
+  "version": "1.0.0",
+  "tenant_id": "tenant-synthetic-alpha",
+  "created_by": "principal-synthetic-publisher",
+  "created_at": "2026-10-23T01:10:00.000Z",
+  "authorization_scope": {
+    "visibility": "public",
+    "purpose": "Publish a redacted synthetic summary and its review limitations.",
+    "recipients": [],
+    "expires_at": null
+  },
+  "kind": "report",
+  "media_type": "application/json",
+  "content_fingerprint": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "size_bytes": 1024,
+  "storage_locator": "urn:ct-aicomm:synthetic:public:artifact:link-summary",
+  "classification": "public",
+  "derived_from": [
+    {
+      "object_type": "artifact",
+      "object_id": "artifact-synthetic-private-link-samples",
+      "version": "1.0.0",
+      "tenant_id": "tenant-synthetic-alpha"
+    }
+  ]
+}

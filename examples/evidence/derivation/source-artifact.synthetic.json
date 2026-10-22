@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0.0",
+  "object_type": "artifact",
+  "artifact_id": "artifact-synthetic-private-link-samples",
+  "version": "1.0.0",
+  "tenant_id": "tenant-synthetic-alpha",
+  "created_by": "principal-synthetic-runner",
+  "created_at": "2026-10-23T01:00:00.000Z",
+  "authorization_scope": {
+    "visibility": "private",
+    "purpose": "Model a restricted source artifact without publishing any real customer content.",
+    "recipients": [],
+    "expires_at": null
+  },
+  "kind": "raw-samples",
+  "media_type": "application/json",
+  "content_fingerprint": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "size_bytes": 4096,
+  "storage_locator": "urn:ct-aicomm:synthetic:private:artifact:link-samples",
+  "classification": "restricted",
+  "derived_from": []
+}

@@ -45,6 +45,7 @@
     "tests/compliance-evidence-binding.test.mjs",
     "tests/connector-sdk-contract.test.mjs",
     "tests/ct-dsl.test.mjs",
+    "tests/evidence-derivation.test.mjs",
     "tests/evidence-content-integrity.test.mjs",
     "tests/evidence-import.test.mjs",
     "tests/evidence-object-schema.test.mjs",
@@ -167,6 +168,26 @@
           "authenticity_verified": false,
           "authorization_verified": false,
           "independent_review_verified": false,
+          "certification_issued": false
+        }
+      }
+    },
+    {
+      "id": "artifact-derivation-lineage",
+      "entrypoint": "examples/evidence/derivation-synthetic.mjs",
+      "expect": {
+        "equals": {
+          "data_origin": "synthetic",
+          "performance_claim_allowed": false,
+          "declared_field_count": 4,
+          "raw_values_included": false,
+          "private_source_required_for_full_review": true,
+          "record_integrity_verified": true,
+          "exact_version_lineage_verified": true,
+          "policy_anchor_verified": true,
+          "source_content_bytes_verified": false,
+          "authenticity_verified": false,
+          "authorization_verified": false,
           "certification_issued": false
         }
       }

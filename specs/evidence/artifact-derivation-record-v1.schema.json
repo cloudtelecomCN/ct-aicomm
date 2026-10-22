@@ -1,0 +1,169 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/evidence/artifact-derivation-record-v1.schema.json",
+  "title": "CT-AIComm Artifact Derivation Record v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_type",
+    "derivation_id",
+    "version",
+    "tenant_id",
+    "created_by",
+    "created_at",
+    "source_artifact",
+    "derived_artifact",
+    "policy",
+    "redactions",
+    "redaction_summary",
+    "review_effect",
+    "source_content_included",
+    "hidden_values_included",
+    "authenticity_verified",
+    "authorization_verified",
+    "certification_issued",
+    "record_fingerprint"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "record_type": { "const": "artifact_derivation_record" },
+    "derivation_id": { "$ref": "#/$defs/id" },
+    "version": { "$ref": "#/$defs/version" },
+    "tenant_id": { "$ref": "#/$defs/id" },
+    "created_by": { "$ref": "#/$defs/id" },
+    "created_at": { "$ref": "#/$defs/instant" },
+    "source_artifact": { "$ref": "#/$defs/sourceDescriptor" },
+    "derived_artifact": { "$ref": "#/$defs/derivedDescriptor" },
+    "policy": { "$ref": "#/$defs/policy" },
+    "redactions": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 256,
+      "items": { "$ref": "#/$defs/redaction" }
+    },
+    "redaction_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["declared_field_count", "omitted_field_count", "transformed_field_count", "categories", "raw_values_included"],
+      "properties": {
+        "declared_field_count": { "type": "integer", "minimum": 1 },
+        "omitted_field_count": { "type": "integer", "minimum": 0 },
+        "transformed_field_count": { "type": "integer", "minimum": 0 },
+        "categories": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/category" }
+        },
+        "raw_values_included": { "const": false }
+      }
+    },
+    "review_effect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["public_review_scope", "private_source_required_for_full_review", "disclosed_impact_codes", "limitations", "source_content_bytes_verified_by_record"],
+      "properties": {
+        "public_review_scope": { "const": "derived-artifact-and-lineage-only" },
+        "private_source_required_for_full_review": { "const": true },
+        "disclosed_impact_codes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/reviewImpact" }
+        },
+        "limitations": {
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 10, "maxLength": 500 }
+        },
+        "source_content_bytes_verified_by_record": { "const": false }
+      }
+    },
+    "source_content_included": { "const": false },
+    "hidden_values_included": { "const": false },
+    "authenticity_verified": { "const": false },
+    "authorization_verified": { "const": false },
+    "certification_issued": { "const": false },
+    "record_fingerprint": { "$ref": "#/$defs/fingerprint" }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-(?:(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+(?:[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
+    },
+    "instant": { "type": "string", "format": "date-time" },
+    "fingerprint": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["object_type", "object_id", "version", "tenant_id"],
+      "properties": {
+        "object_type": { "const": "artifact" },
+        "object_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/version" },
+        "tenant_id": { "$ref": "#/$defs/id" }
+      }
+    },
+    "sourceDescriptor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_ref", "object_fingerprint", "content_fingerprint", "classification"],
+      "properties": {
+        "artifact_ref": { "$ref": "#/$defs/reference" },
+        "object_fingerprint": { "$ref": "#/$defs/fingerprint" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" },
+        "classification": { "const": "restricted" }
+      }
+    },
+    "derivedDescriptor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_ref", "object_fingerprint", "content_fingerprint", "classification"],
+      "properties": {
+        "artifact_ref": { "$ref": "#/$defs/reference" },
+        "object_fingerprint": { "$ref": "#/$defs/fingerprint" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" },
+        "classification": { "const": "public" }
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policy_id", "version", "fingerprint"],
+      "properties": {
+        "policy_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/version" },
+        "fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "category": {
+      "enum": ["commercial-confidential", "credential", "customer-data", "infrastructure-locator", "network-topology", "other-restricted", "personal-data", "raw-measurement"]
+    },
+    "reviewImpact": {
+      "enum": ["granularity-reduced", "identity-replaced", "sample-set-reduced", "source-value-unavailable"]
+    },
+    "redaction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_content_pointer", "action", "category", "reason_code", "review_impact"],
+      "properties": {
+        "source_content_pointer": {
+          "type": "string",
+          "pattern": "^/(?:[^~/]|~0|~1)+(?:/(?:[^~/]|~0|~1)+)*$"
+        },
+        "action": { "enum": ["aggregate", "generalize", "mask", "pseudonymize", "remove"] },
+        "category": { "$ref": "#/$defs/category" },
+        "reason_code": { "$ref": "#/$defs/id" },
+        "review_impact": { "$ref": "#/$defs/reviewImpact" }
+      }
+    }
+  }
+}
