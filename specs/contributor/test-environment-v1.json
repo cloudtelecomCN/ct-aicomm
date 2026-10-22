@@ -54,6 +54,7 @@
     "tests/evidence-object-schema.test.mjs",
     "tests/evidence-lifecycle.test.mjs",
     "tests/passport-local-import-preflight.test.mjs",
+    "tests/passport-observation-normalization.test.mjs",
     "tests/passport-scenario-method-freeze.test.mjs",
     "tests/public-sdk-boundary.test.mjs",
     "tests/registry-entry-integrity.test.mjs"
@@ -315,6 +316,27 @@
           "failed_run_remained_planned": true,
           "raw_payload_retained": false,
           "credentials_retained": false,
+          "external_network_used": false,
+          "performance_claim_allowed": false,
+          "certification_issued": false
+        }
+      }
+    },
+    {
+      "id": "passport-observation-normalization",
+      "entrypoint": "examples/passport/observation-normalization-synthetic.mjs",
+      "expect": {
+        "equals": {
+          "schema_version": "1.0.0",
+          "data_origin": "synthetic",
+          "normalized_value": 46,
+          "normalized_unit": "ms",
+          "attempted_samples": 10,
+          "failed_samples_retained": true,
+          "excluded_samples_retained": true,
+          "sample_accounting_closed": true,
+          "quality_status": "partial",
+          "origins_strictly_separated": true,
           "external_network_used": false,
           "performance_claim_allowed": false,
           "certification_issued": false

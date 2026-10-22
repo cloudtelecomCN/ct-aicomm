@@ -1,0 +1,317 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/passport/normalized-observation-v1.schema.json",
+  "title": "CT-AIComm Link Evidence Passport normalized observation v1",
+  "description": "Immutable normalized observation bound to one started run and its exact frozen method. Unit conversion, sample failures, exclusions, source origin, and quality are explicit; conformance is not a performance or certification claim.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_type",
+    "observation_id",
+    "version",
+    "tenant_id",
+    "created_by",
+    "created_at",
+    "authorization_scope",
+    "run_ref",
+    "freeze_ref",
+    "observed_at",
+    "observation_point",
+    "metric",
+    "aggregation",
+    "measurement",
+    "samples",
+    "failures",
+    "exclusions",
+    "source",
+    "quality",
+    "limitations",
+    "boundary",
+    "content_fingerprint"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "record_type": { "const": "passport_normalized_observation" },
+    "observation_id": { "$ref": "#/$defs/id" },
+    "version": { "$ref": "#/$defs/version" },
+    "tenant_id": { "$ref": "#/$defs/id" },
+    "created_by": { "$ref": "#/$defs/id" },
+    "created_at": { "$ref": "#/$defs/instant" },
+    "authorization_scope": { "$ref": "#/$defs/authorizationScope" },
+    "run_ref": { "$ref": "#/$defs/runReference" },
+    "freeze_ref": { "$ref": "#/$defs/freezeReference" },
+    "observed_at": { "$ref": "#/$defs/instant" },
+    "observation_point": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "metric": { "type": "string", "minLength": 1, "maxLength": 96 },
+    "aggregation": { "enum": ["raw", "count", "mean", "min", "max", "p50", "p95", "p99"] },
+    "measurement": { "$ref": "#/$defs/measurement" },
+    "samples": { "$ref": "#/$defs/samples" },
+    "failures": {
+      "type": "array",
+      "maxItems": 128,
+      "items": { "$ref": "#/$defs/failure" }
+    },
+    "exclusions": {
+      "type": "array",
+      "maxItems": 64,
+      "items": { "$ref": "#/$defs/exclusion" }
+    },
+    "source": { "$ref": "#/$defs/source" },
+    "quality": { "$ref": "#/$defs/quality" },
+    "limitations": {
+      "type": "array",
+      "maxItems": 32,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 3, "maxLength": 500 }
+    },
+    "boundary": { "$ref": "#/$defs/boundary" },
+    "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-(?:(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+(?:[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
+    },
+    "fingerprint": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "instant": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "authorizationScope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["visibility", "purpose", "recipients", "expires_at"],
+      "properties": {
+        "visibility": { "enum": ["private", "shared", "public"] },
+        "purpose": { "type": "string", "minLength": 3, "maxLength": 240 },
+        "recipients": {
+          "type": "array",
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" }
+        },
+        "expires_at": {
+          "oneOf": [
+            { "$ref": "#/$defs/instant" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "contentReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["object_type", "object_id", "version", "tenant_id", "content_fingerprint"],
+      "properties": {
+        "object_type": { "enum": ["artifact", "observation"] },
+        "object_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/version" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "artifactReference": {
+      "allOf": [
+        { "$ref": "#/$defs/contentReference" },
+        { "properties": { "object_type": { "const": "artifact" } } }
+      ]
+    },
+    "observationReference": {
+      "allOf": [
+        { "$ref": "#/$defs/contentReference" },
+        { "properties": { "object_type": { "const": "observation" } } }
+      ]
+    },
+    "runReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["object_type", "object_id", "version", "tenant_id", "content_fingerprint"],
+      "properties": {
+        "object_type": { "const": "run" },
+        "object_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/version" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "freezeReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["object_type", "object_id", "version", "tenant_id", "content_fingerprint"],
+      "properties": {
+        "object_type": { "const": "passport_scenario_method_freeze" },
+        "object_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/version" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "measurement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_value", "source_unit", "normalized_value", "normalized_unit", "conversion_factor"],
+      "properties": {
+        "source_value": { "type": ["number", "null"], "minimum": 0 },
+        "source_unit": {
+          "enum": ["ns", "us", "ms", "s", "bit/s", "kbit/s", "Mbit/s", "Gbit/s", "byte/s", "KiB/s", "MiB/s", "GiB/s", "bytes", "KiB", "MiB", "GiB", "1", "percent", "%", "count", "request/s", "token/s"]
+        },
+        "normalized_value": { "type": ["number", "null"], "minimum": 0 },
+        "normalized_unit": { "enum": ["1", "bit/s", "byte/s", "bytes", "count", "ms", "percent", "request/s", "token/s"] },
+        "conversion_factor": { "type": "number", "exclusiveMinimum": 0 }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "source_value": { "type": "number" },
+            "normalized_value": { "type": "number" }
+          }
+        },
+        {
+          "properties": {
+            "source_value": { "type": "null" },
+            "normalized_value": { "type": "null" }
+          }
+        }
+      ]
+    },
+    "samples": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["attempted", "successful", "failed", "excluded", "included"],
+      "properties": {
+        "attempted": { "type": "integer", "minimum": 1 },
+        "successful": { "type": "integer", "minimum": 0 },
+        "failed": { "type": "integer", "minimum": 0 },
+        "excluded": { "type": "integer", "minimum": 0 },
+        "included": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "failure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "stage", "count"],
+      "properties": {
+        "code": { "type": "string", "pattern": "^[a-z][a-z0-9_.-]{0,95}$" },
+        "stage": { "type": "string", "minLength": 1, "maxLength": 96 },
+        "count": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "exclusion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rule_id", "count"],
+      "properties": {
+        "rule_id": { "$ref": "#/$defs/id" },
+        "count": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["origin", "kind", "source_id", "collected_at", "content_fingerprint", "artifact_ref", "input_observation_refs", "declared_by"],
+      "properties": {
+        "origin": { "enum": ["measured", "synthetic", "inferred", "declared"] },
+        "kind": { "enum": ["instrument", "generator", "derivation", "attestation"] },
+        "source_id": { "$ref": "#/$defs/id" },
+        "collected_at": { "$ref": "#/$defs/instant" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" },
+        "artifact_ref": {
+          "oneOf": [
+            { "$ref": "#/$defs/artifactReference" },
+            { "type": "null" }
+          ]
+        },
+        "input_observation_refs": {
+          "type": "array",
+          "maxItems": 128,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/observationReference" }
+        },
+        "declared_by": {
+          "oneOf": [
+            { "$ref": "#/$defs/id" },
+            { "type": "null" }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "origin": { "const": "measured" } }, "required": ["origin"] },
+          "then": {
+            "properties": {
+              "kind": { "const": "instrument" },
+              "artifact_ref": { "$ref": "#/$defs/artifactReference" },
+              "input_observation_refs": { "maxItems": 0 },
+              "declared_by": { "type": "null" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "origin": { "const": "synthetic" } }, "required": ["origin"] },
+          "then": {
+            "properties": {
+              "kind": { "const": "generator" },
+              "artifact_ref": { "$ref": "#/$defs/artifactReference" },
+              "input_observation_refs": { "maxItems": 0 },
+              "declared_by": { "type": "null" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "origin": { "const": "inferred" } }, "required": ["origin"] },
+          "then": {
+            "properties": {
+              "kind": { "const": "derivation" },
+              "input_observation_refs": { "minItems": 1 },
+              "declared_by": { "type": "null" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "origin": { "const": "declared" } }, "required": ["origin"] },
+          "then": {
+            "properties": {
+              "kind": { "const": "attestation" },
+              "input_observation_refs": { "maxItems": 0 },
+              "declared_by": { "$ref": "#/$defs/id" }
+            }
+          }
+        }
+      ]
+    },
+    "quality": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "flags"],
+      "properties": {
+        "status": { "enum": ["valid", "partial", "invalid", "unknown"] },
+        "flags": {
+          "type": "array",
+          "maxItems": 4,
+          "uniqueItems": true,
+          "items": { "enum": ["failed_samples_retained", "excluded_samples_retained", "no_included_samples", "non_observed_origin"] }
+        }
+      }
+    },
+    "boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["data_origin", "origin_separated", "performance_claim_allowed", "certification_issued"],
+      "properties": {
+        "data_origin": { "enum": ["measured", "synthetic", "inferred", "declared"] },
+        "origin_separated": { "const": true },
+        "performance_claim_allowed": { "const": false },
+        "certification_issued": { "const": false }
+      }
+    }
+  }
+}

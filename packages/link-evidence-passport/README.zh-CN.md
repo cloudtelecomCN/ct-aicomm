@@ -2,7 +2,7 @@
 
 [English](README.md)
 
-本零依赖包实现 CT-609 场景方法冻结，以及 CT-610 本地导入与强制运行预检公开契约。
+本零依赖包实现 CT-609 场景方法冻结、CT-610 本地导入与强制运行预检，以及 CT-611 观测归一与质量标记公开契约。
 
 公开能力包括：
 
@@ -11,7 +11,8 @@
 - 创建和验证不保留路径、原始载荷与凭据的本地导入记录；
 - 评估授权、时钟、预算、并发和停止条件五项预检；
 - 只允许通过仍在有效期内的预检启动运行；
-- 校验运行是否仍绑定原冻结记录，以及用新 `run_id` 创建替代运行。
+- 校验运行是否仍绑定原冻结记录，以及用新 `run_id` 创建替代运行；
+- 通过 `observation.mjs` 创建和验证规范观测记录。
 
 受保护内容包括源站点和目标站点、方向、协议、工作负载配置、精确的 Evidence Core
 Scope 与 Method 引用、工具制品、参数、采样、排除规则、统计项和环境前提。运行进入
@@ -25,9 +26,13 @@ Scope 与 Method 引用、工具制品、参数、采样、排除规则、统计
 本包不访问网络，不执行流量，不采集测量，不认证身份，不提供存储，也不签发认证。
 验证通过只说明输入记录的结构和内容完整性。
 
+规范观测记录使用闭合样本账和 Evidence Core 规范单位，由规则派生质量状态，并为实测、
+合成、推断和声明分别使用专用来源结构；不能仅修改标签来提升或合并来源。
+
 运行合成场景：
 
 ```bash
 node examples/passport/scenario-method-freeze-synthetic.mjs
 node examples/passport/local-import-preflight-synthetic.mjs
+node examples/passport/observation-normalization-synthetic.mjs
 ```

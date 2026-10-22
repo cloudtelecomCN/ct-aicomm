@@ -20,6 +20,7 @@ CT-AIComm 是 CloudTelecom 面向 AI 训练与推理通信场景构建的开放�
 - [证据查询 API 与 SDK v1](docs/evidence/query-api-and-sdk-v1.zh-CN.md)
 - [链路证据护照场景与方法冻结 v1](docs/passport/scenario-and-method-freeze-v1.zh-CN.md)
 - [链路证据护照本地导入与运行预检 v1](docs/passport/local-import-and-run-preflight-v1.zh-CN.md)
+- [链路证据护照观测归一与质量标记 v1](docs/passport/observation-normalization-and-quality-v1.zh-CN.md)
 - [TTFT 样本 v1 JSON Schema](docs/bench-reproduction/ttft-sample.schema.json)
 - [CT-Bench 复现 CLI](packages/bench-reproduce/)
 - [vLLM Connector 兼容矩阵 v1](docs/connectors/vllm.zh-CN.md)
