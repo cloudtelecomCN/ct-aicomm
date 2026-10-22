@@ -21,6 +21,8 @@ sudo install/diagnose.sh
 
 Start in `CT_AGENT_MODE=observe_only`. Move to enforcement only after the registered Agent identity, control endpoint, approved selector policy, rollback state, and maintenance window are confirmed.
 
+The systemd unit uses privileged `ExecStartPre` steps to grant only the Agent group traversal on the bpffs root and create `/sys/fs/bpf/ct-aicomm-agent` before dropping to the dedicated service account. Root remains the only identity with read/write access to the bpffs root, and the Agent can write only in its bounded pin namespace. Treat a failure to prepare that namespace as an installation failure; do not run the long-lived service as root.
+
 ## Upgrade
 
 Keep the previous archive until validation is complete. The upgrader verifies the new signed bundle, retains the installed version, restarts the service, and restores the previous signed version if health verification fails.

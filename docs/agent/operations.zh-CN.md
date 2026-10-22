@@ -21,6 +21,8 @@ sudo install/diagnose.sh
 
 首次必须使用 `CT_AGENT_MODE=observe_only`。只有在 Agent 身份、控制端点、已批准选择器策略、回滚状态和维护窗口均确认后，才能进入执行模式。
 
+systemd 单元会先通过特权 `ExecStartPre` 仅向 Agent 专用组授予 bpffs 根目录的穿越权限，并创建 `/sys/fs/bpf/ct-aicomm-agent`，然后再降权到专用服务账号。bpffs 根目录仍只允许 root 读写，Agent 只能写入自己的受限 pin 命名空间。如果该命名空间准备失败，必须将其视为安装失败；不得改为 root 身份长期运行服务。
+
 ## 升级
 
 验证完成前保留上一版本压缩包。升级器先验证新签名包并保留当前安装，重启服务并检查健康；失败时自动恢复上一签名版本。

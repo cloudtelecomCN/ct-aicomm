@@ -9,7 +9,7 @@ sudo install/preflight.sh
 sudo install/install-package.sh --no-start
 ```
 
-The service receives only `CAP_BPF`, `CAP_NET_ADMIN`, and `CAP_PERFMON`, matching the threat model. Replace the values in `/etc/ct-aicomm-agent/agent.env` before enabling enforcement.
+The service receives only `CAP_BPF`, `CAP_NET_ADMIN`, and `CAP_PERFMON`, matching the threat model. Privileged `ExecStartPre` steps grant only the dedicated Agent group traversal on a mode-`0700` bpffs root, preserve root-only read/write access, and create `/sys/fs/bpf/ct-aicomm-agent` for the non-root service. The Agent cannot write outside that namespace. Replace the values in `/etc/ct-aicomm-agent/agent.env` before enabling enforcement.
 
 Removal calls `ct-aicomm-agent restore --all` before deleting managed files. If restoration fails, removal stops; `--force` is an explicit break-glass operation. Configuration is preserved unless `--purge` is supplied.
 

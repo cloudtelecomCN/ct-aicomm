@@ -39,6 +39,9 @@ test("requires signed production installs and hardened non-root service settings
   assert.match(verify, /openssl pkeyutl -verify/);
   assert.match(verify, /sha256sum --check --strict/);
   for (const setting of ["User=ct-aicomm-agent", "NoNewPrivileges=true", "ProtectKernelModules=true", "ProtectControlGroups=true", "SystemCallFilter=@system-service bpf", "CapabilityBoundingSet=CAP_BPF CAP_NET_ADMIN CAP_PERFMON", "LimitMEMLOCK=infinity", "ReadWritePaths=/sys/fs/bpf/ct-aicomm-agent /var/lib/ct-aicomm-agent"]) assert.match(service, new RegExp(setting));
+  assert.match(service, /^ExecStartPre=\+\/usr\/bin\/chgrp ct-aicomm-agent \/sys\/fs\/bpf$/m);
+  assert.match(service, /^ExecStartPre=\+\/usr\/bin\/chmod 1710 \/sys\/fs\/bpf$/m);
+  assert.match(service, /^ExecStartPre=\+\/usr\/bin\/install -d -o ct-aicomm-agent -g ct-aicomm-agent -m 0750 \/sys\/fs\/bpf\/ct-aicomm-agent$/m);
 });
 
 test("ships a real observe-only runtime instead of a release placeholder", async () => {
