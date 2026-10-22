@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/evidence/evidence-import-record-v1.schema.json",
+  "title": "CT-AIComm evidence import record v1",
+  "description": "Append-only result of one Evidence Core import attempt. A committed record establishes neither authenticity nor authorization, performance validity, independent review, or certification.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_type",
+    "attempt_id",
+    "idempotency_key",
+    "request_fingerprint",
+    "tenant_id",
+    "source_id",
+    "received_at",
+    "evidence_ref",
+    "data_origin",
+    "manifest_fingerprint",
+    "content_fingerprint",
+    "outcome",
+    "imported_object_count",
+    "duplicate_object_count",
+    "errors",
+    "external_anchor_verified",
+    "authenticity_verified",
+    "authorization_verified",
+    "performance_claim_allowed",
+    "certification_issued",
+    "previous_record_fingerprint",
+    "record_fingerprint"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "record_type": { "const": "evidence_import_record" },
+    "attempt_id": { "$ref": "#/$defs/id" },
+    "idempotency_key": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{7,127}$"
+    },
+    "request_fingerprint": { "$ref": "#/$defs/fingerprint" },
+    "tenant_id": { "$ref": "#/$defs/id" },
+    "source_id": { "$ref": "#/$defs/id" },
+    "received_at": { "$ref": "#/$defs/instant" },
+    "evidence_ref": {
+      "oneOf": [
+        { "$ref": "#/$defs/evidenceReference" },
+        { "type": "null" }
+      ]
+    },
+    "data_origin": {
+      "type": ["string", "null"],
+      "enum": ["synthetic", "hybrid", "measured", null]
+    },
+    "manifest_fingerprint": { "$ref": "#/$defs/nullableFingerprint" },
+    "content_fingerprint": { "$ref": "#/$defs/nullableFingerprint" },
+    "outcome": { "enum": ["committed", "replayed", "rejected"] },
+    "imported_object_count": { "type": "integer", "minimum": 0 },
+    "duplicate_object_count": { "type": "integer", "minimum": 0 },
+    "errors": {
+      "type": "array",
+      "maxItems": 256,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "path"],
+        "properties": {
+          "code": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{2,127}$"
+          },
+          "path": {
+            "type": "string",
+            "pattern": "^\\$",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        }
+      }
+    },
+    "external_anchor_verified": { "type": "boolean" },
+    "authenticity_verified": { "const": false },
+    "authorization_verified": { "const": false },
+    "performance_claim_allowed": { "const": false },
+    "certification_issued": { "const": false },
+    "previous_record_fingerprint": { "$ref": "#/$defs/nullableFingerprint" },
+    "record_fingerprint": { "$ref": "#/$defs/fingerprint" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "outcome": { "const": "rejected" } }, "required": ["outcome"] },
+      "then": {
+        "properties": {
+          "imported_object_count": { "const": 0 },
+          "errors": { "minItems": 1 }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "outcome": { "enum": ["committed", "replayed"] } }, "required": ["outcome"] },
+      "then": { "properties": { "errors": { "maxItems": 0 } } }
+    },
+    {
+      "if": { "properties": { "outcome": { "const": "committed" } }, "required": ["outcome"] },
+      "then": { "properties": { "imported_object_count": { "minimum": 1 } } }
+    },
+    {
+      "if": { "properties": { "outcome": { "const": "replayed" } }, "required": ["outcome"] },
+      "then": { "properties": { "imported_object_count": { "const": 0 } } }
+    }
+  ],
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$"
+    },
+    "fingerprint": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "nullableFingerprint": {
+      "oneOf": [
+        { "$ref": "#/$defs/fingerprint" },
+        { "type": "null" }
+      ]
+    },
+    "instant": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "evidenceReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["object_type", "object_id", "version", "tenant_id"],
+      "properties": {
+        "object_type": { "const": "evidence_version" },
+        "object_id": { "$ref": "#/$defs/id" },
+        "version": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-(?:(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+(?:[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
+        },
+        "tenant_id": { "$ref": "#/$defs/id" }
+      }
+    }
+  }
+}

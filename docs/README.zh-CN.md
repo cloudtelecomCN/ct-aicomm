@@ -17,6 +17,7 @@
 - [Evidence Core 对象模型 v1](evidence/object-model-v1.zh-CN.md)
 - [证据五轴状态与生命周期 v1](evidence/status-and-lifecycle-v1.zh-CN.md)
 - [证据内容完整性 v1](evidence/content-integrity-v1.zh-CN.md)
+- [证据导入与幂等契约 v1](evidence/import-and-idempotency-v1.zh-CN.md)
 - [CT-Bench 复现与证据规范](bench-reproduction/README.zh-CN.md)
 - [CT-DataPlane Agent 威胁模型](security/agent-threat-model.zh-CN.md)
 - [CT-DataPlane Agent 安装与运维手册](agent/operations.zh-CN.md)

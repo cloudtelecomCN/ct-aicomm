@@ -46,6 +46,7 @@
     "tests/connector-sdk-contract.test.mjs",
     "tests/ct-dsl.test.mjs",
     "tests/evidence-content-integrity.test.mjs",
+    "tests/evidence-import.test.mjs",
     "tests/evidence-object-schema.test.mjs",
     "tests/evidence-lifecycle.test.mjs",
     "tests/public-sdk-boundary.test.mjs",
@@ -166,6 +167,27 @@
           "authenticity_verified": false,
           "authorization_verified": false,
           "independent_review_verified": false,
+          "certification_issued": false
+        }
+      }
+    },
+    {
+      "id": "evidence-import-idempotency",
+      "entrypoint": "examples/evidence/import-synthetic.mjs",
+      "expect": {
+        "equals": {
+          "data_origin": "synthetic",
+          "performance_claim_allowed": false,
+          "committed_outcome": "committed",
+          "exact_retry_idempotent": true,
+          "same_content_outcome": "replayed",
+          "stored_object_count": 9,
+          "attempt_count": 3,
+          "different_request_same_key_outcome": "rejected",
+          "failed_attempt_recorded": true,
+          "append_only_chain_verified": true,
+          "authenticity_verified": false,
+          "authorization_verified": false,
           "certification_issued": false
         }
       }

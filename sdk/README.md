@@ -6,7 +6,7 @@ This zero-dependency ESM entry point exposes only the versioned public protocol 
 import { normalizeNetworkTelemetry, validateControlMessage } from "./sdk/index.mjs";
 ```
 
-The SDK validates and normalizes caller-supplied evidence. It does not contain credentials, discover private infrastructure, authorize execution, attach eBPF programs, or claim that synthetic data is measured. Version `0.9.0` adds CT-561 versioned compliance rule packs, deterministic upgrade-chain validation, and mapping-only reports. Tenant lookup, legal approval, trusted signing, verifier authentication, certification, and production evidence access remain deliberately excluded. It is source-distributed and is not an npm registry publication.
+The SDK validates and normalizes caller-supplied evidence. It does not contain credentials, discover private infrastructure, authorize execution, attach eBPF programs, or claim that synthetic data is measured. Version `0.10.0` adds the CT-604 tenant-scoped import ledger, canonical unit and UTC checks, exact-reference closure, immutable-version enforcement, and append-only failure records. Tenant lookup, legal approval, trusted signing, verifier authentication, certification, and production evidence access remain deliberately excluded. It is source-distributed and is not an npm registry publication.
 
 Run the example with `node examples/sdk/validate-public-evidence.mjs`. Run one measured client-side TTFT observation with `node packages/ttft-collector/cli.mjs --endpoint=URL --model=MODEL --prompt=TEXT --environment-fingerprint=sha256:...`; provide credentials only through `VLLM_API_KEY`.
 
