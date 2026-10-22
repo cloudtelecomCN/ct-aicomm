@@ -2,7 +2,7 @@
 
 [English](README.md)
 
-本零依赖包实现 CT-609 场景方法冻结、CT-610 本地导入与强制运行预检、CT-611 观测归一与质量标记、CT-612 不可变封存、精确替代链、到期、替代和撤销，以及 CT-613 可比性门禁、字段级差异和未排名视图公开契约。
+本零依赖包实现 CT-609 场景方法冻结、CT-610 本地导入与强制运行预检、CT-611 观测归一与质量标记、CT-612 不可变封存、精确替代链、到期、替代和撤销、CT-613 可比性门禁、字段级差异和未排名视图，以及 CT-614 受校验和保护的 JSON/CSV 交付、人读摘要和离线统计复算公开契约。
 
 公开能力包括：
 
@@ -16,6 +16,7 @@
 - 通过 `versioning.mjs` 创建和验证封存版本与替代版本；
 - 通过 `versioning.mjs` 创建和验证到期、替代、撤销终态事件，并投影版本状态。
 - 通过 `comparison.mjs` 创建和验证同组门禁、版本差异和比较视图。
+- 通过 `delivery.mjs` 创建和验证交付包，并使用 `scripts/verify-passport-delivery.mjs` 在另一环境离线验算。
 
 受保护内容包括源站点和目标站点、方向、协议、工作负载配置、精确的 Evidence Core
 Scope 与 Method 引用、工具制品、参数、采样、排除规则、统计项和环境前提。运行进入
@@ -40,6 +41,9 @@ Scope 与 Method 引用、工具制品、参数、采样、排除规则、统计
 明确比较维度。方法或工作负载漂移只进入差异区，不进入默认并排指标视图。SDK 不应用
 默认排名。
 
+交付包把每一条纳入、排除和失败源样本与封存观测闭合，使用 CT-611 单位目录复算冻结统计，
+并逐字节重新生成摘要。验算成功不认证主体、不证明导出授权、独立复核、真实生产性能或认证结论。
+
 运行合成场景：
 
 ```bash
@@ -48,4 +52,5 @@ node examples/passport/local-import-preflight-synthetic.mjs
 node examples/passport/observation-normalization-synthetic.mjs
 node examples/passport/sealing-versioning-synthetic.mjs
 node examples/passport/comparability-gate-synthetic.mjs
+node examples/passport/delivery-package-synthetic.mjs
 ```

@@ -313,7 +313,7 @@ test("publishes strict schemas, SDK exports, bilingual docs, and the contributor
   assert.equal(preflightSchema.additionalProperties, false);
   assert.equal(localSchema.properties.boundary.$ref, "#/$defs/boundary");
   assert.equal(preflightSchema.properties.policy.const, PASSPORT_PREFLIGHT_POLICY);
-  assert.equal(publicApi.sdk_version, "0.19.0");
+  assert.equal(publicApi.sdk_version, "0.20.0");
   for (const contract of [
     "specs/passport/local-run-import-v1.schema.json",
     "specs/passport/run-preflight-v1.schema.json"

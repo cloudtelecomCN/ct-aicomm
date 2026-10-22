@@ -7,6 +7,8 @@ the CT-610 local-import and mandatory run-preflight contracts, and the CT-611
 observation-normalization and quality contract. CT-612 adds immutable sealing,
 exact replacement lineage, expiry, supersession, and revocation. CT-613 adds a
 deterministic comparability gate, field-level differences, and an unranked view.
+CT-614 adds checksum-bound JSON and CSV delivery files, deterministic human
+summaries, and independent offline statistic recomputation.
 
 It exports:
 
@@ -26,6 +28,9 @@ It exports:
   `projectPassportEvidenceVersion()` from `versioning.mjs`.
 - `createPassportComparison()` and `verifyPassportComparison()` from
   `comparison.mjs`.
+- `createPassportDeliveryPackage()` and `verifyPassportDeliveryPackage()` from
+  `delivery.mjs`, plus the directory verifier in
+  `scripts/verify-passport-delivery.mjs`.
 
 The protected content covers the source and destination sites, direction,
 protocol, workload configuration, exact Evidence Core Scope and Method
@@ -59,6 +64,12 @@ data-origin, and observation shape. Sites and protocol remain explicit compariso
 dimensions. Method or workload drift is shown only as a difference and never
 enters the default side-by-side metric view. The SDK applies no default ranking.
 
+Delivery packages close every included, excluded, and failed source row against
+the sealed observations, recompute the frozen statistic with the CT-611 unit
+catalog, and regenerate the human summary byte for byte. Successful verification
+does not authenticate a principal or prove export authorization, independent
+review, production performance, or certification.
+
 Run the synthetic scenario:
 
 ```bash
@@ -67,4 +78,5 @@ node examples/passport/local-import-preflight-synthetic.mjs
 node examples/passport/observation-normalization-synthetic.mjs
 node examples/passport/sealing-versioning-synthetic.mjs
 node examples/passport/comparability-gate-synthetic.mjs
+node examples/passport/delivery-package-synthetic.mjs
 ```

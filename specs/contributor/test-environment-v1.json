@@ -54,6 +54,7 @@
     "tests/evidence-object-schema.test.mjs",
     "tests/evidence-lifecycle.test.mjs",
     "tests/passport-comparability-gate.test.mjs",
+    "tests/passport-delivery-package.test.mjs",
     "tests/passport-local-import-preflight.test.mjs",
     "tests/passport-observation-normalization.test.mjs",
     "tests/passport-sealing-versioning.test.mjs",
@@ -391,6 +392,33 @@
           "external_network_used": false,
           "performance_claim_allowed": false,
           "independent_review_claimed": false,
+          "certification_issued": false
+        }
+      }
+    },
+    {
+      "id": "passport-delivery-package",
+      "entrypoint": "examples/passport/delivery-package-synthetic.mjs",
+      "expect": {
+        "equals": {
+          "schema_version": "1.0.0",
+          "data_origin": "synthetic",
+          "json_delivered": true,
+          "csv_delivered": true,
+          "human_summary_delivered": true,
+          "offline_steps_delivered": true,
+          "checksums_verified": true,
+          "statistics_recomputed": true,
+          "summary_recomputed": true,
+          "observation_count": 2,
+          "sample_count": 20,
+          "p95_recomputed": true,
+          "mean_recomputed": true,
+          "external_network_used": false,
+          "principal_authentication_verified": false,
+          "export_authorization_verified": false,
+          "independent_review_verified": false,
+          "performance_claim_allowed": false,
           "certification_issued": false
         }
       }

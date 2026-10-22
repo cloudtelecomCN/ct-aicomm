@@ -19,6 +19,7 @@ All notable public changes to CT-AIComm are recorded in this file. The project f
 - CT-611 canonical observation units, closed sample accounting, retained failure and exclusion reasons, derived quality, and strict separation of measured, synthetic, inferred, and declared sources.
 - CT-612 immutable Link Evidence Passport versions, version-local review and freshness, exact replacement lineage, fail-closed expiry, and append-only supersession and revocation.
 - CT-613 deterministic Passport comparison groups, field-level version differences, lifecycle and quality gates, and unranked side-by-side views that exclude method or workload drift.
+- CT-614 checksum-bound Passport delivery packages with JSON, source CSV, deterministic human summaries, fixed statistics algorithms, and a symlink-safe offline verifier that independently recomputes every delivered statistic.
 - Truthful bootstrap governance, a machine-readable role roster, and a public external reviewer or maintainer admission, permission, review, and exit process.
 - CT-556 execution evidence binding v1 with tenant, execution, component-version, and fingerprint locks for policy, Agent, route, trace, and environment evidence.
 - CT-557 data path declaration v1 with stable region, directed-boundary, encryption, processor, JSON/YAML, and authoritative-context validation contracts.
