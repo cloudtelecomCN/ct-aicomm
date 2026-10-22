@@ -46,6 +46,7 @@
     "tests/connector-sdk-contract.test.mjs",
     "tests/ct-dsl.test.mjs",
     "tests/evidence-object-schema.test.mjs",
+    "tests/evidence-lifecycle.test.mjs",
     "tests/public-sdk-boundary.test.mjs",
     "tests/registry-entry-integrity.test.mjs"
   ],
@@ -131,6 +132,19 @@
           "evidence_origin": "synthetic",
           "authorization_verified": false,
           "legal_or_certification_conclusion": false
+        }
+      }
+    },
+    {
+      "id": "evidence-lifecycle",
+      "entrypoint": "examples/evidence/lifecycle-synthetic.mjs",
+      "expect": {
+        "equals": {
+          "data_origin": "synthetic",
+          "performance_claim_allowed": false,
+          "final_lifecycle_state": "expired",
+          "single_status_allowed": false,
+          "certification_issued": false
         }
       }
     }

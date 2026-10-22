@@ -72,7 +72,7 @@ CT-601 定义 CT-AIComm 各证据产品共享的公开、中立对象词汇。�
 | 新鲜度 | `valid`、`expiring`、`expired`、`unknown` |
 | 策略决定 | `accepted`、`rejected`、`manual-review` |
 
-任何一个状态轴都不是万能“通过章”。CT-602 将定义生命周期及允许的状态转换；CT-601 只冻结词汇。
+任何一个状态轴都不是万能“通过章”。[CT-602](status-and-lifecycle-v1.zh-CN.md) 定义生命周期及允许的状态转换；CT-601 只冻结词汇。
 
 ### Review
 

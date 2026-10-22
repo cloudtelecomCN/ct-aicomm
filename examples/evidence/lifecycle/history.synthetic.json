@@ -1,0 +1,112 @@
+{
+  "schema_version": "1.0.0",
+  "data_origin": "synthetic",
+  "performance_claim_allowed": false,
+  "initial_snapshot": {
+    "schema_version": "1.0.0",
+    "evidence_ref": {
+      "object_type": "evidence_version",
+      "object_id": "evidence-synthetic-link-001",
+      "version": "1.0.0",
+      "tenant_id": "tenant-synthetic-alpha"
+    },
+    "lifecycle_state": "draft",
+    "status_axes": {
+      "measurement_validity": "partial",
+      "content_integrity": "unverifiable",
+      "independent_review": "not-reviewed",
+      "freshness": "valid",
+      "policy_decision": "manual-review"
+    },
+    "sequence": 0,
+    "last_event_id": null,
+    "updated_at": "2026-10-22T08:00:00.000Z"
+  },
+  "events": [
+    {
+      "schema_version": "1.0.0",
+      "event_id": "event-synthetic-validation-requested",
+      "evidence_ref": { "object_type": "evidence_version", "object_id": "evidence-synthetic-link-001", "version": "1.0.0", "tenant_id": "tenant-synthetic-alpha" },
+      "sequence": 1,
+      "from": { "lifecycle_state": "draft", "status_axes": { "measurement_validity": "partial", "content_integrity": "unverifiable", "independent_review": "not-reviewed", "freshness": "valid", "policy_decision": "manual-review" } },
+      "to": { "lifecycle_state": "validating", "status_axes": { "measurement_validity": "partial", "content_integrity": "unverifiable", "independent_review": "not-reviewed", "freshness": "valid", "policy_decision": "manual-review" } },
+      "reason_code": "validation_requested",
+      "occurred_at": "2026-10-22T08:05:00.000Z",
+      "actor": { "actor_id": "principal-synthetic-owner", "actor_role": "owner" },
+      "replacement_ref": null
+    },
+    {
+      "schema_version": "1.0.0",
+      "event_id": "event-synthetic-validation-passed",
+      "evidence_ref": { "object_type": "evidence_version", "object_id": "evidence-synthetic-link-001", "version": "1.0.0", "tenant_id": "tenant-synthetic-alpha" },
+      "sequence": 2,
+      "from": { "lifecycle_state": "validating", "status_axes": { "measurement_validity": "partial", "content_integrity": "unverifiable", "independent_review": "not-reviewed", "freshness": "valid", "policy_decision": "manual-review" } },
+      "to": { "lifecycle_state": "sealed", "status_axes": { "measurement_validity": "partial", "content_integrity": "unverifiable", "independent_review": "not-reviewed", "freshness": "valid", "policy_decision": "manual-review" } },
+      "reason_code": "validation_passed",
+      "occurred_at": "2026-10-22T08:15:00.000Z",
+      "actor": { "actor_id": "principal-synthetic-validator", "actor_role": "validator" },
+      "replacement_ref": null
+    },
+    {
+      "schema_version": "1.0.0",
+      "event_id": "event-synthetic-publication-authorized",
+      "evidence_ref": { "object_type": "evidence_version", "object_id": "evidence-synthetic-link-001", "version": "1.0.0", "tenant_id": "tenant-synthetic-alpha" },
+      "sequence": 3,
+      "from": { "lifecycle_state": "sealed", "status_axes": { "measurement_validity": "partial", "content_integrity": "unverifiable", "independent_review": "not-reviewed", "freshness": "valid", "policy_decision": "manual-review" } },
+      "to": { "lifecycle_state": "published", "status_axes": { "measurement_validity": "partial", "content_integrity": "unverifiable", "independent_review": "not-reviewed", "freshness": "valid", "policy_decision": "manual-review" } },
+      "reason_code": "publication_authorized",
+      "occurred_at": "2026-10-22T08:30:00.000Z",
+      "actor": { "actor_id": "principal-synthetic-publisher", "actor_role": "publisher" },
+      "replacement_ref": null
+    },
+    {
+      "schema_version": "1.0.0",
+      "event_id": "event-synthetic-review-started",
+      "evidence_ref": { "object_type": "evidence_version", "object_id": "evidence-synthetic-link-001", "version": "1.0.0", "tenant_id": "tenant-synthetic-alpha" },
+      "sequence": 4,
+      "from": { "lifecycle_state": "published", "status_axes": { "measurement_validity": "partial", "content_integrity": "unverifiable", "independent_review": "not-reviewed", "freshness": "valid", "policy_decision": "manual-review" } },
+      "to": { "lifecycle_state": "published", "status_axes": { "measurement_validity": "partial", "content_integrity": "unverifiable", "independent_review": "in-progress", "freshness": "valid", "policy_decision": "manual-review" } },
+      "reason_code": "status_changed",
+      "occurred_at": "2026-10-22T09:00:00.000Z",
+      "actor": { "actor_id": "principal-synthetic-reviewer", "actor_role": "reviewer" },
+      "replacement_ref": null
+    },
+    {
+      "schema_version": "1.0.0",
+      "event_id": "event-synthetic-review-uncertain",
+      "evidence_ref": { "object_type": "evidence_version", "object_id": "evidence-synthetic-link-001", "version": "1.0.0", "tenant_id": "tenant-synthetic-alpha" },
+      "sequence": 5,
+      "from": { "lifecycle_state": "published", "status_axes": { "measurement_validity": "partial", "content_integrity": "unverifiable", "independent_review": "in-progress", "freshness": "valid", "policy_decision": "manual-review" } },
+      "to": { "lifecycle_state": "published", "status_axes": { "measurement_validity": "partial", "content_integrity": "unverifiable", "independent_review": "uncertain", "freshness": "expiring", "policy_decision": "manual-review" } },
+      "reason_code": "status_changed",
+      "occurred_at": "2026-11-20T08:00:00.000Z",
+      "actor": { "actor_id": "principal-synthetic-reviewer", "actor_role": "reviewer" },
+      "replacement_ref": null
+    },
+    {
+      "schema_version": "1.0.0",
+      "event_id": "event-synthetic-validity-elapsed",
+      "evidence_ref": { "object_type": "evidence_version", "object_id": "evidence-synthetic-link-001", "version": "1.0.0", "tenant_id": "tenant-synthetic-alpha" },
+      "sequence": 6,
+      "from": { "lifecycle_state": "published", "status_axes": { "measurement_validity": "partial", "content_integrity": "unverifiable", "independent_review": "uncertain", "freshness": "expiring", "policy_decision": "manual-review" } },
+      "to": { "lifecycle_state": "expired", "status_axes": { "measurement_validity": "partial", "content_integrity": "unverifiable", "independent_review": "uncertain", "freshness": "expired", "policy_decision": "manual-review" } },
+      "reason_code": "validity_elapsed",
+      "occurred_at": "2026-11-22T08:00:00.000Z",
+      "actor": { "actor_id": "system-synthetic-lifecycle", "actor_role": "system" },
+      "replacement_ref": null
+    }
+  ],
+  "expected_projection": {
+    "lifecycle_state": "expired",
+    "blocking_conditions": [
+      "lifecycle_expired",
+      "measurement_partial",
+      "content_integrity_unverifiable",
+      "independent_review_uncertain",
+      "freshness_expired",
+      "policy_decision_manual-review"
+    ],
+    "single_status_allowed": false,
+    "certification_issued": false
+  }
+}

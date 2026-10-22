@@ -72,7 +72,7 @@ The five status axes are:
 | Freshness | `valid`, `expiring`, `expired`, `unknown` |
 | Policy decision | `accepted`, `rejected`, `manual-review` |
 
-No axis is a universal pass mark. CT-602 defines allowed lifecycle and state transitions; CT-601 only freezes the vocabulary.
+No axis is a universal pass mark. [CT-602](status-and-lifecycle-v1.md) defines allowed lifecycle and state transitions; CT-601 only freezes the vocabulary.
 
 ### Review
 

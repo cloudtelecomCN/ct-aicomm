@@ -12,3 +12,4 @@ export { DATA_PATH_DECLARATION_VERSION, createDataPathDeclaration, validateDataP
 export { AUDIT_PACKAGE_KINDS, AUDIT_PACKAGE_VERSION, createAuditPackage, renderAuditPackageChecksums, serializeAuditPackageManifest, verifyAuditPackage } from "../packages/compliance/audit-package.mjs";
 export { EVIDENCE_GAP_REPORT_VERSION, EVIDENCE_GAP_TYPES, inspectEvidenceGaps } from "../packages/compliance/evidence-gap.mjs";
 export { COMPLIANCE_RULE_DOMAINS, COMPLIANCE_RULE_PACK_VERSION, createComplianceRulePack, mapComplianceRulePack, validateComplianceRulePack, verifyComplianceRulePackUpgrade } from "../packages/compliance/rule-pack.mjs";
+export { EVIDENCE_LIFECYCLE_ERROR_CODES, EVIDENCE_LIFECYCLE_STATES, EVIDENCE_LIFECYCLE_VERSION, EVIDENCE_STATUS_AXES, createEvidenceLifecycleSnapshot, projectEvidenceStatus, replayEvidenceLifecycle, transitionEvidenceLifecycle } from "../packages/evidence-lifecycle/index.mjs";

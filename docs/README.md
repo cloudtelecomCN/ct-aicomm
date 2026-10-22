@@ -15,6 +15,7 @@
 - [Fail-closed evidence gap detection v1](compliance/evidence-gap-detection.md)
 - [Versioned compliance rule packs v1](compliance/rule-packs.md)
 - [Evidence Core object model v1](evidence/object-model-v1.md)
+- [Evidence status and lifecycle v1](evidence/status-and-lifecycle-v1.md)
 - [CT-Bench reproduction and evidence contract](bench-reproduction/README.md)
 - [CT-DataPlane Agent threat model](security/agent-threat-model.md)
 - [CT-DataPlane Agent operations runbook](agent/operations.md)

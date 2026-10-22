@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/evidence/evidence-lifecycle-event-v1.schema.json",
+  "title": "CT-AIComm Evidence Core lifecycle event v1",
+  "description": "Append-only lifecycle event with complete before and after status axes. A lifecycle state never replaces the five-axis status model or establishes certification.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "event_id", "evidence_ref", "sequence", "from", "to", "reason_code", "occurred_at", "actor", "replacement_ref"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "event_id": { "$ref": "#/$defs/id" },
+    "evidence_ref": { "$ref": "#/$defs/evidenceReference" },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "from": { "$ref": "#/$defs/stateSnapshot" },
+    "to": { "$ref": "#/$defs/stateSnapshot" },
+    "reason_code": {
+      "enum": ["validation_requested", "validation_failed", "validation_passed", "publication_authorized", "status_changed", "validity_elapsed", "replacement_published", "revocation_authorized"]
+    },
+    "occurred_at": { "$ref": "#/$defs/instant" },
+    "actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["actor_id", "actor_role"],
+      "properties": {
+        "actor_id": { "$ref": "#/$defs/id" },
+        "actor_role": { "enum": ["owner", "operator", "validator", "publisher", "reviewer", "policy-consumer", "system"] }
+      }
+    },
+    "replacement_ref": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/evidenceReference" }
+      ]
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-(?:(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+(?:[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
+    },
+    "instant": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "evidenceReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["object_type", "object_id", "version", "tenant_id"],
+      "properties": {
+        "object_type": { "const": "evidence_version" },
+        "object_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/version" },
+        "tenant_id": { "$ref": "#/$defs/id" }
+      }
+    },
+    "statusAxes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["measurement_validity", "content_integrity", "independent_review", "freshness", "policy_decision"],
+      "properties": {
+        "measurement_validity": { "enum": ["sufficient", "partial", "invalid", "unknown"] },
+        "content_integrity": { "enum": ["passed", "failed", "unverifiable"] },
+        "independent_review": { "enum": ["not-reviewed", "in-progress", "consistent", "deviation", "uncertain"] },
+        "freshness": { "enum": ["valid", "expiring", "expired", "unknown"] },
+        "policy_decision": { "enum": ["accepted", "rejected", "manual-review"] }
+      }
+    },
+    "stateSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lifecycle_state", "status_axes"],
+      "properties": {
+        "lifecycle_state": { "enum": ["draft", "validating", "sealed", "published", "expired", "superseded", "revoked"] },
+        "status_axes": { "$ref": "#/$defs/statusAxes" }
+      }
+    }
+  }
+}
