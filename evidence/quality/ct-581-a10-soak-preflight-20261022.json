@@ -1,0 +1,68 @@
+{
+  "schema_version": "1.0.0",
+  "task": "CT-581",
+  "evidence_type": "short_duration_soak_preflight_receipt",
+  "data_origin": "measured",
+  "status": "partial",
+  "environment_fingerprint": "sha256:57bda3ca3327fbee49a35e974b0f11e0135f6543cfa8361085964b93b1734c5b",
+  "window": {
+    "first_request_started_at": "2026-10-22T03:50:05.978Z",
+    "last_request_started_at": "2026-10-22T03:54:09.716Z",
+    "summed_stratum_duration_ms": 243893.338217,
+    "monitor_sample_count": 485,
+    "monitor_interval_seconds": 1
+  },
+  "workload": {
+    "model": "Qwen/Qwen2.5-7B-Instruct",
+    "accelerator_per_endpoint": "NVIDIA A10",
+    "endpoint_topology_count": 2,
+    "concurrency_levels": [1, 8, 32, 64],
+    "samples_per_stratum": 64,
+    "repetitions": 20,
+    "stratum_count": 160,
+    "attempt_count": 10240,
+    "success_count": 10240,
+    "failure_count": 0
+  },
+  "high_concurrency_results": [
+    { "topology_id": "all-endpoints", "endpoint_count": 2, "concurrency": 64, "attempt_count": 1280, "success_rate": 1, "successful_requests_per_second": 353.481454, "ttft_ms": { "p50": 137.628825, "p95": 183.985647, "p99": 185.318224 } },
+    { "topology_id": "single-endpoint", "endpoint_count": 1, "concurrency": 64, "attempt_count": 1280, "success_rate": 1, "successful_requests_per_second": 190.505561, "ttft_ms": { "p50": 205.098722, "p95": 328.725534, "p99": 345.960556 } }
+  ],
+  "service_observation": {
+    "node_a_restart_count": 0,
+    "node_b_restart_count": 0,
+    "node_a_final_state": "active/running",
+    "node_b_final_state": "active/running"
+  },
+  "resource_observation": {
+    "node_a": { "vllm_cpu_average_percent": 3.565, "vllm_cpu_peak_percent": 30, "gpu_active_sm_average_percent": 99.23, "gpu_sm_peak_percent": 100, "gpu_power_peak_w": 157, "gpu_temperature_peak_c": 63, "framebuffer_delta_mib": 24 },
+    "node_b": { "vllm_cpu_average_percent": 1.207, "vllm_cpu_peak_percent": 16, "gpu_active_sm_average_percent": 97.46, "gpu_sm_peak_percent": 100, "gpu_power_peak_w": 156, "gpu_temperature_peak_c": 59, "framebuffer_delta_mib": 0 },
+    "process_rss_observation": "not_captured_in_this_preflight"
+  },
+  "restricted_artifacts": {
+    "plan_file_sha256": "8d4a5739d13ec7619b30725d1156957e42c119629d855c808e3376db2f3c6255",
+    "batch_file_sha256": "dce5251164cb41c06e0077526b10ddd5ca5be26a3ef1c1e950379dd45137f361",
+    "summary_file_sha256": "fce0bfd99423f560fa071c0155daff0b11ad9fcd46d9a8eed713f78f1da3d3b5",
+    "node_a_pidstat_sha256": "689701225b0b6b7f259b4de73a4792c3b2c425b63eb0016a02ed69fdb69a475c",
+    "node_a_gpu_sha256": "d86731a938cabc7bdffe735c40547c6e26094f06689be5ee2592615e86227768",
+    "node_b_pidstat_sha256": "9620e85c8414820c4cdcc03907823ca54f677699721e0c62b866d24a2d1fce6b",
+    "node_b_gpu_sha256": "c726639a5807de95cf692b942367fb897ef00fecb5976931885834b8c454a5cb",
+    "node_a_restricted_archive_sha256": "936d33fff5fc4ee2cc7b6e74a9ade5a91f6cd6f0bbfd4c92843482c7d42a6ae5",
+    "node_b_restricted_archive_sha256": "9a549fa857b0df491961c89a00de348cee55c4727a89a5e24f7b8fe097f9d947",
+    "plan_fingerprint": "bf00fdfff9e6e979c7b2226a37fba4579465d253ca710754cecac6866bb35ba8",
+    "batch_fingerprint": "70e0b24f15ca26f65bd7599b9a932479c10b6c4176790b6f309cf13c5f9b1a7b",
+    "summary_fingerprint": "f25b3f7dc67a99db54c8a5a0a59d72abe85ee4cce6e642b94ac7a365fa9d0566",
+    "runner_source_sha256": "57d876b25b8b087e0166a96106974ea3be278b9c792cb51797d69eedafca0615",
+    "cli_source_sha256": "cc71fa46b1808f68ffec487a1672194c18e5cc23a26761b704c29f31fe708924"
+  },
+  "claim_gate": "not_passed_seven_and_thirty_day_stages_not_run",
+  "restricted_fields_published": false,
+  "limitations": [
+    "The active request window was approximately 244 seconds and is only a short preflight, not a seven-day or thirty-day soak.",
+    "Process CPU and GPU telemetry were sampled; process RSS was not captured by the pidstat invocation used for this preflight.",
+    "The test covers one frozen dual-node NVIDIA A10 environment and does not establish production availability or an SLO.",
+    "Topology strata ran sequentially, so the result is not a simultaneous mixed-topology workload.",
+    "No Agent daemon was running; these resource observations describe the vLLM serving workload, not CT-DataPlane Agent overhead.",
+    "Raw samples, runtime endpoints, host identifiers, and monitoring logs remain restricted and have not received independent review."
+  ]
+}

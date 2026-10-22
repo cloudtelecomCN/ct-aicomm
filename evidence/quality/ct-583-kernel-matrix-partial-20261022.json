@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0.0",
+  "task": "CT-583",
+  "evidence_type": "kernel_compatibility_matrix_receipt",
+  "data_origin": "measured",
+  "status": "partial",
+  "preflight_source_sha256": "38eee701c4455a6be46db2af2d107de110637da923c12a7eeeadc4e382304802",
+  "selector_source_sha256": "51bec16e9a5a8bc6621a2cbc20d75455d3c6cbc89d7e5fe81071f1f6c50f9194",
+  "matrix": [
+    {
+      "platform_id": "ubuntu-22.04-x86_64-linux-5.15",
+      "distribution": "Ubuntu 22.04",
+      "architecture": "x86_64",
+      "kernel": "5.15.0-191-generic",
+      "host_observation_count": 2,
+      "cgroup_v2": true,
+      "btf_vmlinux": true,
+      "bpffs_mounted": true,
+      "unprivileged_bpf_disabled": 2,
+      "required_program_types": {
+        "cgroup_sock_addr": "available",
+        "sched_cls": "available",
+        "sock_ops": "available"
+      },
+      "preflight": { "passed_hosts": 2, "failed_hosts": 0 },
+      "compile": {
+        "verified_hosts": 1,
+        "not_run_hosts": 1,
+        "toolchain": "Ubuntu clang 14.0.0-1ubuntu1.1",
+        "object_sha256": "62b20c345d8994bf9b3c1577cc64db92c83007508f332cf3298a66aa15174cd1",
+        "verified_sections": ["cgroup/connect4", "classifier", "sockops", ".BTF", ".BTF.ext"]
+      },
+      "historical_verifier_and_attach_evidence": "CT-524 and CT-526 restricted evidence",
+      "result": "supported_for_current_poc"
+    }
+  ],
+  "restricted_artifacts": {
+    "compile_host_validation_log_sha256": "962e6e93729b312d3882a899c5782f110ced173550c46c3580a420ef4249da8f",
+    "probe_only_host_validation_log_sha256": "f6c2158d0bbabcb0af9997bf3807cd6e6b552aaefdcee1fe486881454ed7b140",
+    "node_a_restricted_archive_sha256": "936d33fff5fc4ee2cc7b6e74a9ade5a91f6cd6f0bbfd4c92843482c7d42a6ae5",
+    "node_b_restricted_archive_sha256": "9a549fa857b0df491961c89a00de348cee55c4727a89a5e24f7b8fe097f9d947"
+  },
+  "claim_gate": "not_passed_multi_kernel_matrix_incomplete",
+  "restricted_fields_published": false,
+  "limitations": [
+    "Both observations use the same distribution, architecture, and kernel, so they constitute one compatibility row rather than two.",
+    "The second host did not have Clang installed; it passed preflight and kernel feature probing but did not compile the object locally.",
+    "Verifier loading and cgroup attachment are bound to the prior CT-524 and CT-526 restricted runs, not repeated in this read-only validation.",
+    "No newer Ubuntu kernel, RHEL-family kernel, ARM64 platform, Kylin, or openEuler row has been measured yet."
+  ]
+}

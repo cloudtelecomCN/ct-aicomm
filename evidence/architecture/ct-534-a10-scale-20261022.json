@@ -1,0 +1,56 @@
+{
+  "schema_version": "1.0.0",
+  "task": "CT-534",
+  "phase": "phase_2_scale_testing",
+  "evidence_type": "measured_multi_endpoint_saturation_receipt",
+  "data_origin": "measured",
+  "environment_fingerprint": "sha256:57bda3ca3327fbee49a35e974b0f11e0135f6543cfa8361085964b93b1734c5b",
+  "experiment": {
+    "model": "Qwen/Qwen2.5-7B-Instruct",
+    "accelerator_per_endpoint": "NVIDIA A10",
+    "endpoint_topologies": [
+      { "id": "single-endpoint", "endpoint_count": 1 },
+      { "id": "all-endpoints", "endpoint_count": 2 }
+    ],
+    "concurrency_levels": [1, 8, 32, 64],
+    "samples_per_stratum": 64,
+    "repetitions": 2,
+    "attempt_count": 1024,
+    "success_count": 1024,
+    "failure_count": 0
+  },
+  "restricted_artifacts": {
+    "plan_file_sha256": "46cfcf909ae0a2899597541ad9651ebdbad64a70663e6f67adcc9041704bc29b",
+    "batch_file_sha256": "59c3b62fd81b3d5044348b54698ee9636309c15d0793c2fde48288d2f55b6583",
+    "summary_file_sha256": "3a41388e1181e5689c8a0cdf9060f420af479922c509a142a8373d5dff216416",
+    "node_a_restricted_archive_sha256": "936d33fff5fc4ee2cc7b6e74a9ade5a91f6cd6f0bbfd4c92843482c7d42a6ae5",
+    "node_b_restricted_archive_sha256": "9a549fa857b0df491961c89a00de348cee55c4727a89a5e24f7b8fe097f9d947",
+    "plan_fingerprint": "b77d2b45a2e72e40c639ad84cfbc3464107411d355c3e3b2877cd649a808ed3e",
+    "batch_fingerprint": "5c162dcd237d328626e654b1fa05cb2db188b4b8fd98deb4cc9776b16f3d4f8d",
+    "summary_fingerprint": "0865678f3442b33ac155a84ad42631408ceb8c033d4e8baf93d1d409f86b0fbe"
+  },
+  "results": [
+    { "topology_id": "all-endpoints", "endpoint_count": 2, "concurrency": 1, "attempt_count": 128, "success_rate": 1, "successful_requests_per_second": 19.870114, "ttft_ms": { "p50": 41.100525, "p95": 61.045697, "p99": 94.098317 } },
+    { "topology_id": "all-endpoints", "endpoint_count": 2, "concurrency": 8, "attempt_count": 128, "success_rate": 1, "successful_requests_per_second": 80.870549, "ttft_ms": { "p50": 96.794413, "p95": 98.207216, "p99": 104.260497 } },
+    { "topology_id": "all-endpoints", "endpoint_count": 2, "concurrency": 32, "attempt_count": 128, "success_rate": 1, "successful_requests_per_second": 274.716671, "ttft_ms": { "p50": 105.738223, "p95": 115.115946, "p99": 115.204492 } },
+    { "topology_id": "all-endpoints", "endpoint_count": 2, "concurrency": 64, "attempt_count": 128, "success_rate": 1, "successful_requests_per_second": 366.197428, "ttft_ms": { "p50": 142.768433, "p95": 177.551007, "p99": 177.693335 } },
+    { "topology_id": "single-endpoint", "endpoint_count": 1, "concurrency": 1, "attempt_count": 128, "success_rate": 1, "successful_requests_per_second": 10.311938, "ttft_ms": { "p50": 97.184533, "p95": 97.644201, "p99": 97.892272 } },
+    { "topology_id": "single-endpoint", "endpoint_count": 1, "concurrency": 8, "attempt_count": 128, "success_rate": 1, "successful_requests_per_second": 76.299907, "ttft_ms": { "p50": 103.403377, "p95": 104.507741, "p99": 104.779251 } },
+    { "topology_id": "single-endpoint", "endpoint_count": 1, "concurrency": 32, "attempt_count": 128, "success_rate": 1, "successful_requests_per_second": 174.181605, "ttft_ms": { "p50": 174.420772, "p95": 190.360417, "p99": 190.887992 } },
+    { "topology_id": "single-endpoint", "endpoint_count": 1, "concurrency": 64, "attempt_count": 128, "success_rate": 1, "successful_requests_per_second": 198.827689, "ttft_ms": { "p50": 177.2986, "p95": 326.315809, "p99": 327.392423 } }
+  ],
+  "resource_observation": {
+    "node_a": { "gpu_sm_peak_percent": 100, "gpu_power_peak_w": 156, "gpu_temperature_peak_c": 52, "framebuffer_peak_mib": 19257, "vllm_rss_peak_mib": 1349.12 },
+    "node_b": { "gpu_sm_peak_percent": 100, "gpu_power_peak_w": 156, "gpu_temperature_peak_c": 47, "framebuffer_peak_mib": 19249, "vllm_rss_peak_mib": 1350.45 }
+  },
+  "claim_gate": "passed_for_this_frozen_environment",
+  "conclusion": "The declared two-endpoint topology completed every attempt and sustained higher successful-request throughput with lower P95 TTFT than the declared single-endpoint topology at concurrency 64 in this run.",
+  "restricted_fields_published": false,
+  "limitations": [
+    "The comparison covers one frozen dual-node NVIDIA A10 topology, one model, one software stack, and one network environment.",
+    "The single-endpoint topology always used the same endpoint, so endpoint-specific asymmetry is part of the comparison.",
+    "TTFT is client-observed time to the first streamed content delta; each stream is cancelled after that observation.",
+    "The run does not establish production capacity, linear scaling, an availability SLO, or performance on other accelerators, models, regions, or load profiles.",
+    "Raw samples, runtime endpoints, host identifiers, and monitoring logs remain restricted; no independent reviewer has approved this receipt yet."
+  ]
+}
