@@ -17,3 +17,5 @@ agent/bin/* text eol=lf
 examples/registry/**/*.json text eol=lf
 registry/entries/**/*.json text eol=lf
 registry/keys/**/*.json text eol=lf
+examples/evidence/v1/*.json text eol=lf
+examples/evidence/v1/SHA256SUMS text eol=lf

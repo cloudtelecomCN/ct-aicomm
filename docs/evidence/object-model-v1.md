@@ -111,4 +111,4 @@ Cross-object and authoritative-state checks belong to CT-602 through CT-607. JSO
 
 The nine examples under [`examples/evidence/v1/`](../../examples/evidence/v1/) form one coherent synthetic graph. They use no customer names, routable endpoints, credentials, private topology, or measured production result.
 
-The synthetic `EvidenceVersion` deliberately reports content integrity as `unverifiable`. CT-601 defines the fingerprint field but does not claim that the placeholder digest has been recomputed; CT-603 adds the canonical manifest and offline verifier that can move this axis to `passed`.
+The synthetic `EvidenceVersion` deliberately reports content integrity as `unverifiable`. CT-601 defines the field, while [CT-603](content-integrity-v1.md) now provides the recomputed content fingerprint, canonical manifest, and offline verifier. A consumer still has to record a successful verification through the lifecycle before moving the integrity axis to `passed`.

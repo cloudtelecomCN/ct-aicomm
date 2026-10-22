@@ -9,7 +9,9 @@
   "authorization_scope": {
     "visibility": "shared",
     "purpose": "Offline synthetic contract testing only.",
-    "recipients": ["organization-synthetic-reviewer"],
+    "recipients": [
+      "organization-synthetic-reviewer"
+    ],
     "expires_at": "2027-10-22T08:00:00.000Z"
   },
   "run_ref": {

@@ -111,4 +111,4 @@ CT-601 定义 CT-AIComm 各证据产品共享的公开、中立对象词汇。�
 
 [`examples/evidence/v1/`](../../examples/evidence/v1/) 下的九个示例组成一个一致的合成对象图，不包含客户名称、可路由端点、凭据、私有拓扑或真实生产测量结果。
 
-合成 `EvidenceVersion` 特意把内容完整性标记为 `unverifiable`。CT-601 只定义指纹字段，不宣称占位摘要已经复算；CT-603 将增加规范化清单与离线验证器，只有验证成功后该状态轴才能进入 `passed`。
+合成 `EvidenceVersion` 特意把内容完整性标记为 `unverifiable`。CT-601 定义字段，[CT-603](content-integrity-v1.zh-CN.md) 现已提供复算后的内容指纹、规范 manifest 和离线验证器；消费者仍需把成功验证写入生命周期事件，内容完整性轴才能进入 `passed`。

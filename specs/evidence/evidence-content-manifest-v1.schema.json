@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/evidence/evidence-content-manifest-v1.schema.json",
+  "title": "CT-AIComm evidence content integrity manifest v1",
+  "description": "Strict manifest for offline Evidence Core content verification. Hash consistency does not establish authenticity, authorization, independent review, or certification.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "manifest_id",
+    "evidence_ref",
+    "data_origin",
+    "created_at",
+    "canonicalization",
+    "checksum_manifest_path",
+    "protected_scope",
+    "content_fingerprint",
+    "objects",
+    "manifest_fingerprint"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "manifest_id": { "$ref": "#/$defs/id" },
+    "evidence_ref": { "$ref": "#/$defs/evidenceReference" },
+    "data_origin": { "enum": ["synthetic", "hybrid", "measured"] },
+    "created_at": { "$ref": "#/$defs/instant" },
+    "canonicalization": { "const": "RFC8785" },
+    "checksum_manifest_path": { "const": "SHA256SUMS" },
+    "protected_scope": { "const": "entire-json-object" },
+    "content_fingerprint": { "$ref": "#/$defs/fingerprint" },
+    "objects": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 10000,
+      "items": { "$ref": "#/$defs/objectDescriptor" },
+      "contains": {
+        "type": "object",
+        "required": ["object_type"],
+        "properties": { "object_type": { "const": "evidence_version" } }
+      },
+      "minContains": 1,
+      "maxContains": 1
+    },
+    "manifest_fingerprint": { "$ref": "#/$defs/fingerprint" }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-(?:(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+(?:[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
+    },
+    "fingerprint": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "instant": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "evidenceReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["object_type", "object_id", "version", "tenant_id"],
+      "properties": {
+        "object_type": { "const": "evidence_version" },
+        "object_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/version" },
+        "tenant_id": { "$ref": "#/$defs/id" }
+      }
+    },
+    "objectDescriptor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "object_type",
+        "object_id",
+        "version",
+        "tenant_id",
+        "role",
+        "media_type",
+        "canonicalization",
+        "object_fingerprint",
+        "sha256",
+        "bytes"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}\\.json$",
+          "not": { "const": "manifest.json" }
+        },
+        "object_type": {
+          "enum": ["scope", "method", "run", "observation", "artifact", "evidence_version", "review", "policy_decision", "export_grant"]
+        },
+        "object_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/version" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "role": { "enum": ["evidence-content", "evidence-version", "downstream-record"] },
+        "media_type": { "const": "application/json" },
+        "canonicalization": { "const": "RFC8785" },
+        "object_fingerprint": { "$ref": "#/$defs/fingerprint" },
+        "sha256": { "$ref": "#/$defs/fingerprint" },
+        "bytes": { "type": "integer", "minimum": 1 }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "object_type": { "enum": ["scope", "method", "run", "observation", "artifact"] } }, "required": ["object_type"] },
+          "then": { "properties": { "role": { "const": "evidence-content" } } }
+        },
+        {
+          "if": { "properties": { "object_type": { "const": "evidence_version" } }, "required": ["object_type"] },
+          "then": { "properties": { "role": { "const": "evidence-version" } } }
+        },
+        {
+          "if": { "properties": { "object_type": { "enum": ["review", "policy_decision", "export_grant"] } }, "required": ["object_type"] },
+          "then": { "properties": { "role": { "const": "downstream-record" } } }
+        }
+      ]
+    }
+  }
+}

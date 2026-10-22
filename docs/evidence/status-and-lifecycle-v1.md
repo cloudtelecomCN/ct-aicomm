@@ -60,8 +60,8 @@ rejects duplicate or discontinuous sequences, stale timestamps, mismatched
 references, unknown fields, backward status moves, invalid role/reason pairs,
 and no-op status events.
 
-CT-602 verifies deterministic transition semantics only. CT-603 adds content
-fingerprints and offline manifest verification. CT-607 adds durable event
+CT-602 verifies deterministic transition semantics only. [CT-603](content-integrity-v1.md)
+provides content fingerprints and offline manifest verification. CT-607 adds durable event
 delivery, idempotent downstream consumption, and TTL invalidation.
 
 ## Stable error codes

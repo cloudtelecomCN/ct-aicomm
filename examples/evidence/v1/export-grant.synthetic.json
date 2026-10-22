@@ -9,18 +9,28 @@
   "authorization_scope": {
     "visibility": "shared",
     "purpose": "Offline synthetic contract testing only.",
-    "recipients": ["organization-synthetic-reviewer"],
+    "recipients": [
+      "organization-synthetic-reviewer"
+    ],
     "expires_at": "2027-10-22T08:00:00.000Z"
   },
   "resource_refs": [
-    { "object_type": "evidence_version", "object_id": "evidence-synthetic-link-001", "version": "1.0.0", "tenant_id": "tenant-synthetic-alpha" }
+    {
+      "object_type": "evidence_version",
+      "object_id": "evidence-synthetic-link-001",
+      "version": "1.0.0",
+      "tenant_id": "tenant-synthetic-alpha"
+    }
   ],
   "recipient": {
     "principal_id": "principal-synthetic-buyer",
     "organization_id": "organization-synthetic-reviewer"
   },
   "purpose": "Allow a reviewer to inspect the synthetic boundary and five-axis status fields.",
-  "field_scope": ["/boundary", "/status"],
+  "field_scope": [
+    "/boundary",
+    "/status"
+  ],
   "expires_at": "2026-11-22T08:30:00.000Z",
   "watermark": "SYNTHETIC CONTRACT FIXTURE - NOT A PERFORMANCE RESULT",
   "status": "active"

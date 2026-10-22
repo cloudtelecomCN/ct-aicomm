@@ -9,7 +9,9 @@
   "authorization_scope": {
     "visibility": "shared",
     "purpose": "Offline synthetic contract testing only.",
-    "recipients": ["organization-synthetic-reviewer"],
+    "recipients": [
+      "organization-synthetic-reviewer"
+    ],
     "expires_at": "2027-10-22T08:00:00.000Z"
   },
   "consumer": {
@@ -22,7 +24,12 @@
     "fingerprint": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
   },
   "evidence_refs": [
-    { "object_type": "evidence_version", "object_id": "evidence-synthetic-link-001", "version": "1.0.0", "tenant_id": "tenant-synthetic-alpha" }
+    {
+      "object_type": "evidence_version",
+      "object_id": "evidence-synthetic-link-001",
+      "version": "1.0.0",
+      "tenant_id": "tenant-synthetic-alpha"
+    }
   ],
   "outcome": "manual-review",
   "reason": "Synthetic evidence is retained for contract testing and is not eligible for an operational decision.",

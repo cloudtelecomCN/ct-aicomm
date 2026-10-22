@@ -9,7 +9,9 @@
   "authorization_scope": {
     "visibility": "shared",
     "purpose": "Offline synthetic contract testing only.",
-    "recipients": ["organization-synthetic-reviewer"],
+    "recipients": [
+      "organization-synthetic-reviewer"
+    ],
     "expires_at": "2027-10-22T08:00:00.000Z"
   },
   "tool": {
@@ -18,8 +20,16 @@
     "artifact_fingerprint": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
   },
   "parameters": [
-    { "name": "payload_bytes", "value": 1024, "unit": "bytes" },
-    { "name": "network_access", "value": false, "unit": null }
+    {
+      "name": "payload_bytes",
+      "value": 1024,
+      "unit": "bytes"
+    },
+    {
+      "name": "network_access",
+      "value": false,
+      "unit": null
+    }
   ],
   "sampling": {
     "target_count": 20,
@@ -27,10 +37,20 @@
     "warmup_count": 2
   },
   "exclusion_rules": [
-    { "rule_id": "exclude-synthetic-warmup", "description": "Exclude the two declared synthetic warm-up samples." }
+    {
+      "rule_id": "exclude-synthetic-warmup",
+      "description": "Exclude the two declared synthetic warm-up samples."
+    }
   ],
   "statistics": [
-    { "metric": "synthetic-latency", "aggregations": ["count", "mean", "p95"] }
+    {
+      "metric": "synthetic-latency",
+      "aggregations": [
+        "count",
+        "mean",
+        "p95"
+      ]
+    }
   ],
   "environment_prerequisites": [
     "Node.js 22 or later with external network access disabled."

@@ -45,6 +45,7 @@
     "tests/compliance-evidence-binding.test.mjs",
     "tests/connector-sdk-contract.test.mjs",
     "tests/ct-dsl.test.mjs",
+    "tests/evidence-content-integrity.test.mjs",
     "tests/evidence-object-schema.test.mjs",
     "tests/evidence-lifecycle.test.mjs",
     "tests/public-sdk-boundary.test.mjs",
@@ -144,6 +145,27 @@
           "performance_claim_allowed": false,
           "final_lifecycle_state": "expired",
           "single_status_allowed": false,
+          "certification_issued": false
+        }
+      }
+    },
+    {
+      "id": "evidence-content-integrity",
+      "entrypoint": "scripts/verify-evidence-content.mjs",
+      "arguments": [
+        "examples/evidence/v1",
+        "--expected-manifest",
+        "sha256:4cee25b68abd0074163f61602efc140047e2671cc3cafaffc2b8964d1821543d"
+      ],
+      "expect": {
+        "equals": {
+          "data_origin": "synthetic",
+          "object_count": 9,
+          "integrity_verified": true,
+          "external_anchor_verified": true,
+          "authenticity_verified": false,
+          "authorization_verified": false,
+          "independent_review_verified": false,
           "certification_issued": false
         }
       }

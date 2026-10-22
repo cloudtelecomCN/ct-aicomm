@@ -84,7 +84,7 @@ function validate(value, contract, path = "$", root = schema) {
 }
 
 async function loadExamples() {
-  const files = (await readdir(examplesUrl)).filter((name) => name.endsWith(".json")).sort();
+  const files = (await readdir(examplesUrl)).filter((name) => name.endsWith(".synthetic.json")).sort();
   const entries = await Promise.all(files.map(async (name) => [name, JSON.parse(await readFile(new URL(name, examplesUrl), "utf8"))]));
   return Object.fromEntries(entries);
 }
