@@ -545,6 +545,26 @@ paths:
         "400": { description: Declaration version is invalid. }
         "401": { description: A valid active workspace token is required. }
         "404": { description: Declaration version is absent from the authenticated organization. }
+  /api/v1/workspace/compliance/declarations/{id}/versions/{version}/rule-mappings:
+    get:
+      operationId: getWorkspaceComplianceRuleMappings
+      summary: Map one immutable declaration version to the pinned public compliance rule packs.
+      description: Returns mapping-only evidence-location results for MLPS preparation, data boundaries, and customer-defined enterprise references. The response is organization-scoped and never issues a legal conclusion, external assessment, certification, or transfer authorization.
+      security: [{ workspaceToken: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+        - in: path
+          name: version
+          required: true
+          schema: { type: integer, minimum: 1 }
+      responses:
+        "200": { description: Deterministic rule-pack mappings pinned to public pack versions and fingerprints. }
+        "400": { description: Declaration version is invalid. }
+        "401": { description: A valid active workspace token is required. }
+        "404": { description: Declaration version is absent from the authenticated organization. }
   /api/v1/workspace/compliance/declarations/{id}/versions/{version}/assessment-handoff:
     get:
       operationId: getWorkspaceComplianceAssessmentHandoff

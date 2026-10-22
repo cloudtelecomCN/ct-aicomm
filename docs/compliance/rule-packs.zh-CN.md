@@ -39,3 +39,5 @@ node scripts/validate-compliance-rule-pack.mjs examples/compliance/rule-packs/sy
 ```
 
 校验新版本时，用 `--previous` 传入精确的前一版本。企业规则包应使用 `authority_type: customer_defined`；如果内部政策文本属于保密信息，应留在私有系统中，并在采用前由具名法务、安全负责人和测评方复核。
+
+网站契约通过 `GET /api/v1/workspace/compliance/declarations/{id}/versions/{version}/rule-mappings` 提供组织隔离的只读映射接口。服务固定到这些公开规则包指纹，同时把租户声明和证据保留在私有系统中。

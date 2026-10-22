@@ -39,3 +39,5 @@ node scripts/validate-compliance-rule-pack.mjs examples/compliance/rule-packs/sy
 ```
 
 For a new version, pass the exact prior pack with `--previous`. Customer mappings should use `authority_type: customer_defined`, keep internal policy text outside this public repository when confidential, and undergo named legal, security, and assessor review before adoption.
+
+The website contract exposes the organization-scoped, read-only mapping surface at `GET /api/v1/workspace/compliance/declarations/{id}/versions/{version}/rule-mappings`. The service pins these public pack fingerprints while keeping tenant declarations and evidence private.
