@@ -32,6 +32,7 @@ node scripts/create-soak-manifest.mjs \
   --started-at=2026-01-01T00:00:00.000Z \
   --source-commit=<完整的40位commit> \
   --environment=<受限环境文件.json> \
+  --load-profile=<受限负载配置.json> \
   --prompts=<受限Prompt文件.jsonl> \
   --agent=/usr/local/lib/ct-aicomm-agent/bin/ct-aicomm-agent \
   --bpf=/usr/local/lib/ct-aicomm-agent/lib/ct_selector.bpf.o \
@@ -40,6 +41,39 @@ node scripts/create-soak-manifest.mjs \
   --monitor=scripts/soak_monitor.py \
   --output=<受限运行目录>/manifest.json
 ```
+
+在 manifest 声明的开始时间前一小时内，在每台节点上向独立的就绪检查目录采集一次最新观测：
+
+```bash
+python3 scripts/soak_monitor.py \
+  --once \
+  --manifest=<受限运行目录>/manifest.json \
+  --node-alias=node-a \
+  --output=<受限运行目录>/readiness/node-a
+```
+
+将每台节点的 `latest.json` 复制到受限控制端，然后运行不产生负载的启动门禁。该门禁校验冻结环境和负载配置指纹、全部运行制品、模型发现、当前服务状态、Agent 心跳证据以及控制端剩余空间。它只发送 `GET /v1/models`，不会发起推理请求。门禁应与正式负载分开运行，结果保留在受限目录内，凭据不得出现在命令行；需要认证时可通过进程环境传入 `VLLM_API_KEY`。
+
+```bash
+node scripts/check-soak-readiness.mjs \
+  --manifest=<受限运行目录>/manifest.json \
+  --environment=<受限环境文件.json> \
+  --load-profile=<受限负载配置.json> \
+  --prompts=<受限Prompt文件.jsonl> \
+  --agent=/usr/local/lib/ct-aicomm-agent/bin/ct-aicomm-agent \
+  --bpf=/usr/local/lib/ct-aicomm-agent/lib/ct_selector.bpf.o \
+  --collector=packages/ttft-collector/collector.mjs \
+  --runner=scripts/run-soak-stage.mjs \
+  --monitor=scripts/soak_monitor.py \
+  --endpoint=endpoint-a=<受限地址> \
+  --endpoint=endpoint-b=<受限地址> \
+  --node-observation=node-a=<受限运行目录>/readiness/node-a/latest.json \
+  --node-observation=node-b=<受限运行目录>/readiness/node-b/latest.json \
+  --output-root=<受限运行目录> \
+  --output=<受限运行目录>/readiness.json
+```
+
+只有就绪结果为 `ready` 才能启动计时阶段。输出文件使用受限权限创建，并且不能覆盖已有结果。结果不会包含运行地址和凭据，但节点与端点指纹仍属于受限运行证据。
 
 每个声明节点分别启动一个可续跑的主机监控器：
 

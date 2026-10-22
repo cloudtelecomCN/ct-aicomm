@@ -32,6 +32,7 @@ node scripts/create-soak-manifest.mjs \
   --started-at=2026-01-01T00:00:00.000Z \
   --source-commit=<full-40-character-commit> \
   --environment=<restricted-environment.json> \
+  --load-profile=<restricted-load-profile.json> \
   --prompts=<restricted-prompts.jsonl> \
   --agent=/usr/local/lib/ct-aicomm-agent/bin/ct-aicomm-agent \
   --bpf=/usr/local/lib/ct-aicomm-agent/lib/ct_selector.bpf.o \
@@ -40,6 +41,39 @@ node scripts/create-soak-manifest.mjs \
   --monitor=scripts/soak_monitor.py \
   --output=<restricted-run>/manifest.json
 ```
+
+During the hour before the declared start, collect a one-shot observation on every node into a separate readiness directory:
+
+```bash
+python3 scripts/soak_monitor.py \
+  --once \
+  --manifest=<restricted-run>/manifest.json \
+  --node-alias=node-a \
+  --output=<restricted-run>/readiness/node-a
+```
+
+Copy each node's `latest.json` to the restricted controller, then run the no-workload launch gate. The gate verifies the frozen environment and load-profile fingerprints, every runtime artifact, model discovery, current service and Agent-heartbeat evidence, and controller free space. It sends only `GET /v1/models`; it does not issue an inference request. Run it separately from the eventual workload, keep its output restricted, and do not pass credentials on the command line. `VLLM_API_KEY` may be supplied through the process environment when required.
+
+```bash
+node scripts/check-soak-readiness.mjs \
+  --manifest=<restricted-run>/manifest.json \
+  --environment=<restricted-environment.json> \
+  --load-profile=<restricted-load-profile.json> \
+  --prompts=<restricted-prompts.jsonl> \
+  --agent=/usr/local/lib/ct-aicomm-agent/bin/ct-aicomm-agent \
+  --bpf=/usr/local/lib/ct-aicomm-agent/lib/ct_selector.bpf.o \
+  --collector=packages/ttft-collector/collector.mjs \
+  --runner=scripts/run-soak-stage.mjs \
+  --monitor=scripts/soak_monitor.py \
+  --endpoint=endpoint-a=<restricted-url> \
+  --endpoint=endpoint-b=<restricted-url> \
+  --node-observation=node-a=<restricted-run>/readiness/node-a/latest.json \
+  --node-observation=node-b=<restricted-run>/readiness/node-b/latest.json \
+  --output-root=<restricted-run> \
+  --output=<restricted-run>/readiness.json
+```
+
+Do not launch the timed stage unless the readiness result is `ready`. The output file is created with restricted permissions and cannot replace an existing result. Runtime URLs and credentials are excluded from that result, but node and endpoint fingerprints remain restricted operational evidence.
 
 Run one resumable host monitor per declared node:
 
