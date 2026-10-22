@@ -525,6 +525,26 @@ paths:
         "403": { description: Workspace owner or admin role is required. }
         "404": { description: Declaration version is absent from the authenticated organization. }
         "409": { description: Reviewer separation failed, version is not review-ready, or a decision already exists. }
+  /api/v1/workspace/compliance/declarations/{id}/versions/{version}/assessment-workspace:
+    get:
+      operationId: getWorkspaceComplianceAssessmentWorkspace
+      summary: Read one consolidated external-assessment workspace for an immutable declaration version.
+      description: Returns seven workflow stages, non-secret invitation delivery and acknowledgement evidence, the assessor submission, import and verification state, and server-evaluated responsibility separation. It never returns credentials, token digests, internal token identifiers, certification, or transfer authority.
+      security: [{ workspaceToken: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+        - in: path
+          name: version
+          required: true
+          schema: { type: integer, minimum: 1 }
+      responses:
+        "200": { description: Organization-scoped assessment workspace snapshot with explicit responsibility and assurance boundaries. }
+        "400": { description: Declaration version is invalid. }
+        "401": { description: A valid active workspace token is required. }
+        "404": { description: Declaration version is absent from the authenticated organization. }
   /api/v1/workspace/compliance/declarations/{id}/versions/{version}/assessment-handoff:
     get:
       operationId: getWorkspaceComplianceAssessmentHandoff
