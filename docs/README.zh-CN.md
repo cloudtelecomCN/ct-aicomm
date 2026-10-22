@@ -26,6 +26,7 @@
 - [链路证据护照本地导入与运行预检 v1](passport/local-import-and-run-preflight-v1.zh-CN.md)
 - [链路证据护照观测归一与质量标记 v1](passport/observation-normalization-and-quality-v1.zh-CN.md)
 - [链路证据护照封存、版本与终态 v1](passport/sealing-versioning-and-terminal-status-v1.zh-CN.md)
+- [链路证据护照可比性门禁与版本差异 v1](passport/comparability-gate-and-version-diff-v1.zh-CN.md)
 - [CT-Bench 复现与证据规范](bench-reproduction/README.zh-CN.md)
 - [CT-DataPlane Agent 威胁模型](security/agent-threat-model.zh-CN.md)
 - [CT-DataPlane Agent 安装与运维手册](agent/operations.zh-CN.md)

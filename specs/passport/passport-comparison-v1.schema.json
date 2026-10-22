@@ -1,0 +1,239 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/passport/passport-comparison-v1.schema.json",
+  "title": "CT-AIComm Link Evidence Passport comparison v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_type",
+    "comparison_id",
+    "version",
+    "tenant_id",
+    "created_by",
+    "created_at",
+    "evaluated_at",
+    "group_rule",
+    "baseline",
+    "candidates",
+    "view",
+    "boundary",
+    "content_fingerprint"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "record_type": { "const": "passport_comparison" },
+    "comparison_id": { "$ref": "#/$defs/id" },
+    "version": { "$ref": "#/$defs/version" },
+    "tenant_id": { "$ref": "#/$defs/id" },
+    "created_by": { "$ref": "#/$defs/id" },
+    "created_at": { "$ref": "#/$defs/instant" },
+    "evaluated_at": { "$ref": "#/$defs/instant" },
+    "group_rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rule_id", "rule_version", "exact_dimensions", "comparison_dimensions", "default_ranking_applied"],
+      "properties": {
+        "rule_id": { "const": "ct-passport-default-comparability-v1" },
+        "rule_version": { "const": "1.0.0" },
+        "exact_dimensions": {
+          "const": [
+            "authorization_scope",
+            "scenario.direction",
+            "scenario.workload",
+            "method_template",
+            "boundary.data_origin",
+            "observation_shape"
+          ]
+        },
+        "comparison_dimensions": { "const": ["scenario.sites", "scenario.protocol"] },
+        "default_ranking_applied": { "const": false }
+      }
+    },
+    "baseline": { "$ref": "#/$defs/baseline" },
+    "candidates": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "items": { "$ref": "#/$defs/candidate" }
+    },
+    "view": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["side_by_side_refs", "difference_only_refs", "ranking_eligible_refs", "metric_rows", "default_ranking_applied"],
+      "properties": {
+        "side_by_side_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/reference" }
+        },
+        "difference_only_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/reference" }
+        },
+        "ranking_eligible_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/reference" }
+        },
+        "metric_rows": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/metricRow" }
+        },
+        "default_ranking_applied": { "const": false }
+      }
+    },
+    "boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "comparability_is_not_equivalence",
+        "explicit_ranking_policy_required",
+        "performance_claim_allowed",
+        "independent_review_claimed",
+        "certification_issued"
+      ],
+      "properties": {
+        "comparability_is_not_equivalence": { "const": true },
+        "explicit_ranking_policy_required": { "const": true },
+        "performance_claim_allowed": { "const": false },
+        "independent_review_claimed": { "const": false },
+        "certification_issued": { "const": false }
+      }
+    },
+    "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-(?:(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+(?:[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
+    },
+    "instant": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "fingerprint": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["object_type", "object_id", "version", "tenant_id", "content_fingerprint"],
+      "properties": {
+        "object_type": { "const": "passport_evidence_version" },
+        "object_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/version" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "blockerCode": {
+      "enum": [
+        "authorization_scope_mismatch",
+        "direction_mismatch",
+        "workload_mismatch",
+        "method_mismatch",
+        "data_origin_mismatch",
+        "observation_shape_mismatch",
+        "baseline_inactive",
+        "candidate_inactive",
+        "baseline_measurement_not_sufficient",
+        "candidate_measurement_not_sufficient",
+        "baseline_observation_quality_not_valid",
+        "candidate_observation_quality_not_valid"
+      ]
+    },
+    "baseline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["passport_ref", "group_fingerprint", "ranking_eligible", "blocker_codes"],
+      "properties": {
+        "passport_ref": { "$ref": "#/$defs/reference" },
+        "group_fingerprint": { "$ref": "#/$defs/fingerprint" },
+        "ranking_eligible": { "type": "boolean" },
+        "blocker_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/blockerCode" }
+        }
+      }
+    },
+    "difference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "classification", "baseline_value_json", "candidate_value_json"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1, "maxLength": 512, "pattern": "^/" },
+        "classification": { "enum": ["comparison_dimension", "ranking_blocker", "eligibility", "metadata"] },
+        "baseline_value_json": { "type": "string", "maxLength": 32768 },
+        "candidate_value_json": { "type": "string", "maxLength": 32768 }
+      }
+    },
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "passport_ref",
+        "group_fingerprint",
+        "same_group",
+        "ranking_eligible",
+        "view_mode",
+        "blocker_codes",
+        "differences"
+      ],
+      "properties": {
+        "passport_ref": { "$ref": "#/$defs/reference" },
+        "group_fingerprint": { "$ref": "#/$defs/fingerprint" },
+        "same_group": { "type": "boolean" },
+        "ranking_eligible": { "type": "boolean" },
+        "view_mode": { "enum": ["side-by-side-unranked", "difference-only"] },
+        "blocker_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/blockerCode" }
+        },
+        "differences": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/difference" }
+        }
+      }
+    },
+    "metricValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["passport_ref", "normalized_value", "quality_status", "included_samples"],
+      "properties": {
+        "passport_ref": { "$ref": "#/$defs/reference" },
+        "normalized_value": { "type": ["number", "null"] },
+        "quality_status": { "enum": ["valid", "partial", "invalid", "unknown"] },
+        "included_samples": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "metricRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["origin", "observation_point", "metric", "aggregation", "normalized_unit", "values"],
+      "properties": {
+        "origin": { "enum": ["measured", "synthetic", "inferred", "declared"] },
+        "observation_point": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "metric": { "type": "string", "minLength": 1, "maxLength": 96 },
+        "aggregation": { "enum": ["raw", "count", "mean", "min", "max", "p50", "p95", "p99"] },
+        "normalized_unit": { "type": "string", "minLength": 1, "maxLength": 32 },
+        "values": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/metricValue" }
+        }
+      }
+    }
+  }
+}

@@ -2,7 +2,7 @@
 
 [English](README.md)
 
-本零依赖包实现 CT-609 场景方法冻结、CT-610 本地导入与强制运行预检、CT-611 观测归一与质量标记，以及 CT-612 不可变封存、精确替代链、到期、替代和撤销公开契约。
+本零依赖包实现 CT-609 场景方法冻结、CT-610 本地导入与强制运行预检、CT-611 观测归一与质量标记、CT-612 不可变封存、精确替代链、到期、替代和撤销，以及 CT-613 可比性门禁、字段级差异和未排名视图公开契约。
 
 公开能力包括：
 
@@ -15,6 +15,7 @@
 - 通过 `observation.mjs` 创建和验证规范观测记录。
 - 通过 `versioning.mjs` 创建和验证封存版本与替代版本；
 - 通过 `versioning.mjs` 创建和验证到期、替代、撤销终态事件，并投影版本状态。
+- 通过 `comparison.mjs` 创建和验证同组门禁、版本差异和比较视图。
 
 受保护内容包括源站点和目标站点、方向、协议、工作负载配置、精确的 Evidence Core
 Scope 与 Method 引用、工具制品、参数、采样、排除规则、统计项和环境前提。运行进入
@@ -35,6 +36,10 @@ Scope 与 Method 引用、工具制品、参数、采样、排除规则、统计
 自身封存时间推导新鲜度截止时间，并且不继承策略接受状态。即使终态事件未送达，到期
 投影也会默认失效；替代和撤销使用追加式终态事件，不修改封存源。
 
+比较要求授权范围、方向、工作负载、方法、数据来源和观测形状完全一致；站点与协议保留为
+明确比较维度。方法或工作负载漂移只进入差异区，不进入默认并排指标视图。SDK 不应用
+默认排名。
+
 运行合成场景：
 
 ```bash
@@ -42,4 +47,5 @@ node examples/passport/scenario-method-freeze-synthetic.mjs
 node examples/passport/local-import-preflight-synthetic.mjs
 node examples/passport/observation-normalization-synthetic.mjs
 node examples/passport/sealing-versioning-synthetic.mjs
+node examples/passport/comparability-gate-synthetic.mjs
 ```

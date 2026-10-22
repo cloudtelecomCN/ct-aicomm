@@ -53,6 +53,7 @@
     "tests/evidence-import.test.mjs",
     "tests/evidence-object-schema.test.mjs",
     "tests/evidence-lifecycle.test.mjs",
+    "tests/passport-comparability-gate.test.mjs",
     "tests/passport-local-import-preflight.test.mjs",
     "tests/passport-observation-normalization.test.mjs",
     "tests/passport-sealing-versioning.test.mjs",
@@ -364,6 +365,32 @@
           "source_version_mutated": false,
           "external_network_used": false,
           "performance_claim_allowed": false,
+          "certification_issued": false
+        }
+      }
+    },
+    {
+      "id": "passport-comparability-gate",
+      "entrypoint": "examples/passport/comparability-gate-synthetic.mjs",
+      "expect": {
+        "equals": {
+          "schema_version": "1.0.0",
+          "data_origin": "synthetic",
+          "same_group_candidate": true,
+          "same_group_side_by_side": true,
+          "same_group_ranking_eligible": true,
+          "workload_drift_excluded": true,
+          "workload_drift_blocked": true,
+          "workload_drift_in_metric_rows": false,
+          "method_drift_excluded": true,
+          "method_drift_blocked": true,
+          "method_drift_in_metric_rows": false,
+          "default_ranking_applied": false,
+          "explicit_ranking_policy_required": true,
+          "comparison_record_immutable": true,
+          "external_network_used": false,
+          "performance_claim_allowed": false,
+          "independent_review_claimed": false,
           "certification_issued": false
         }
       }
