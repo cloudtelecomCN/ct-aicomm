@@ -54,6 +54,7 @@ test("release workflow signs, verifies, attests, and publishes from an exact tag
   assert.match(workflow, /sigstore\/cosign-installer@[0-9a-f]{40}/);
   assert.match(workflow, /gh release create/);
   assert.match(workflow, /--verify-tag/);
+  assert.match(workflow, /CT_RELEASE_OUTPUT_ROOT:\s*\$\{\{ runner\.temp \}\}/);
   assert.doesNotMatch(workflow, /uses:\s*[^\n]+@(main|master|v\d+)/);
 });
 

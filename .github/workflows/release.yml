@@ -42,6 +42,8 @@ jobs:
         run: npm run test:full
       - name: Build deterministic release artifacts
         shell: bash
+        env:
+          CT_RELEASE_OUTPUT_ROOT: ${{ runner.temp }}
         run: node scripts/create-public-release.mjs --revision "$GITHUB_SHA" --tag "$GITHUB_REF_NAME" --output "$RUNNER_TEMP/ct-aicomm-release"
       - name: Verify generated checksums
         shell: bash

@@ -4,7 +4,7 @@ import { execFileSync } from "node:child_process";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { buildChildEnvironment } from "../scripts/run-contributor-tests.mjs";
+import { buildChildEnvironment, repositoryPath } from "../scripts/run-contributor-tests.mjs";
 
 const repositoryRoot = fileURLToPath(new URL("../", import.meta.url));
 const manifest = JSON.parse(await readFile(path.join(repositoryRoot, "specs/contributor/test-environment-v1.json"), "utf8"));
@@ -37,6 +37,15 @@ test("sanitizes credentials and deployment variables before spawning checks", ()
   assert.match(environment.NODE_OPTIONS, /^--import=file:/);
   assert.doesNotMatch(environment.NODE_OPTIONS, /do-not-forward/);
   assert.equal(environment.CT_CONTRIBUTOR_OFFLINE, "1");
+});
+
+test("rejects contributor paths outside the repository before execution", async () => {
+  assert.equal(
+    await repositoryPath("tests/contributor-test-environment.test.mjs"),
+    fileURLToPath(import.meta.url)
+  );
+  await assert.rejects(repositoryPath("../package.json"), /escapes the allowed root/u);
+  await assert.rejects(repositoryPath(repositoryRoot), /non-empty relative path/u);
 });
 
 test("blocks non-loopback network access before a connection is attempted", () => {

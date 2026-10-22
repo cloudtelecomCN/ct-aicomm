@@ -1,12 +1,14 @@
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
+import { readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { prepareEmptyDirectoryWithinRoot } from "./path-boundary.mjs";
 
 const REPOSITORY = "cloudtelecomCN/ct-aicomm";
 const SCRIPT_PATH = fileURLToPath(import.meta.url);
 const ROOT = path.resolve(path.dirname(SCRIPT_PATH), "..");
+const DEFAULT_RELEASE_OUTPUT_ROOT = path.join(ROOT, "dist", "release");
 const MAX_GIT_BUFFER = 256 * 1024 * 1024;
 
 function assert(condition, message) {
@@ -147,10 +149,20 @@ async function artifactRecord(outputDirectory, file, mediaType, purpose) {
   return { file, media_type: mediaType, purpose, size_bytes: bytes.length, sha256: sha(bytes) };
 }
 
+export async function prepareReleaseOutputDirectory({ output, tag, environment = process.env }) {
+  const configuredRoot = environment.CT_RELEASE_OUTPUT_ROOT?.trim();
+  const allowedRoot = path.resolve(configuredRoot || DEFAULT_RELEASE_OUTPUT_ROOT);
+  const requestedOutput = path.resolve(output ?? path.join(allowedRoot, tag));
+  return prepareEmptyDirectoryWithinRoot(allowedRoot, requestedOutput, {
+    label: "Release output directory"
+  });
+}
+
 export async function createPublicRelease({ output, revision = "HEAD", tag: requestedTag } = {}) {
   const version = parseVersion(await readFile(path.join(ROOT, "VERSION"), "utf8"));
   const tag = requestedTag ?? `v${version}`;
   assert(tag === `v${version}`, `Release tag ${tag} does not match VERSION ${version}`);
+  const outputDirectory = await prepareReleaseOutputDirectory({ output, tag });
 
   const status = git(["status", "--porcelain"], { encoding: "utf8" }).trim();
   assert(!status, "Release builds require a clean Git worktree");
@@ -166,8 +178,6 @@ export async function createPublicRelease({ output, revision = "HEAD", tag: requ
     return { path: file.replaceAll("\\", "/"), sha1: sha(bytes, "sha1"), sha256: sha(bytes) };
   });
 
-  const outputDirectory = path.resolve(output ?? path.join(ROOT, "dist", "release", tag));
-  await mkdir(outputDirectory, { recursive: true });
   const archiveName = `ct-aicomm-${tag}-source.tar.gz`;
   const sbomName = `ct-aicomm-${tag}.spdx.json`;
   const manifestName = `release-manifest-${tag}.json`;

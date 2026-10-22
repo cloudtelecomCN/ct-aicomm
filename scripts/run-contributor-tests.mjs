@@ -1,7 +1,8 @@
 import { spawn } from "node:child_process";
-import { readdir, readFile } from "node:fs/promises";
+import { readdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { resolveExistingPathWithinRoot } from "./path-boundary.mjs";
 
 const REPOSITORY_ROOT = fileURLToPath(new URL("../", import.meta.url));
 const RUNNER_PATH = fileURLToPath(import.meta.url);
@@ -40,11 +41,16 @@ export function buildChildEnvironment(source = process.env) {
   return environment;
 }
 
-function repositoryPath(relativePath) {
-  const resolved = path.resolve(REPOSITORY_ROOT, relativePath);
-  const prefix = `${path.resolve(REPOSITORY_ROOT)}${path.sep}`;
-  if (!resolved.startsWith(prefix)) {
-    throw new Error(`Path escapes the public repository: ${relativePath}`);
+export async function repositoryPath(relativePath) {
+  if (typeof relativePath !== "string" || !relativePath || path.isAbsolute(relativePath)) {
+    throw new Error(`Repository path must be a non-empty relative path: ${relativePath}`);
+  }
+  const resolved = await resolveExistingPathWithinRoot(REPOSITORY_ROOT, relativePath, {
+    label: "Repository path"
+  });
+  const metadata = await stat(resolved);
+  if (!metadata.isFile()) {
+    throw new Error(`Repository path must resolve to a file: ${relativePath}`);
   }
   return resolved;
 }
@@ -133,7 +139,7 @@ async function loadManifest() {
 }
 
 async function runContracts(manifest) {
-  const tests = manifest.contract_tests.map((testPath) => repositoryPath(testPath));
+  const tests = await Promise.all(manifest.contract_tests.map((testPath) => repositoryPath(testPath)));
   await runNode("contract tests", ["--test", ...tests]);
   return manifest.contract_tests.map((testPath) => ({ id: testPath, status: "passed" }));
 }
@@ -141,7 +147,7 @@ async function runContracts(manifest) {
 async function runScenarios(manifest) {
   const results = [];
   for (const scenario of manifest.synthetic_scenarios) {
-    const entrypoint = repositoryPath(scenario.entrypoint);
+    const entrypoint = await repositoryPath(scenario.entrypoint);
     const { stdout } = await runNode(scenario.id, [entrypoint, ...(scenario.arguments ?? [])]);
     let output;
     try {
@@ -157,10 +163,10 @@ async function runScenarios(manifest) {
 
 async function runFullSuite() {
   const testsDirectory = path.join(REPOSITORY_ROOT, "tests");
-  const tests = (await readdir(testsDirectory))
+  const testNames = (await readdir(testsDirectory))
     .filter((name) => name.endsWith(".test.mjs"))
-    .sort()
-    .map((name) => path.join(testsDirectory, name));
+    .sort();
+  const tests = await Promise.all(testNames.map((name) => repositoryPath(path.join("tests", name))));
   await runNode("full public test suite", ["--test", ...tests]);
   return tests.map((testPath) => ({ id: path.relative(REPOSITORY_ROOT, testPath).replaceAll("\\", "/"), status: "passed" }));
 }
