@@ -10,6 +10,7 @@ CT-AIComm 是 CloudTelecom 面向 AI 训练与推理通信场景构建的开放�
 - [离线贡献者测试环境](docs/contributor/test-environment.zh-CN.md)
 - [中文白皮书](docs/whitepaper/README.zh-CN.md)
 - [CT-Bench 复现与证据规范](docs/bench-reproduction/README.zh-CN.md)
+- [Evidence Core 对象模型 v1](docs/evidence/object-model-v1.zh-CN.md)
 - [TTFT 样本 v1 JSON Schema](docs/bench-reproduction/ttft-sample.schema.json)
 - [CT-Bench 复现 CLI](packages/bench-reproduce/)
 - [vLLM Connector 兼容矩阵 v1](docs/connectors/vllm.zh-CN.md)

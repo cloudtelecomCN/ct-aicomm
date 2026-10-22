@@ -45,6 +45,7 @@
     "tests/compliance-evidence-binding.test.mjs",
     "tests/connector-sdk-contract.test.mjs",
     "tests/ct-dsl.test.mjs",
+    "tests/evidence-object-schema.test.mjs",
     "tests/public-sdk-boundary.test.mjs",
     "tests/registry-entry-integrity.test.mjs"
   ],

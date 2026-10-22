@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0.0",
+  "object_type": "review",
+  "review_id": "review-synthetic-internal-001",
+  "version": "1.0.0",
+  "tenant_id": "tenant-synthetic-alpha",
+  "created_by": "principal-synthetic-reviewer",
+  "created_at": "2026-10-22T08:20:00.000Z",
+  "authorization_scope": {
+    "visibility": "shared",
+    "purpose": "Offline synthetic contract testing only.",
+    "recipients": ["organization-synthetic-reviewer"],
+    "expires_at": "2027-10-22T08:00:00.000Z"
+  },
+  "evidence_ref": {
+    "object_type": "evidence_version",
+    "object_id": "evidence-synthetic-link-001",
+    "version": "1.0.0",
+    "tenant_id": "tenant-synthetic-alpha"
+  },
+  "reviewer": {
+    "principal_id": "principal-synthetic-reviewer",
+    "organization_id": "organization-synthetic-author"
+  },
+  "independence_disclosure": {
+    "relationship": "implementation-participant",
+    "details": "The synthetic reviewer belongs to the fixture author organization and does not claim independence.",
+    "independent_claim": false
+  },
+  "review_scope": ["structure", "calculation"],
+  "method": "Inspect required fields and recompute the deterministic synthetic aggregate from the fixture.",
+  "findings": [
+    { "finding_id": "finding-synthetic-origin", "severity": "info", "statement": "The package is explicitly synthetic and cannot support a production performance claim." }
+  ],
+  "conclusion": "internal-only",
+  "concluded_at": "2026-10-22T08:20:00.000Z"
+}

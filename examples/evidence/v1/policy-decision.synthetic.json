@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0.0",
+  "object_type": "policy_decision",
+  "decision_id": "decision-synthetic-001",
+  "version": "1.0.0",
+  "tenant_id": "tenant-synthetic-alpha",
+  "created_by": "principal-synthetic-consumer",
+  "created_at": "2026-10-22T08:25:00.000Z",
+  "authorization_scope": {
+    "visibility": "shared",
+    "purpose": "Offline synthetic contract testing only.",
+    "recipients": ["organization-synthetic-reviewer"],
+    "expires_at": "2027-10-22T08:00:00.000Z"
+  },
+  "consumer": {
+    "type": "human",
+    "consumer_id": "principal-synthetic-consumer"
+  },
+  "rule": {
+    "rule_id": "rule-synthetic-manual-only",
+    "version": "1.0.0",
+    "fingerprint": "sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+  },
+  "evidence_refs": [
+    { "object_type": "evidence_version", "object_id": "evidence-synthetic-link-001", "version": "1.0.0", "tenant_id": "tenant-synthetic-alpha" }
+  ],
+  "outcome": "manual-review",
+  "reason": "Synthetic evidence is retained for contract testing and is not eligible for an operational decision.",
+  "decided_at": "2026-10-22T08:25:00.000Z"
+}

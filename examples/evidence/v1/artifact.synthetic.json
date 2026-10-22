@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0.0",
+  "object_type": "artifact",
+  "artifact_id": "artifact-synthetic-samples",
+  "version": "1.0.0",
+  "tenant_id": "tenant-synthetic-alpha",
+  "created_by": "principal-synthetic-runner",
+  "created_at": "2026-10-22T08:12:00.000Z",
+  "authorization_scope": {
+    "visibility": "public",
+    "purpose": "Publish a non-sensitive synthetic contract fixture.",
+    "recipients": [],
+    "expires_at": null
+  },
+  "kind": "raw-samples",
+  "media_type": "text/csv",
+  "content_fingerprint": "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+  "size_bytes": 128,
+  "storage_locator": "urn:ct-aicomm:synthetic:artifact:raw-samples",
+  "classification": "public",
+  "derived_from": []
+}

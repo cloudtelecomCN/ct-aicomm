@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0.0",
+  "object_type": "scope",
+  "scope_id": "scope-synthetic-link-a-b",
+  "version": "1.0.0",
+  "tenant_id": "tenant-synthetic-alpha",
+  "created_by": "principal-synthetic-author",
+  "created_at": "2026-10-22T08:00:00.000Z",
+  "authorization_scope": {
+    "visibility": "shared",
+    "purpose": "Offline synthetic contract testing only.",
+    "recipients": ["organization-synthetic-reviewer"],
+    "expires_at": "2027-10-22T08:00:00.000Z"
+  },
+  "sites": [
+    { "site_id": "site-synthetic-a", "role": "source", "region": "synthetic-east" },
+    { "site_id": "site-synthetic-b", "role": "destination", "region": "synthetic-west" }
+  ],
+  "endpoints": [
+    { "endpoint_id": "endpoint-synthetic-a", "site_id": "site-synthetic-a", "role": "source" },
+    { "endpoint_id": "endpoint-synthetic-b", "site_id": "site-synthetic-b", "role": "destination" }
+  ],
+  "direction": "unidirectional",
+  "purpose": "Exercise the public evidence object contract without contacting a network endpoint.",
+  "validity": {
+    "starts_at": "2026-10-22T08:00:00.000Z",
+    "ends_at": "2026-10-22T09:00:00.000Z"
+  },
+  "workload_class": "network-transfer"
+}

@@ -6,6 +6,7 @@ All notable public changes to CT-AIComm are recorded in this file. The project f
 
 ### Added
 
+- CT-601 Evidence Core object model v1 with nine strict, tenant-scoped object contracts, exact-version references, bilingual field dictionaries, and synthetic fixtures that make no performance or independence claim.
 - Truthful bootstrap governance, a machine-readable role roster, and a public external reviewer or maintainer admission, permission, review, and exit process.
 - CT-556 execution evidence binding v1 with tenant, execution, component-version, and fingerprint locks for policy, Agent, route, trace, and environment evidence.
 - CT-557 data path declaration v1 with stable region, directed-boundary, encryption, processor, JSON/YAML, and authoritative-context validation contracts.

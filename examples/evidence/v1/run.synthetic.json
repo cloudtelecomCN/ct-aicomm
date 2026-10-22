@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0.0",
+  "object_type": "run",
+  "run_id": "run-synthetic-001",
+  "version": "1.0.0",
+  "tenant_id": "tenant-synthetic-alpha",
+  "created_by": "principal-synthetic-runner",
+  "created_at": "2026-10-22T08:05:00.000Z",
+  "authorization_scope": {
+    "visibility": "shared",
+    "purpose": "Offline synthetic contract testing only.",
+    "recipients": ["organization-synthetic-reviewer"],
+    "expires_at": "2027-10-22T08:00:00.000Z"
+  },
+  "scope_ref": {
+    "object_type": "scope",
+    "object_id": "scope-synthetic-link-a-b",
+    "version": "1.0.0",
+    "tenant_id": "tenant-synthetic-alpha"
+  },
+  "method_ref": {
+    "object_type": "method",
+    "object_id": "method-synthetic-link-v1",
+    "version": "1.0.0",
+    "tenant_id": "tenant-synthetic-alpha"
+  },
+  "planned_window": {
+    "starts_at": "2026-10-22T08:10:00.000Z",
+    "ends_at": "2026-10-22T08:15:00.000Z"
+  },
+  "actual_window": {
+    "starts_at": "2026-10-22T08:10:00.000Z",
+    "ends_at": "2026-10-22T08:11:00.000Z"
+  },
+  "environment": {
+    "environment_id": "environment-offline-synthetic",
+    "fingerprint": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "summary": "Offline fixture environment with no external network or production endpoint."
+  },
+  "workload": {
+    "name": "synthetic-link-fixture",
+    "version": "1.0.0",
+    "origin": "synthetic",
+    "configuration_fingerprint": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+  },
+  "clock": {
+    "source": "fixture-clock",
+    "synchronized": false,
+    "max_known_skew_ms": 0
+  },
+  "run_status": "completed",
+  "exit_reason": "Synthetic fixture generation completed without external I/O."
+}

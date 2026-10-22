@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0.0",
+  "object_type": "evidence_version",
+  "evidence_id": "evidence-synthetic-link-001",
+  "version": "1.0.0",
+  "tenant_id": "tenant-synthetic-alpha",
+  "created_by": "principal-synthetic-owner",
+  "created_at": "2026-10-22T08:15:00.000Z",
+  "authorization_scope": {
+    "visibility": "shared",
+    "purpose": "Offline synthetic contract testing only.",
+    "recipients": ["organization-synthetic-reviewer"],
+    "expires_at": "2027-10-22T08:00:00.000Z"
+  },
+  "scope_ref": {
+    "object_type": "scope",
+    "object_id": "scope-synthetic-link-a-b",
+    "version": "1.0.0",
+    "tenant_id": "tenant-synthetic-alpha"
+  },
+  "method_ref": {
+    "object_type": "method",
+    "object_id": "method-synthetic-link-v1",
+    "version": "1.0.0",
+    "tenant_id": "tenant-synthetic-alpha"
+  },
+  "run_refs": [
+    { "object_type": "run", "object_id": "run-synthetic-001", "version": "1.0.0", "tenant_id": "tenant-synthetic-alpha" }
+  ],
+  "observation_refs": [
+    { "object_type": "observation", "object_id": "observation-synthetic-latency-p95", "version": "1.0.0", "tenant_id": "tenant-synthetic-alpha" }
+  ],
+  "artifact_refs": [
+    { "object_type": "artifact", "object_id": "artifact-synthetic-samples", "version": "1.0.0", "tenant_id": "tenant-synthetic-alpha" }
+  ],
+  "boundary": {
+    "statement": "This package demonstrates the v1 evidence object contract with deterministic synthetic data only.",
+    "data_origin": "synthetic",
+    "limitations": [
+      "No production endpoint, customer workload, or external network was used."
+    ],
+    "performance_claim_allowed": false
+  },
+  "status": {
+    "measurement_validity": "partial",
+    "content_integrity": "unverifiable",
+    "independent_review": "not-reviewed",
+    "freshness": "valid",
+    "policy_decision": "manual-review"
+  },
+  "sealed_at": "2026-10-22T08:15:00.000Z",
+  "content_fingerprint": "sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+}
