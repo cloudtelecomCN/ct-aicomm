@@ -13,6 +13,7 @@
 - [Data path declaration v1](compliance/data-path-declaration.md)
 - [Offline-verifiable audit package v1](compliance/audit-package.md)
 - [Fail-closed evidence gap detection v1](compliance/evidence-gap-detection.md)
+- [Versioned compliance rule packs v1](compliance/rule-packs.md)
 - [CT-Bench reproduction and evidence contract](bench-reproduction/README.md)
 - [CT-DataPlane Agent threat model](security/agent-threat-model.md)
 - [CT-DataPlane Agent operations runbook](agent/operations.md)

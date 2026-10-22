@@ -13,6 +13,7 @@
 - [数据路径声明 v1](compliance/data-path-declaration.zh-CN.md)
 - [可离线验证审计包 v1](compliance/audit-package.zh-CN.md)
 - [默认拒绝的证据缺口检测 v1](compliance/evidence-gap-detection.zh-CN.md)
+- [版本化合规规则包 v1](compliance/rule-packs.zh-CN.md)
 - [CT-Bench 复现与证据规范](bench-reproduction/README.zh-CN.md)
 - [CT-DataPlane Agent 威胁模型](security/agent-threat-model.zh-CN.md)
 - [CT-DataPlane Agent 安装与运维手册](agent/operations.zh-CN.md)

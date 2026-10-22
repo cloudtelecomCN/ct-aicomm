@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0.0",
+  "pack_id": "ct.synthetic.enterprise-baseline",
+  "pack_version": "1.0.0",
+  "title": "Synthetic enterprise assurance baseline",
+  "description": "Illustrative customer-defined mappings across region, encryption, and retention controls.",
+  "data_origin": "synthetic",
+  "published_at": "2026-10-22T00:00:00.000Z",
+  "effective_from": "2026-10-22T00:00:00.000Z",
+  "supersedes": null,
+  "issuer": {
+    "name": "CT-AIComm public reference project",
+    "authority_type": "project_reference",
+    "reference_url": "https://github.com/cloudtelecomCN/ct-aicomm"
+  },
+  "scope": {
+    "jurisdictions": ["CUSTOMER-DEFINED"],
+    "workload_types": ["ai-inference"],
+    "notes": "Replace every reference with organization-approved policy identifiers before internal adoption."
+  },
+  "mappings": [
+    {
+      "mapping_id": "enterprise-encryption-baseline",
+      "domain": "enterprise",
+      "source_framework": "enterprise-reference-baseline",
+      "source_control_refs": ["enterprise-data-protection"],
+      "target_control_ids": ["CTC-STORAGE-01", "CTC-TRANSIT-01"],
+      "evidence_kinds": ["storage-encryption-config", "transport-encryption-config"],
+      "rationale": "Group transport and storage evidence under one customer-defined protection objective.",
+      "assessment_required": true
+    },
+    {
+      "mapping_id": "enterprise-region-approval",
+      "domain": "enterprise",
+      "source_framework": "enterprise-reference-baseline",
+      "source_control_refs": ["enterprise-region-allowlist"],
+      "target_control_ids": ["CTC-REGION-01"],
+      "evidence_kinds": ["boundary-declaration", "policy-approval-reference"],
+      "rationale": "Locate declared region boundaries and the customer-owned approval reference for human review.",
+      "assessment_required": true
+    },
+    {
+      "mapping_id": "enterprise-retention-baseline",
+      "domain": "enterprise",
+      "source_framework": "enterprise-reference-baseline",
+      "source_control_refs": ["enterprise-retention-window"],
+      "target_control_ids": ["CTC-RETENTION-01"],
+      "evidence_kinds": ["retention-policy", "retention-receipt"],
+      "rationale": "Locate bounded retention policy and operation evidence for an internal reviewer.",
+      "assessment_required": true
+    }
+  ],
+  "assurance_boundary": {
+    "mapping_only": true,
+    "legal_conclusion": false,
+    "certification_issued": false,
+    "external_assessment_performed": false
+  },
+  "pack_fingerprint": "sha256:b061a1ce1f37d6c233b86d7b7048fbb401c41601fb2386d3ee23be71c4b1549a"
+}

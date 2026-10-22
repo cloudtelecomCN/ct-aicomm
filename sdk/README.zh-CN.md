@@ -6,7 +6,7 @@
 import { normalizeNetworkTelemetry, validateControlMessage } from "./sdk/index.mjs";
 ```
 
-SDK 只校验并规范化调用方提供的证据，不包含凭据、不发现私有基础设施、不授权执行、不挂载 eBPF 程序，也不会把合成数据表述为实测数据。版本 `0.8.0` 新增 CT-559 默认拒绝的证据缺口检测，检查缺失、陈旧、冲突和未签名记录。租户查询、法律审批、可信签名、验证器认证和生产证据读取能力仍明确排除；当前以源码分发，尚未发布到 npm Registry。
+SDK 只校验并规范化调用方提供的证据，不包含凭据、不发现私有基础设施、不授权执行、不挂载 eBPF 程序，也不会把合成数据表述为实测数据。版本 `0.9.0` 新增 CT-561 版本化合规规则包、确定性升级链校验和仅映射报告。租户查询、法律审批、可信签名、验证器认证、认证签发和生产证据读取能力仍明确排除；当前以源码分发，尚未发布到 npm Registry。
 
 使用 `node examples/sdk/validate-public-evidence.mjs` 运行示例。使用 `node packages/ttft-collector/cli.mjs --endpoint=URL --model=MODEL --prompt=TEXT --environment-fingerprint=sha256:...` 采集一次客户端可观测 TTFT；凭据只能通过 `VLLM_API_KEY` 提供。
 
@@ -23,3 +23,5 @@ Registry 使用方可以运行 `node scripts/verify-registry-history.mjs` 验证
 审计工具可以导入 `createAuditPackage` 和 `verifyAuditPackage`，也可以运行离线生成与验证 CLI。审计包验证能够发现证据缺失和篡改，并可将标识符绑定到调用方提供的上下文；仅通过校验和验证不能认证审批人，也不能授权执行。
 
 证据审核方可以导入 `inspectEvidenceGaps`，或运行 `scripts/inspect-evidence-gaps.mjs`。调用方必须把权威上下文、可信评估时间和已认证验证器 ID 与待检查评估文件分开提供。只有零缺口报告才会输出 `requirements_satisfied`；该状态不构成执行授权、法律批准或外部认证。
+
+合规架构人员可以导入 `createComplianceRulePack`、`validateComplianceRulePack`、`verifyComplianceRulePackUpgrade` 和 `mapComplianceRulePack`，也可以运行 `scripts/validate-compliance-rule-pack.mjs`。映射报告只按版本化参考定位已提交证据，不签发法律结论、外部测评或认证。

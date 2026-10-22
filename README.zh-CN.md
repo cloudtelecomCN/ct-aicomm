@@ -25,6 +25,7 @@ CT-AIComm 是 CloudTelecom 面向 AI 训练与推理通信场景构建的开放�
 - [数据路径声明 v1](docs/compliance/data-path-declaration.zh-CN.md)
 - [可离线验证审计包 v1](docs/compliance/audit-package.zh-CN.md)
 - [默认拒绝的证据缺口检测 v1](docs/compliance/evidence-gap-detection.zh-CN.md)
+- [版本化合规规则包 v1](docs/compliance/rule-packs.zh-CN.md)
 - [版本验证与 SBOM](docs/release/verification.zh-CN.md)
 - [变更记录](CHANGELOG.zh-CN.md)
 - [Agent 控制与遥测 Schema](specs/agent/)

@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0.0",
+  "pack_id": "ct.synthetic.data-boundary",
+  "pack_version": "1.0.0",
+  "title": "Synthetic data boundary mapping",
+  "description": "Illustrative mappings from declared data boundaries to internal evidence controls.",
+  "data_origin": "synthetic",
+  "published_at": "2026-10-22T00:00:00.000Z",
+  "effective_from": "2026-10-22T00:00:00.000Z",
+  "supersedes": null,
+  "issuer": {
+    "name": "CT-AIComm public reference project",
+    "authority_type": "project_reference",
+    "reference_url": "https://github.com/cloudtelecomCN/ct-aicomm"
+  },
+  "scope": {
+    "jurisdictions": ["CN", "MULTI"],
+    "workload_types": ["ai-inference", "ai-training"],
+    "notes": "Adapt jurisdiction and transfer-basis references with counsel before operational use."
+  },
+  "mappings": [
+    {
+      "mapping_id": "boundary-declared-basis",
+      "domain": "data_boundary",
+      "source_framework": "CT-data-boundary-reference",
+      "source_control_refs": ["cross-region-basis"],
+      "target_control_ids": ["CTC-REGION-01"],
+      "evidence_kinds": ["boundary-declaration", "transfer-basis-reference"],
+      "rationale": "Connect each cross-region boundary to a declared basis and reviewable evidence reference.",
+      "assessment_required": true
+    },
+    {
+      "mapping_id": "boundary-transport-protection",
+      "domain": "data_boundary",
+      "source_framework": "CT-data-boundary-reference",
+      "source_control_refs": ["boundary-transport-encryption"],
+      "target_control_ids": ["CTC-TRANSIT-01"],
+      "evidence_kinds": ["transport-encryption-config", "transport-observation"],
+      "rationale": "Locate encryption evidence for each declared boundary crossing without deciding legal sufficiency.",
+      "assessment_required": true
+    }
+  ],
+  "assurance_boundary": {
+    "mapping_only": true,
+    "legal_conclusion": false,
+    "certification_issued": false,
+    "external_assessment_performed": false
+  },
+  "pack_fingerprint": "sha256:1fc7a980573c19ffa20a82c3e357928716b352578e7a76fea5e3530912be0450"
+}

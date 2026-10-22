@@ -12,6 +12,7 @@ All notable public changes to CT-AIComm are recorded in this file. The project f
 - CT-558 audit package v1 with a closed declaration, approval, execution, and rollback artifact set, deterministic SHA-256 manifests, offline builder and verifier CLIs, and explicit authenticity boundaries.
 - CT-559 fail-closed evidence gap detection v1 for missing, stale, conflicting, and unsigned records, with caller-supplied trust context and deterministic reports.
 - CT-560 consolidated external-assessment workspace API contract with seven ordered stages, redacted delivery evidence, and explicit importer/verifier responsibility separation.
+- CT-561 versioned compliance rule packs for MLPS preparation, data boundaries, and enterprise mappings, with deterministic upgrade chains and explicit non-certification reports.
 
 ## [0.1.0] - 2026-10-22
 

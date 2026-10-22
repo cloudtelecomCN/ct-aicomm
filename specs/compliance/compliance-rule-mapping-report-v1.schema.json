@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/compliance/compliance-rule-mapping-report-v1.json",
+  "title": "CT-AIComm compliance rule mapping report v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "evaluation_id", "pack_id", "pack_version", "pack_fingerprint", "subject", "evaluated_at", "status", "counts", "mappings", "mapping_only", "legal_conclusion", "certification_issued", "external_assessment_performed", "report_fingerprint"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "evaluation_id": { "$ref": "#/$defs/id" },
+    "pack_id": { "$ref": "#/$defs/id" },
+    "pack_version": { "type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$" },
+    "pack_fingerprint": { "$ref": "#/$defs/fingerprint" },
+    "subject": { "type": "object" },
+    "evaluated_at": { "type": "string", "format": "date-time" },
+    "status": { "enum": ["mapped_with_gaps", "not_evaluated", "mapped_without_observed_gaps"] },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total", "evidence_present", "evidence_missing", "not_evaluated"],
+      "properties": {
+        "total": { "type": "integer", "minimum": 1 },
+        "evidence_present": { "type": "integer", "minimum": 0 },
+        "evidence_missing": { "type": "integer", "minimum": 0 },
+        "not_evaluated": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "mappings": { "type": "array", "minItems": 1, "items": { "type": "object" } },
+    "mapping_only": { "const": true },
+    "legal_conclusion": { "const": false },
+    "certification_issued": { "const": false },
+    "external_assessment_performed": { "const": false },
+    "report_fingerprint": { "$ref": "#/$defs/fingerprint" }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$" },
+    "fingerprint": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" }
+  }
+}

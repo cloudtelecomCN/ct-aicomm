@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/compliance/compliance-control-observation-v1.json",
+  "title": "CT-AIComm compliance control observation v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "evaluation_id", "subject", "control_observations"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "evaluation_id": { "$ref": "#/$defs/id" },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tenant_id", "workload_id", "declaration_id", "declaration_version"],
+      "properties": {
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "workload_id": { "$ref": "#/$defs/id" },
+        "declaration_id": { "$ref": "#/$defs/id" },
+        "declaration_version": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "control_observations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["control_id", "status", "evidence_refs"],
+        "properties": {
+          "control_id": { "$ref": "#/$defs/id" },
+          "status": { "enum": ["evidence_present", "evidence_missing", "not_observed"] },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["evidence_id", "evidence_kind", "content_fingerprint"],
+              "properties": {
+                "evidence_id": { "$ref": "#/$defs/id" },
+                "evidence_kind": { "$ref": "#/$defs/id" },
+                "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$" },
+    "fingerprint": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" }
+  }
+}

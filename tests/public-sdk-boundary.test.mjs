@@ -77,6 +77,21 @@ test("public API exposes CT-559 evidence gap detection without verifier or certi
   }
 });
 
+test("public API exposes CT-561 versioned rule mapping without certification authority", async () => {
+  const manifest = JSON.parse(await readFile(new URL("../specs/public-api-v1.json", import.meta.url), "utf8"));
+  for (const contract of [
+    "specs/compliance/compliance-rule-pack-v1.schema.json",
+    "specs/compliance/compliance-control-observation-v1.schema.json",
+    "specs/compliance/compliance-rule-mapping-report-v1.schema.json"
+  ]) assert.ok(manifest.public_contracts.includes(contract));
+  for (const tool of ["packages/compliance/rule-pack.mjs", "packages/compliance/rule-pack.d.ts", "scripts/validate-compliance-rule-pack.mjs"]) assert.ok(manifest.public_tools.includes(tool));
+  for (const symbol of ["COMPLIANCE_RULE_DOMAINS", "COMPLIANCE_RULE_PACK_VERSION", "createComplianceRulePack", "validateComplianceRulePack", "verifyComplianceRulePackUpgrade", "mapComplianceRulePack"]) assert.ok(manifest.exports.includes(symbol));
+  for (const forbidden of ["certifyRuleMapping", "approveLegalConclusion", "authenticateAssessor"]) {
+    assert.equal(manifest.exports.includes(forbidden), false);
+    assert.equal(Object.hasOwn(sdk, forbidden), false);
+  }
+});
+
 test("public API manifest includes Agent protocol SDK 1.0 without credential APIs", async () => {
   const manifest = JSON.parse(await readFile(new URL("../specs/public-api-v1.json", import.meta.url), "utf8"));
   assert.ok(manifest.public_contracts.includes("specs/agent/control-protocol-v1.schema.json"));

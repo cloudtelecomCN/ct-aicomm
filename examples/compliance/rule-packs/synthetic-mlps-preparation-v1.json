@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0.0",
+  "pack_id": "ct.synthetic.mlps-preparation",
+  "pack_version": "1.0.0",
+  "title": "Synthetic MLPS preparation mapping",
+  "description": "Illustrative evidence-location mappings for assessment preparation; this is not official control text.",
+  "data_origin": "synthetic",
+  "published_at": "2026-10-22T00:00:00.000Z",
+  "effective_from": "2026-10-22T00:00:00.000Z",
+  "supersedes": null,
+  "issuer": {
+    "name": "CT-AIComm public reference project",
+    "authority_type": "project_reference",
+    "reference_url": "https://github.com/cloudtelecomCN/ct-aicomm"
+  },
+  "scope": {
+    "jurisdictions": ["CN"],
+    "workload_types": ["ai-inference"],
+    "notes": "Use only to organize preparation evidence before review by a qualified assessor."
+  },
+  "mappings": [
+    {
+      "mapping_id": "mlps-prep-audit-retention",
+      "domain": "mlps",
+      "source_framework": "MLPS2-preparation-reference",
+      "source_control_refs": ["audit-retention-reference"],
+      "target_control_ids": ["CTC-RETENTION-01"],
+      "evidence_kinds": ["retention-policy", "retention-receipt"],
+      "rationale": "Locate bounded retention declarations and immutable retention evidence for assessor review.",
+      "assessment_required": true
+    },
+    {
+      "mapping_id": "mlps-prep-storage-protection",
+      "domain": "mlps",
+      "source_framework": "MLPS2-preparation-reference",
+      "source_control_refs": ["stored-data-protection-reference"],
+      "target_control_ids": ["CTC-STORAGE-01"],
+      "evidence_kinds": ["storage-encryption-config", "key-control-receipt"],
+      "rationale": "Locate storage encryption declarations and supporting evidence without asserting assessment results.",
+      "assessment_required": true
+    },
+    {
+      "mapping_id": "mlps-prep-transport-protection",
+      "domain": "mlps",
+      "source_framework": "MLPS2-preparation-reference",
+      "source_control_refs": ["network-protection-reference"],
+      "target_control_ids": ["CTC-TRANSIT-01"],
+      "evidence_kinds": ["transport-encryption-config", "transport-observation"],
+      "rationale": "Locate transport encryption declarations and observations for later independent assessment.",
+      "assessment_required": true
+    }
+  ],
+  "assurance_boundary": {
+    "mapping_only": true,
+    "legal_conclusion": false,
+    "certification_issued": false,
+    "external_assessment_performed": false
+  },
+  "pack_fingerprint": "sha256:f9febeb4fdb0ab86f71ad69bc10c9d9ff39c43236186734ecf78645a023079c9"
+}

@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0.0",
+  "evaluation_id": "evaluation-synthetic-001",
+  "subject": {
+    "tenant_id": "tenant-synthetic",
+    "workload_id": "workload-synthetic-inference",
+    "declaration_id": "declaration-synthetic-001",
+    "declaration_version": 1
+  },
+  "control_observations": [
+    {
+      "control_id": "CTC-REGION-01",
+      "status": "evidence_present",
+      "evidence_refs": [{ "evidence_id": "evidence-region-001", "evidence_kind": "boundary-declaration", "content_fingerprint": "sha256:1111111111111111111111111111111111111111111111111111111111111111" }]
+    },
+    {
+      "control_id": "CTC-RETENTION-01",
+      "status": "evidence_missing",
+      "evidence_refs": []
+    },
+    {
+      "control_id": "CTC-STORAGE-01",
+      "status": "evidence_present",
+      "evidence_refs": [{ "evidence_id": "evidence-storage-001", "evidence_kind": "storage-encryption-config", "content_fingerprint": "sha256:2222222222222222222222222222222222222222222222222222222222222222" }]
+    },
+    {
+      "control_id": "CTC-TRANSIT-01",
+      "status": "not_observed",
+      "evidence_refs": []
+    }
+  ]
+}

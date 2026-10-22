@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/compliance/compliance-rule-pack-v1.json",
+  "title": "CT-AIComm compliance rule pack v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "pack_id", "pack_version", "title", "description", "data_origin", "published_at", "effective_from", "supersedes", "issuer", "scope", "mappings", "assurance_boundary", "pack_fingerprint"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "pack_id": { "$ref": "#/$defs/id" },
+    "pack_version": { "$ref": "#/$defs/semver" },
+    "title": { "$ref": "#/$defs/narrative" },
+    "description": { "$ref": "#/$defs/narrative" },
+    "data_origin": { "enum": ["reference", "enterprise_declared", "synthetic"] },
+    "published_at": { "type": "string", "format": "date-time" },
+    "effective_from": { "type": "string", "format": "date-time" },
+    "supersedes": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["pack_id", "pack_version", "pack_fingerprint"],
+          "properties": {
+            "pack_id": { "$ref": "#/$defs/id" },
+            "pack_version": { "$ref": "#/$defs/semver" },
+            "pack_fingerprint": { "$ref": "#/$defs/fingerprint" }
+          }
+        }
+      ]
+    },
+    "issuer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "authority_type", "reference_url"],
+      "properties": {
+        "name": { "$ref": "#/$defs/narrative" },
+        "authority_type": { "enum": ["project_reference", "customer_defined"] },
+        "reference_url": { "oneOf": [{ "type": "string", "format": "uri", "pattern": "^https://" }, { "type": "null" }] }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["jurisdictions", "workload_types", "notes"],
+      "properties": {
+        "jurisdictions": { "$ref": "#/$defs/nonempty_ids" },
+        "workload_types": { "$ref": "#/$defs/nonempty_ids" },
+        "notes": { "$ref": "#/$defs/narrative" }
+      }
+    },
+    "mappings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["mapping_id", "domain", "source_framework", "source_control_refs", "target_control_ids", "evidence_kinds", "rationale", "assessment_required"],
+        "properties": {
+          "mapping_id": { "$ref": "#/$defs/id" },
+          "domain": { "enum": ["mlps", "data_boundary", "enterprise"] },
+          "source_framework": { "$ref": "#/$defs/id" },
+          "source_control_refs": { "$ref": "#/$defs/nonempty_ids" },
+          "target_control_ids": { "$ref": "#/$defs/nonempty_ids" },
+          "evidence_kinds": { "$ref": "#/$defs/nonempty_ids" },
+          "rationale": { "$ref": "#/$defs/narrative" },
+          "assessment_required": { "const": true }
+        }
+      }
+    },
+    "assurance_boundary": { "$ref": "#/$defs/assurance_boundary" },
+    "pack_fingerprint": { "$ref": "#/$defs/fingerprint" }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$" },
+    "semver": { "type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$" },
+    "fingerprint": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "narrative": { "type": "string", "minLength": 4, "maxLength": 500, "pattern": "^[^\\u0000-\\u001f\\u007f]+$" },
+    "nonempty_ids": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/id" } },
+    "assurance_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mapping_only", "legal_conclusion", "certification_issued", "external_assessment_performed"],
+      "properties": {
+        "mapping_only": { "const": true },
+        "legal_conclusion": { "const": false },
+        "certification_issued": { "const": false },
+        "external_assessment_performed": { "const": false }
+      }
+    }
+  }
+}
