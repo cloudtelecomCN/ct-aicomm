@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/evidence/evidence-invalidation-event-v1.schema.json",
+  "title": "CT-AIComm Evidence Core downstream invalidation event v1",
+  "description": "An at-least-once terminal status event for invalidating one exact EvidenceVersion in downstream products. The event is not a certification or proof of delivery.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "event_type",
+    "event_id",
+    "evidence_ref",
+    "lifecycle_sequence",
+    "source_event_id",
+    "source_event_fingerprint",
+    "occurred_at",
+    "emitted_at",
+    "replacement_ref",
+    "delivery_semantics",
+    "requires_immediate_invalidation",
+    "certification_issued",
+    "event_fingerprint"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "event_type": { "enum": ["evidence.expired", "evidence.superseded", "evidence.revoked"] },
+    "event_id": { "$ref": "#/$defs/id" },
+    "evidence_ref": { "$ref": "#/$defs/evidenceReference" },
+    "lifecycle_sequence": { "type": "integer", "minimum": 1 },
+    "source_event_id": { "$ref": "#/$defs/id" },
+    "source_event_fingerprint": { "$ref": "#/$defs/fingerprint" },
+    "occurred_at": { "$ref": "#/$defs/instant" },
+    "emitted_at": { "$ref": "#/$defs/instant" },
+    "replacement_ref": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/evidenceReference" }
+      ]
+    },
+    "delivery_semantics": { "const": "at-least-once" },
+    "requires_immediate_invalidation": { "const": true },
+    "certification_issued": { "const": false },
+    "event_fingerprint": { "$ref": "#/$defs/fingerprint" }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-(?:(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+(?:[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
+    },
+    "instant": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "fingerprint": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "evidenceReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["object_type", "object_id", "version", "tenant_id"],
+      "properties": {
+        "object_type": { "const": "evidence_version" },
+        "object_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/version" },
+        "tenant_id": { "$ref": "#/$defs/id" }
+      }
+    }
+  }
+}

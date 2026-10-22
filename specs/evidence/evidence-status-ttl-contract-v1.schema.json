@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/evidence/evidence-status-ttl-contract-v1.schema.json",
+  "title": "CT-AIComm Evidence Core downstream status TTL contract v1",
+  "description": "A bounded, fail-closed lease for a downstream cache of one exact EvidenceVersion status. Conformance does not establish authenticity, authorization, validity, review independence, or certification.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "contract_type",
+    "lease_id",
+    "evidence_ref",
+    "lifecycle_sequence",
+    "source_status_fingerprint",
+    "status_checked_at",
+    "issued_at",
+    "evidence_expires_at",
+    "max_cache_ttl_seconds",
+    "ttl_expires_at",
+    "status_query_uri",
+    "fail_closed_on_ttl_expiry",
+    "certification_issued",
+    "contract_fingerprint"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "contract_type": { "const": "evidence_status_lease" },
+    "lease_id": { "$ref": "#/$defs/id" },
+    "evidence_ref": { "$ref": "#/$defs/evidenceReference" },
+    "lifecycle_sequence": { "type": "integer", "minimum": 1 },
+    "source_status_fingerprint": { "$ref": "#/$defs/fingerprint" },
+    "status_checked_at": { "$ref": "#/$defs/instant" },
+    "issued_at": { "$ref": "#/$defs/instant" },
+    "evidence_expires_at": { "$ref": "#/$defs/instant" },
+    "max_cache_ttl_seconds": { "type": "integer", "minimum": 1, "maximum": 86400 },
+    "ttl_expires_at": { "$ref": "#/$defs/instant" },
+    "status_query_uri": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://[^#]+$",
+      "maxLength": 2048
+    },
+    "fail_closed_on_ttl_expiry": { "const": true },
+    "certification_issued": { "const": false },
+    "contract_fingerprint": { "$ref": "#/$defs/fingerprint" }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-(?:(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+(?:[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
+    },
+    "instant": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "fingerprint": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "evidenceReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["object_type", "object_id", "version", "tenant_id"],
+      "properties": {
+        "object_type": { "const": "evidence_version" },
+        "object_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/version" },
+        "tenant_id": { "$ref": "#/$defs/id" }
+      }
+    }
+  }
+}

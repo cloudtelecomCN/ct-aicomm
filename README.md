@@ -16,6 +16,7 @@ CT-AIComm is CloudTelecom's open, evidence-first operating system initiative for
 - [Evidence import and idempotency v1](docs/evidence/import-and-idempotency-v1.md)
 - [Artifact lineage and redacted derivation v1](docs/evidence/artifact-lineage-and-redaction-v1.md)
 - [Tenant export authorization and download audit v1](docs/evidence/tenant-export-authorization-v1.md)
+- [Downstream invalidation and TTL v1](docs/evidence/downstream-invalidation-and-ttl-v1.md)
 - [TTFT sample v1 JSON Schema](docs/bench-reproduction/ttft-sample.schema.json)
 - [CT-Bench reproduction CLI](packages/bench-reproduce/)
 - [vLLM connector compatibility v1](docs/connectors/vllm.md)

@@ -20,6 +20,7 @@
 - [Evidence import and idempotency v1](evidence/import-and-idempotency-v1.md)
 - [Artifact lineage and redacted derivation v1](evidence/artifact-lineage-and-redaction-v1.md)
 - [Tenant export authorization and download audit v1](evidence/tenant-export-authorization-v1.md)
+- [Downstream invalidation and TTL v1](evidence/downstream-invalidation-and-ttl-v1.md)
 - [CT-Bench reproduction and evidence contract](bench-reproduction/README.md)
 - [CT-DataPlane Agent threat model](security/agent-threat-model.md)
 - [CT-DataPlane Agent operations runbook](agent/operations.md)

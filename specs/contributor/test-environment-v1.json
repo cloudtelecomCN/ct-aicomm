@@ -47,6 +47,7 @@
     "tests/ct-dsl.test.mjs",
     "tests/evidence-derivation.test.mjs",
     "tests/evidence-export-authorization.test.mjs",
+    "tests/evidence-invalidation.test.mjs",
     "tests/evidence-content-integrity.test.mjs",
     "tests/evidence-import.test.mjs",
     "tests/evidence-object-schema.test.mjs",
@@ -229,6 +230,26 @@
           "raw_export_content_recorded": false,
           "principal_authentication_verified": false,
           "transport_attestation_verified": false,
+          "certification_issued": false
+        }
+      }
+    },
+    {
+      "id": "evidence-downstream-invalidation",
+      "entrypoint": "examples/evidence/downstream-invalidation-synthetic.mjs",
+      "expect": {
+        "equals": {
+          "data_origin": "synthetic",
+          "performance_claim_allowed": false,
+          "event_type": "evidence.superseded",
+          "consumer_count": 3,
+          "event_invalidated_count": 3,
+          "idempotent_replay_count": 3,
+          "ttl_fallback_invalidated": true,
+          "all_downstreams_eventually_invalidated": true,
+          "replacement_version": "1.1.0",
+          "delivery_semantics": "at-least-once",
+          "fail_closed_on_ttl_expiry": true,
           "certification_issued": false
         }
       }
