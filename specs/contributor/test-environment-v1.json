@@ -53,6 +53,7 @@
     "tests/evidence-import.test.mjs",
     "tests/evidence-object-schema.test.mjs",
     "tests/evidence-lifecycle.test.mjs",
+    "tests/passport-scenario-method-freeze.test.mjs",
     "tests/public-sdk-boundary.test.mjs",
     "tests/registry-entry-integrity.test.mjs"
   ],
@@ -272,6 +273,28 @@
           "credentials_attached": false,
           "private_fields_returned": false,
           "stable_error_code": "not_found",
+          "certification_issued": false
+        }
+      }
+    },
+    {
+      "id": "passport-scenario-method-freeze",
+      "entrypoint": "examples/passport/scenario-method-freeze-synthetic.mjs",
+      "expect": {
+        "equals": {
+          "data_origin": "synthetic",
+          "performance_claim_allowed": false,
+          "freeze_integrity_verified": true,
+          "run_binding_integrity_verified": true,
+          "started_run_bound": true,
+          "changed_parameter_rejected": true,
+          "new_run_required": true,
+          "same_run_id_rejected": true,
+          "replacement_run_created": true,
+          "previous_run_unchanged": true,
+          "site_direction_protocol_workload_frozen": true,
+          "method_template_frozen": true,
+          "external_network_used": false,
           "certification_issued": false
         }
       }

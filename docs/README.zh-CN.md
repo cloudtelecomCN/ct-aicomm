@@ -22,6 +22,7 @@
 - [租户导出授权与下载审计 v1](evidence/tenant-export-authorization-v1.zh-CN.md)
 - [下游失效传播与 TTL v1](evidence/downstream-invalidation-and-ttl-v1.zh-CN.md)
 - [证据查询 API 与 SDK v1](evidence/query-api-and-sdk-v1.zh-CN.md)
+- [链路证据护照场景与方法冻结 v1](passport/scenario-and-method-freeze-v1.zh-CN.md)
 - [CT-Bench 复现与证据规范](bench-reproduction/README.zh-CN.md)
 - [CT-DataPlane Agent 威胁模型](security/agent-threat-model.zh-CN.md)
 - [CT-DataPlane Agent 安装与运维手册](agent/operations.zh-CN.md)

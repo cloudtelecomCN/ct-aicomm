@@ -6,7 +6,9 @@
 import { normalizeNetworkTelemetry, validateControlMessage } from "./sdk/index.mjs";
 ```
 
-SDK 只校验并规范化调用方提供的证据，不包含凭据、不发现私有基础设施、不授权执行、不挂载 eBPF 程序，也不会把合成数据表述为实测数据。版本 `0.14.0` 新增 CT-608 只读 Evidence Query 契约、严格公开投影、精确版本读取、查询绑定游标分页、状态视图和与传输无关的 `GET` 请求描述，同时保留 CT-607 失效与 TTL 工具及既有 Evidence Core 模块。身份认证、私有查询授权、消息代理投递、私有制品内容访问、法律审批、可信签名、认证签发和生产证据读取能力仍明确排除；当前以源码分发，尚未发布到 npm Registry。
+SDK 只校验并规范化调用方提供的证据，不包含凭据、不发现私有基础设施、不授权执行、不挂载 eBPF 程序，也不会把合成数据表述为实测数据。版本 `0.15.0` 新增 CT-609 链路证据护照场景与方法冻结、精确运行绑定，以及运行开始后强制创建替代运行的策略，同时保留 CT-608 只读 Evidence Query 契约和既有 Evidence Core 模块。身份认证、私有查询授权、测量执行、消息代理投递、私有制品内容访问、法律审批、可信签名、认证签发和生产证据读取能力仍明确排除；当前以源码分发，尚未发布到 npm Registry。
+
+护照集成方可以导入 `createPassportScenarioMethodFreeze`、`createPassportRunPlan`、`startPassportRun`、`assertPassportRunFreeze` 和 `createPassportReplacementRun`。契约会冻结精确站点对、方向、协议、工作负载配置、方法引用、工具指纹、参数、采样、排除规则、统计项和环境前提。运行一旦开始，任何变更都会以 `passport_new_run_required` 默认拒绝，并要求使用新的 `run_id`；SDK 不执行基准测试，也不认证结果。
 
 证据目录消费方可以导入 `queryEvidenceRecords`、`getEvidenceQueryRecord`、`createEvidenceQueryStatus` 和 `buildEvidenceQueryRequest`。记录一旦包含租户、主体、存储、端点、凭据或联系字段就默认拒绝。SDK 不执行网络访问，也不定义生产服务器；私有查询只能由单独的实现完成认证与授权。
 

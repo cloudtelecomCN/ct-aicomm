@@ -14,6 +14,7 @@ All notable public changes to CT-AIComm are recorded in this file. The project f
 - CT-606 fail-closed tenant export authorization with exact recipient, purpose, versioned resource, segment-aware field and time checks, plus an append-only, value-free delivery audit chain.
 - CT-607 fingerprinted terminal status events, idempotent at-least-once downstream consumption, and a bounded fail-closed TTL fallback.
 - CT-608 standalone read-only Evidence Query OpenAPI, strict public projections, exact-version SDK lookup, query-bound pagination, stable errors, and bilingual integration guidance.
+- CT-609 Link Evidence Passport scenario and method freeze contracts for exact sites, direction, protocol, workload, and method parameters, with immutable run bindings and mandatory replacement runs after execution starts.
 - Truthful bootstrap governance, a machine-readable role roster, and a public external reviewer or maintainer admission, permission, review, and exit process.
 - CT-556 execution evidence binding v1 with tenant, execution, component-version, and fingerprint locks for policy, Agent, route, trace, and environment evidence.
 - CT-557 data path declaration v1 with stable region, directed-boundary, encryption, processor, JSON/YAML, and authoritative-context validation contracts.

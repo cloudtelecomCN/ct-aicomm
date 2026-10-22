@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/passport/run-freeze-binding-v1.schema.json",
+  "title": "CT-AIComm link evidence passport run freeze binding v1",
+  "description": "Binds one exact run identity to one exact scenario-method freeze. Once state is started, a changed freeze requires a different run_id.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_type",
+    "run_id",
+    "version",
+    "tenant_id",
+    "created_by",
+    "created_at",
+    "authorization_scope",
+    "freeze_ref",
+    "planned_window",
+    "state",
+    "started_at",
+    "supersedes_run_ref",
+    "change_policy",
+    "content_fingerprint"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "record_type": { "const": "passport_run_freeze_binding" },
+    "run_id": { "$ref": "#/$defs/id" },
+    "version": { "$ref": "#/$defs/version" },
+    "tenant_id": { "$ref": "#/$defs/id" },
+    "created_by": { "$ref": "#/$defs/id" },
+    "created_at": { "$ref": "#/$defs/instant" },
+    "authorization_scope": { "$ref": "#/$defs/authorizationScope" },
+    "freeze_ref": { "$ref": "#/$defs/freezeReference" },
+    "planned_window": { "$ref": "#/$defs/timeWindow" },
+    "state": { "enum": ["planned", "started"] },
+    "started_at": {
+      "oneOf": [
+        { "$ref": "#/$defs/instant" },
+        { "type": "null" }
+      ]
+    },
+    "supersedes_run_ref": {
+      "oneOf": [
+        { "$ref": "#/$defs/runReference" },
+        { "type": "null" }
+      ]
+    },
+    "change_policy": { "const": "new-run-required-after-start" },
+    "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "state": { "const": "planned" } }, "required": ["state"] },
+      "then": { "properties": { "started_at": { "type": "null" } } }
+    },
+    {
+      "if": { "properties": { "state": { "const": "started" } }, "required": ["state"] },
+      "then": { "properties": { "started_at": { "$ref": "#/$defs/instant" } } }
+    }
+  ],
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-(?:(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+(?:[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
+    },
+    "fingerprint": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "instant": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "authorizationScope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["visibility", "purpose", "recipients", "expires_at"],
+      "properties": {
+        "visibility": { "enum": ["private", "shared", "public"] },
+        "purpose": { "type": "string", "minLength": 3, "maxLength": 240 },
+        "recipients": {
+          "type": "array",
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" }
+        },
+        "expires_at": {
+          "oneOf": [
+            { "$ref": "#/$defs/instant" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "freezeReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["freeze_id", "version", "tenant_id", "content_fingerprint"],
+      "properties": {
+        "freeze_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/version" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "runReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["run_id", "version", "tenant_id", "content_fingerprint"],
+      "properties": {
+        "run_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/version" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "timeWindow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["starts_at", "ends_at"],
+      "properties": {
+        "starts_at": { "$ref": "#/$defs/instant" },
+        "ends_at": { "$ref": "#/$defs/instant" }
+      }
+    }
+  }
+}
