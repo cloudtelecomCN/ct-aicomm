@@ -6,7 +6,9 @@
 import { normalizeNetworkTelemetry, validateControlMessage } from "./sdk/index.mjs";
 ```
 
-SDK 只校验并规范化调用方提供的证据，不包含凭据、不发现私有基础设施、不授权执行、不挂载 eBPF 程序，也不会把合成数据表述为实测数据。版本 `0.11.0` 新增 CT-605 受限制品到公开制品的派生记录、不含原值的脱敏披露、确定性复核影响，以及相互分离的公开检查与授权元数据验证；同时保留 CT-604 租户范围导入台账、规范单位与 UTC 检查、精确引用闭包、不可变版本约束和追加式失败记录。租户查询、私有制品内容访问、法律审批、可信签名、验证器认证、认证签发和生产证据读取能力仍明确排除；当前以源码分发，尚未发布到 npm Registry。
+SDK 只校验并规范化调用方提供的证据，不包含凭据、不发现私有基础设施、不授权执行、不挂载 eBPF 程序，也不会把合成数据表述为实测数据。版本 `0.12.0` 新增 CT-606 租户范围导出授权引擎、按完整路径段匹配的字段授权、可信上下文指纹比对和追加式交付审计，同时保留 CT-605 受限制品到公开制品的派生契约及既有 Evidence Core 工具。身份认证、私有制品内容访问、下载传输、法律审批、可信签名、认证签发和生产证据读取能力仍明确排除；当前以源码分发，尚未发布到 npm Registry。
+
+证据导出服务可以导入 `createEvidenceExportAuditLedger`、`evaluateEvidenceExportRequest`、`recordEvidenceExportDelivery` 和 `verifyEvidenceExportAuditLedger`。策略引擎会对租户、接收方、用途、精确资源版本、字段范围、时间、grant 状态以及调用方提供的认证上下文锚执行默认拒绝检查。它不记录私有载荷、凭据、存储定位或下载 URL，也不宣称已认证主体或证明传输。
 
 使用 `node examples/sdk/validate-public-evidence.mjs` 运行示例。使用 `node packages/ttft-collector/cli.mjs --endpoint=URL --model=MODEL --prompt=TEXT --environment-fingerprint=sha256:...` 采集一次客户端可观测 TTFT；凭据只能通过 `VLLM_API_KEY` 提供。
 

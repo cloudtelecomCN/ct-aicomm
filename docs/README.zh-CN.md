@@ -19,6 +19,7 @@
 - [证据内容完整性 v1](evidence/content-integrity-v1.zh-CN.md)
 - [证据导入与幂等契约 v1](evidence/import-and-idempotency-v1.zh-CN.md)
 - [制品血缘与脱敏派生 v1](evidence/artifact-lineage-and-redaction-v1.zh-CN.md)
+- [租户导出授权与下载审计 v1](evidence/tenant-export-authorization-v1.zh-CN.md)
 - [CT-Bench 复现与证据规范](bench-reproduction/README.zh-CN.md)
 - [CT-DataPlane Agent 威胁模型](security/agent-threat-model.zh-CN.md)
 - [CT-DataPlane Agent 安装与运维手册](agent/operations.zh-CN.md)

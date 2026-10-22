@@ -1,0 +1,229 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/evidence/evidence-export-audit-event-v1.schema.json",
+  "title": "CT-AIComm evidence export audit event v1",
+  "description": "Append-only authorization-decision and delivery records for tenant-scoped Evidence Core exports. Conformance does not authenticate a principal, attest transport delivery, authorize production access, or issue certification.",
+  "oneOf": [
+    { "$ref": "#/$defs/authorizationDecision" },
+    { "$ref": "#/$defs/deliveryRecord" }
+  ],
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-(?:(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+(?:[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
+    },
+    "fingerprint": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "nullableFingerprint": {
+      "type": ["string", "null"],
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "instant": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["object_type", "object_id", "version", "tenant_id"],
+      "properties": {
+        "object_type": {
+          "enum": ["scope", "method", "run", "observation", "artifact", "evidence_version", "review", "policy_decision", "export_grant"]
+        },
+        "object_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/version" },
+        "tenant_id": { "$ref": "#/$defs/id" }
+      }
+    },
+    "grantReference": {
+      "allOf": [
+        { "$ref": "#/$defs/reference" },
+        {
+          "properties": {
+            "object_type": { "const": "export_grant" }
+          }
+        }
+      ]
+    },
+    "principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["principal_id", "organization_id"],
+      "properties": {
+        "principal_id": { "$ref": "#/$defs/id" },
+        "organization_id": { "$ref": "#/$defs/id" }
+      }
+    },
+    "pointerList": {
+      "type": "array",
+      "maxItems": 256,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^/(?:[^~/]|~0|~1)+(?:/(?:[^~/]|~0|~1)+)*$"
+      }
+    },
+    "previousFingerprint": {
+      "type": ["string", "null"],
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "authorizationDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "event_type",
+        "event_id",
+        "request_fingerprint",
+        "tenant_id",
+        "request_tenant_id",
+        "occurred_at",
+        "grant_ref",
+        "grant_fingerprint",
+        "principal",
+        "auth_context_fingerprint",
+        "auth_context_anchor_verified",
+        "purpose",
+        "resource_ref",
+        "requested_field_scope",
+        "denied_field_scope",
+        "decision",
+        "reason_codes",
+        "authorization_expires_at",
+        "download_performed",
+        "principal_authentication_verified",
+        "authorization_enforced_by_transport",
+        "previous_event_fingerprint",
+        "event_fingerprint"
+      ],
+      "properties": {
+        "schema_version": { "const": "1.0.0" },
+        "event_type": { "const": "export_authorization_decision" },
+        "event_id": { "$ref": "#/$defs/id" },
+        "request_fingerprint": { "$ref": "#/$defs/fingerprint" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "request_tenant_id": { "$ref": "#/$defs/id" },
+        "occurred_at": { "$ref": "#/$defs/instant" },
+        "grant_ref": { "$ref": "#/$defs/grantReference" },
+        "grant_fingerprint": { "$ref": "#/$defs/fingerprint" },
+        "principal": { "$ref": "#/$defs/principal" },
+        "auth_context_fingerprint": { "$ref": "#/$defs/fingerprint" },
+        "auth_context_anchor_verified": { "type": "boolean" },
+        "purpose": { "type": "string", "minLength": 3, "maxLength": 500 },
+        "resource_ref": { "$ref": "#/$defs/reference" },
+        "requested_field_scope": {
+          "allOf": [
+            { "$ref": "#/$defs/pointerList" },
+            { "minItems": 1 }
+          ]
+        },
+        "denied_field_scope": { "$ref": "#/$defs/pointerList" },
+        "decision": { "enum": ["allowed", "denied"] },
+        "reason_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "evidence_export_auth_context_unverified",
+              "evidence_export_grant_inactive",
+              "evidence_export_grant_expired",
+              "evidence_export_grant_not_yet_valid",
+              "evidence_export_grant_scope_invalid",
+              "evidence_export_tenant_mismatch",
+              "evidence_export_recipient_mismatch",
+              "evidence_export_purpose_mismatch",
+              "evidence_export_resource_denied",
+              "evidence_export_field_denied"
+            ]
+          }
+        },
+        "authorization_expires_at": { "$ref": "#/$defs/instant" },
+        "download_performed": { "const": false },
+        "principal_authentication_verified": { "const": false },
+        "authorization_enforced_by_transport": { "const": false },
+        "previous_event_fingerprint": { "$ref": "#/$defs/previousFingerprint" },
+        "event_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "decision": { "const": "allowed" } }, "required": ["decision"] },
+          "then": { "properties": { "reason_codes": { "maxItems": 0 } } },
+          "else": { "properties": { "reason_codes": { "minItems": 1 } } }
+        }
+      ]
+    },
+    "deliveryRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "event_type",
+        "event_id",
+        "request_fingerprint",
+        "tenant_id",
+        "occurred_at",
+        "authorization_event_fingerprint",
+        "grant_ref",
+        "resource_ref",
+        "recipient",
+        "outcome",
+        "bytes_sent",
+        "content_fingerprint",
+        "error_code",
+        "transport_delivery_reported",
+        "transport_attestation_verified",
+        "previous_event_fingerprint",
+        "event_fingerprint"
+      ],
+      "properties": {
+        "schema_version": { "const": "1.0.0" },
+        "event_type": { "const": "export_delivery_record" },
+        "event_id": { "$ref": "#/$defs/id" },
+        "request_fingerprint": { "$ref": "#/$defs/fingerprint" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "occurred_at": { "$ref": "#/$defs/instant" },
+        "authorization_event_fingerprint": { "$ref": "#/$defs/fingerprint" },
+        "grant_ref": { "$ref": "#/$defs/grantReference" },
+        "resource_ref": { "$ref": "#/$defs/reference" },
+        "recipient": { "$ref": "#/$defs/principal" },
+        "outcome": { "enum": ["delivered", "failed"] },
+        "bytes_sent": { "type": "integer", "minimum": 0 },
+        "content_fingerprint": { "$ref": "#/$defs/nullableFingerprint" },
+        "error_code": {
+          "type": ["string", "null"],
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$"
+        },
+        "transport_delivery_reported": { "const": true },
+        "transport_attestation_verified": { "const": false },
+        "previous_event_fingerprint": { "$ref": "#/$defs/previousFingerprint" },
+        "event_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "outcome": { "const": "delivered" } }, "required": ["outcome"] },
+          "then": {
+            "properties": {
+              "bytes_sent": { "minimum": 1 },
+              "content_fingerprint": { "$ref": "#/$defs/fingerprint" },
+              "error_code": { "const": null }
+            }
+          },
+          "else": {
+            "properties": {
+              "bytes_sent": { "const": 0 },
+              "content_fingerprint": { "const": null },
+              "error_code": { "$ref": "#/$defs/id" }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

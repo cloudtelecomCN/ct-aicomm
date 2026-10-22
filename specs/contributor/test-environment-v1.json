@@ -46,6 +46,7 @@
     "tests/connector-sdk-contract.test.mjs",
     "tests/ct-dsl.test.mjs",
     "tests/evidence-derivation.test.mjs",
+    "tests/evidence-export-authorization.test.mjs",
     "tests/evidence-content-integrity.test.mjs",
     "tests/evidence-import.test.mjs",
     "tests/evidence-object-schema.test.mjs",
@@ -209,6 +210,25 @@
           "append_only_chain_verified": true,
           "authenticity_verified": false,
           "authorization_verified": false,
+          "certification_issued": false
+        }
+      }
+    },
+    {
+      "id": "evidence-export-authorization",
+      "entrypoint": "examples/evidence/export-authorization-synthetic.mjs",
+      "expect": {
+        "equals": {
+          "data_origin": "synthetic",
+          "performance_claim_allowed": false,
+          "allowed_decision_count": 1,
+          "denied_decision_count": 1,
+          "delivered_count": 1,
+          "cross_tenant_denied": true,
+          "append_only_chain_verified": true,
+          "raw_export_content_recorded": false,
+          "principal_authentication_verified": false,
+          "transport_attestation_verified": false,
           "certification_issued": false
         }
       }
