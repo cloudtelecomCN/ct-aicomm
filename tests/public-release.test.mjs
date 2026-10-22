@@ -3,11 +3,12 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { buildReleaseManifest, buildSpdxDocument, extractReleaseNotes, parseVersion } from "../scripts/create-public-release.mjs";
 
-const [versionText, changelog, changelogChinese, workflow, guide, guideChinese] = await Promise.all([
+const [versionText, changelog, changelogChinese, workflow, nodeTestsWorkflow, guide, guideChinese] = await Promise.all([
   readFile("VERSION", "utf8"),
   readFile("CHANGELOG.md", "utf8"),
   readFile("CHANGELOG.zh-CN.md", "utf8"),
   readFile(".github/workflows/release.yml", "utf8"),
+  readFile(".github/workflows/node-tests.yml", "utf8"),
   readFile("docs/release/verification.md", "utf8"),
   readFile("docs/release/verification.zh-CN.md", "utf8")
 ]);
@@ -56,6 +57,14 @@ test("release workflow signs, verifies, attests, and publishes from an exact tag
   assert.match(workflow, /--verify-tag/);
   assert.match(workflow, /CT_RELEASE_OUTPUT_ROOT:\s*\$\{\{ runner\.temp \}\}/);
   assert.doesNotMatch(workflow, /uses:\s*[^\n]+@(main|master|v\d+)/);
+});
+
+test("public CI actions are pinned to immutable revisions", () => {
+  const actionReferences = [...nodeTestsWorkflow.matchAll(/uses:\s*([^\s#]+)/g)].map((match) => match[1]);
+  assert.ok(actionReferences.length >= 2);
+  for (const reference of actionReferences) {
+    assert.match(reference, /^[\w-]+\/[\w-]+@[a-f0-9]{40}$/);
+  }
 });
 
 test("documents checksum, keyless signature, provenance, and synthetic boundaries", () => {
