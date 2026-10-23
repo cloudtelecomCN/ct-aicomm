@@ -32,6 +32,7 @@
 - [Independent Run Review engagement and scope v1](review/engagement-and-scope-v1.md)
 - [Independent Run Review identity, organization, and conflicts v1](review/identity-organization-and-conflicts-v1.md)
 - [Independent Run Review structure and statistical recalculation v1](review/structure-and-statistical-recalculation-v1.md)
+- [Independent Run Review supervised re-execution and environment differences v1](review/supervised-reexecution-and-environment-differences-v1.md)
 - [CT-Bench reproduction and evidence contract](bench-reproduction/README.md)
 - [CT-DataPlane Agent threat model](security/agent-threat-model.md)
 - [CT-DataPlane Agent operations runbook](agent/operations.md)

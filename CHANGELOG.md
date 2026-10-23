@@ -24,6 +24,7 @@ All notable public changes to CT-AIComm are recorded in this file. The project f
 - CT-616 immutable Independent Run Review engagements with exact Passport and delivery bindings, explicit levels, tolerances, purposes, delivery agreements, and mandatory new engagement identities for every scope change.
 - CT-617 immutable, declared-records-only independence assessments for identity, organization control, payment, role separation, conflicts, and recusals, with a fail-closed gate that prevents same-controller opinion signing.
 - CT-618 immutable structure checklists, independent sample recalculation, exact tolerance coverage, and explainable difference registers bound to an eligible independence gate and active reviewer share.
+- CT-619 immutable supervised later-execution records, complete supervision-window checks, and a derived seven-dimension environment difference register that never claims historical-state reproduction.
 - Truthful bootstrap governance, a machine-readable role roster, and a public external reviewer or maintainer admission, permission, review, and exit process.
 - CT-556 execution evidence binding v1 with tenant, execution, component-version, and fingerprint locks for policy, Agent, route, trace, and environment evidence.
 - CT-557 data path declaration v1 with stable region, directed-boundary, encryption, processor, JSON/YAML, and authoritative-context validation contracts.

@@ -201,7 +201,7 @@ test("publishes strict schema, SDK exports, bilingual guidance, and offline cove
   ]);
   assert.equal(schema.$defs.recalculationRecord.additionalProperties, false);
   assert.equal(schema.$defs.recalculationRecord.properties.record_type.const, "independent_review_recalculation");
-  assert.equal(publicApi.sdk_version, "0.24.0");
+  assert.equal(publicApi.sdk_version, "0.25.0");
   assert.ok(publicApi.public_contracts.includes("specs/review/review-recalculation-v1.schema.json"));
   for (const tool of [
     "packages/independent-run-review/recalculation.mjs",

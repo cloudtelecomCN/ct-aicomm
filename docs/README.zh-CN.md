@@ -32,6 +32,7 @@
 - [独立运行复核委托与范围 v1](review/engagement-and-scope-v1.zh-CN.md)
 - [独立运行复核身份、组织与利益冲突 v1](review/identity-organization-and-conflicts-v1.zh-CN.md)
 - [独立运行复核结构检查与统计复算 v1](review/structure-and-statistical-recalculation-v1.zh-CN.md)
+- [独立运行复核监督重新运行与环境差异 v1](review/supervised-reexecution-and-environment-differences-v1.zh-CN.md)
 - [CT-Bench 复现与证据规范](bench-reproduction/README.zh-CN.md)
 - [CT-DataPlane Agent 威胁模型](security/agent-threat-model.zh-CN.md)
 - [CT-DataPlane Agent 安装与运维手册](agent/operations.zh-CN.md)

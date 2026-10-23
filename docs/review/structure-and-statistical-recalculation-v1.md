@@ -34,6 +34,8 @@ Each statistic is classified as `exact`, `within-tolerance`, or `outside-toleran
 
 An active share record is required, but CT-618 does not authenticate the named principal or externally verify export authorization. The CT-617 gate remains based on declared records and is not certification of reviewer independence. CT-618 performs structural checks and statistical comparison only. It does not rerun the workload, reproduce a historical environment, issue an opinion, alter Passport status, adjudicate an SLA, establish a performance conclusion, or issue certification.
 
+[CT-619](./supervised-reexecution-and-environment-differences-v1.md) adds a separately fingerprinted later-execution record, supervision window, event-log reference, and environment difference register. It still never represents that later run as historical-state reproduction.
+
 All checked-in examples are synthetic. A `consistent` result means only that the submitted recalculation agrees with the authorized sample package under the declared method and tolerance.
 
 ## Run offline

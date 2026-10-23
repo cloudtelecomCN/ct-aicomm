@@ -1,0 +1,255 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/review/review-supervised-reexecution-v1.schema.json",
+  "title": "CT-AIComm independent review supervised re-execution v1",
+  "description": "An immutable CT-619 record binding one later supervised execution, its event-log fingerprint, and a derived seven-dimension environment difference register to an exact historical delivery and recalculation. Conformance never represents the later execution as historical-state reproduction and does not issue an opinion, performance conclusion, SLA decision, or certification.",
+  "$ref": "#/$defs/reexecutionRecord",
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-(?:(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+(?:[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
+    },
+    "fingerprint": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "fingerprintOrNull": {
+      "oneOf": [
+        { "$ref": "#/$defs/fingerprint" },
+        { "type": "null" }
+      ]
+    },
+    "instant": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "dimensionName": {
+      "enum": ["sites", "protocol", "workload", "method", "compute", "software", "network"]
+    },
+    "reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["object_type", "object_id", "version", "tenant_id", "content_fingerprint"],
+      "properties": {
+        "object_type": {
+          "enum": [
+            "independent_review_engagement",
+            "independent_review_independence_assessment",
+            "passport_share_grant",
+            "passport_evidence_version",
+            "passport_delivery_manifest",
+            "independent_review_recalculation",
+            "run"
+          ]
+        },
+        "object_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/version" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "currentDimension": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dimension", "basis", "fingerprint"],
+      "properties": {
+        "dimension": { "$ref": "#/$defs/dimensionName" },
+        "basis": { "enum": ["declared", "observed", "unknown"] },
+        "fingerprint": { "$ref": "#/$defs/fingerprintOrNull" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "basis": { "const": "unknown" } } },
+          "then": { "properties": { "fingerprint": { "type": "null" } } },
+          "else": { "properties": { "fingerprint": { "$ref": "#/$defs/fingerprint" } } }
+        }
+      ]
+    },
+    "environmentSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dimensions"],
+      "properties": {
+        "dimensions": {
+          "type": "array",
+          "minItems": 7,
+          "maxItems": 7,
+          "items": { "$ref": "#/$defs/currentDimension" }
+        }
+      }
+    },
+    "historicalDimension": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dimension", "basis", "fingerprint"],
+      "properties": {
+        "dimension": { "$ref": "#/$defs/dimensionName" },
+        "basis": { "enum": ["historical-package", "unknown"] },
+        "fingerprint": { "$ref": "#/$defs/fingerprintOrNull" }
+      }
+    },
+    "difference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dimension", "historical", "current", "classification"],
+      "properties": {
+        "dimension": { "$ref": "#/$defs/dimensionName" },
+        "historical": { "$ref": "#/$defs/historicalDimension" },
+        "current": { "$ref": "#/$defs/currentDimension" },
+        "classification": { "enum": ["same", "changed", "unknown"] }
+      }
+    },
+    "newRun": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "run_id", "version", "tenant_id", "started_at", "completed_at", "data_origin",
+        "artifact_manifest_fingerprint", "environment_snapshot", "content_fingerprint"
+      ],
+      "properties": {
+        "run_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/version" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "started_at": { "$ref": "#/$defs/instant" },
+        "completed_at": { "$ref": "#/$defs/instant" },
+        "data_origin": { "enum": ["measured", "synthetic", "inferred", "declared"] },
+        "artifact_manifest_fingerprint": { "$ref": "#/$defs/fingerprint" },
+        "environment_snapshot": { "$ref": "#/$defs/environmentSnapshot" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "supervision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode", "supervisor_subject_id", "supervisor_organization_id", "started_at",
+        "completed_at", "event_count", "event_log_fingerprint"
+      ],
+      "properties": {
+        "mode": { "const": "live-observation" },
+        "supervisor_subject_id": { "$ref": "#/$defs/id" },
+        "supervisor_organization_id": { "$ref": "#/$defs/id" },
+        "started_at": { "$ref": "#/$defs/instant" },
+        "completed_at": { "$ref": "#/$defs/instant" },
+        "event_count": { "type": "integer", "minimum": 1, "maximum": 1000000 },
+        "event_log_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dimension_count", "same_count", "changed_count", "unknown_count",
+        "historical_state_reproduced", "supervision_covers_complete_run",
+        "comparison_status", "performance_conclusion"
+      ],
+      "properties": {
+        "dimension_count": { "const": 7 },
+        "same_count": { "type": "integer", "minimum": 0, "maximum": 7 },
+        "changed_count": { "type": "integer", "minimum": 0, "maximum": 7 },
+        "unknown_count": { "type": "integer", "minimum": 0, "maximum": 7 },
+        "historical_state_reproduced": { "const": false },
+        "supervision_covers_complete_run": { "const": true },
+        "comparison_status": { "const": "environment-differences-recorded" },
+        "performance_conclusion": { "const": "not-issued" }
+      }
+    },
+    "boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "historical_package_referenced", "later_run_recorded", "supervision_recorded",
+        "environment_differences_recorded", "historical_state_reproduced",
+        "supervision_externally_attested", "principal_authentication_verified",
+        "organization_control_externally_verified", "export_authorization_externally_verified",
+        "reviewer_independence_certified", "opinion_issued", "passport_status_mutated",
+        "performance_claim_allowed", "sla_adjudicated", "certification_issued"
+      ],
+      "properties": {
+        "historical_package_referenced": { "const": true },
+        "later_run_recorded": { "const": true },
+        "supervision_recorded": { "const": true },
+        "environment_differences_recorded": { "const": true },
+        "historical_state_reproduced": { "const": false },
+        "supervision_externally_attested": { "const": false },
+        "principal_authentication_verified": { "const": false },
+        "organization_control_externally_verified": { "const": false },
+        "export_authorization_externally_verified": { "const": false },
+        "reviewer_independence_certified": { "const": false },
+        "opinion_issued": { "const": false },
+        "passport_status_mutated": { "const": false },
+        "performance_claim_allowed": { "const": false },
+        "sla_adjudicated": { "const": false },
+        "certification_issued": { "const": false }
+      }
+    },
+    "reexecutionRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version", "record_type", "reexecution_id", "version", "tenant_id",
+        "created_by", "recorded_at", "engagement_ref", "independence_assessment_ref",
+        "share_ref", "passport_ref", "delivery_ref", "historical_recalculation_ref",
+        "historical_run_ref", "reviewer", "new_run", "supervision", "temporal_relation",
+        "environment_difference_register", "summary", "boundary", "content_fingerprint"
+      ],
+      "properties": {
+        "schema_version": { "const": "1.0.0" },
+        "record_type": { "const": "independent_review_supervised_reexecution" },
+        "reexecution_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/version" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "created_by": { "$ref": "#/$defs/id" },
+        "recorded_at": { "$ref": "#/$defs/instant" },
+        "engagement_ref": { "$ref": "#/$defs/reference" },
+        "independence_assessment_ref": { "$ref": "#/$defs/reference" },
+        "share_ref": { "$ref": "#/$defs/reference" },
+        "passport_ref": { "$ref": "#/$defs/reference" },
+        "delivery_ref": { "$ref": "#/$defs/reference" },
+        "historical_recalculation_ref": { "$ref": "#/$defs/reference" },
+        "historical_run_ref": { "$ref": "#/$defs/reference" },
+        "reviewer": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["subject_id", "organization_id", "role"],
+          "properties": {
+            "subject_id": { "$ref": "#/$defs/id" },
+            "organization_id": { "$ref": "#/$defs/id" },
+            "role": { "const": "review-lead" }
+          }
+        },
+        "new_run": { "$ref": "#/$defs/newRun" },
+        "supervision": { "$ref": "#/$defs/supervision" },
+        "temporal_relation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "classification", "historical_delivery_created_at", "historical_recalculated_at",
+            "new_run_started_at", "historical_state_reproduced"
+          ],
+          "properties": {
+            "classification": { "const": "later-execution" },
+            "historical_delivery_created_at": { "$ref": "#/$defs/instant" },
+            "historical_recalculated_at": { "$ref": "#/$defs/instant" },
+            "new_run_started_at": { "$ref": "#/$defs/instant" },
+            "historical_state_reproduced": { "const": false }
+          }
+        },
+        "environment_difference_register": {
+          "type": "array",
+          "minItems": 7,
+          "maxItems": 7,
+          "items": { "$ref": "#/$defs/difference" }
+        },
+        "summary": { "$ref": "#/$defs/summary" },
+        "boundary": { "$ref": "#/$defs/boundary" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    }
+  }
+}

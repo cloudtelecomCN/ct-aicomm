@@ -64,6 +64,7 @@
     "tests/review-engagement-scope.test.mjs",
     "tests/review-independence-conflicts.test.mjs",
     "tests/review-structure-recalculation.test.mjs",
+    "tests/review-supervised-reexecution.test.mjs",
     "tests/registry-entry-integrity.test.mjs"
   ],
   "synthetic_scenarios": [
@@ -527,6 +528,32 @@
           "principal_authentication_verified": false,
           "export_authorization_externally_verified": false,
           "supervised_reexecution_performed": false,
+          "opinion_issued": false,
+          "performance_claim_allowed": false,
+          "certification_issued": false,
+          "external_network_used": false
+        }
+      }
+    },
+    {
+      "id": "independent-review-supervised-reexecution",
+      "entrypoint": "examples/review/supervised-reexecution-synthetic.mjs",
+      "expect": {
+        "equals": {
+          "schema_version": "1.0.0",
+          "data_origin": "synthetic",
+          "exact_historical_package_bound": true,
+          "exact_historical_run_bound": true,
+          "later_run_bound": true,
+          "supervision_covers_run": true,
+          "environment_dimension_count": 7,
+          "same_count": 4,
+          "changed_count": 0,
+          "unknown_count": 3,
+          "drift_changed_count": 1,
+          "historical_state_reproduced": false,
+          "principal_authentication_verified": false,
+          "export_authorization_externally_verified": false,
           "opinion_issued": false,
           "performance_claim_allowed": false,
           "certification_issued": false,

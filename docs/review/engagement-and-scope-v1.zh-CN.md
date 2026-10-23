@@ -53,7 +53,7 @@ CT-616 定义开展独立复核工作之前必须形成的不可变委托记录�
 
 ## 信任边界
 
-有效委托只表示存在结构完整且带内容指纹的工作约定。它不证明身份、组织关系、利益冲突、复核方独立性、证据访问授权、复核已经执行、意见已经签发、SLA 已违约、性能已证明或认证已签发。[CT-617](./identity-organization-and-conflicts-v1.zh-CN.md) 提供独立的、仅基于声明记录的身份、组织、付款、职责分离、利益冲突与回避门禁；[CT-618](./structure-and-statistical-recalculation-v1.zh-CN.md) 单独记录有边界的结构检查与统计复算；CT-619–620 再增加监督运行与受治理意见生命周期记录。
+有效委托只表示存在结构完整且带内容指纹的工作约定。它不证明身份、组织关系、利益冲突、复核方独立性、证据访问授权、复核已经执行、意见已经签发、SLA 已违约、性能已证明或认证已签发。[CT-617](./identity-organization-and-conflicts-v1.zh-CN.md) 提供独立的、仅基于声明记录的身份、组织、付款、职责分离、利益冲突与回避门禁；[CT-618](./structure-and-statistical-recalculation-v1.zh-CN.md) 单独记录有边界的结构检查与统计复算；[CT-619](./supervised-reexecution-and-environment-differences-v1.zh-CN.md) 记录后续监督运行及环境差异，但不声称历史状态重现；CT-620 再增加受治理意见生命周期记录。
 
 ## 离线示例
 

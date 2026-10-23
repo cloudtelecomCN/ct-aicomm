@@ -6,7 +6,7 @@
 import { normalizeNetworkTelemetry, validateControlMessage } from "./sdk/index.mjs";
 ```
 
-SDK 只校验并规范化调用方提供的证据，不包含凭据、不发现私有基础设施、不授权执行、不挂载 eBPF 程序，也不会把合成数据表述为实测数据。版本 `0.24.0` 新增 CT-618 结构检查、独立样本复算、声明容差比较和不可变差异记录，并要求绑定通过的 CT-617 门禁与有效复核方分享。同时保留 CT-617 仅基于声明记录的独立性检查、CT-616 不可变复核委托、CT-615 受治理分享、CT-614 受校验和保护的离线交付、CT-613 精确可比组门禁、CT-612 护照不可变封存、CT-611 来源隔离的规范观测、CT-610 预检门禁、CT-609 链路证据护照冻结和既有 Evidence Core 模块。身份认证、企业控制或导出授权外部核验、复核方独立性认证、监督重跑、意见签发、性能结论、排名策略、消息代理投递、私有制品内容访问、法律审批、可信签名、认证签发和生产证据读取能力仍明确排除；当前以源码分发，尚未发布到 npm Registry。
+SDK 只校验并规范化调用方提供的证据，不包含凭据、不发现私有基础设施、不授权执行、不挂载 eBPF 程序，也不会把合成数据表述为实测数据。版本 `0.25.0` 新增 CT-619 后续运行绑定、完整监督时间窗检查、事件日志指纹和派生的七维环境差异登记。同时保留 CT-618 独立样本复算、CT-617 仅基于声明记录的独立性检查、CT-616 不可变复核委托，以及既有 Passport 与 Evidence Core 模块。身份认证、企业控制或导出授权外部核验、监督事实外部证明、复核方独立性认证、历史状态重现、意见签发、性能结论、排名策略、消息代理投递、私有制品内容访问、法律审批、可信签名、认证签发和生产证据读取能力仍明确排除；当前以源码分发，尚未发布到 npm Registry。
 
 护照集成方可以导入 `createPassportScenarioMethodFreeze`、`createPassportRunPlan`、`startPassportRun`、`createPassportNormalizedObservation`、`createPassportEvidenceVersion`、`createPassportReplacementVersion`、`createPassportVersionTerminalEvent`、`createPassportDeliveryPackage`、`createPassportShareGrant`、`createPassportSupplementRequest`、`createPassportSupplementResponse`、`createPassportBuyerDecision` 及相应验证器和投影器。契约冻结精确站点对、方向、协议、工作负载、方法、运行和规范观测。每个新封存版本都把独立复核和策略状态重置，并根据自身封存时间推导新鲜度截止时间，不继承前序版本的复核或新鲜度。分享记录不是 bearer 凭据、导出授权、独立复核或认证；买方决定与当前访问和平台证据状态始终分离。运行一旦开始，任何变更仍要求使用新的 `run_id`；SDK 不执行基准测试，也不认证结果。
 
@@ -15,6 +15,8 @@ SDK 只校验并规范化调用方提供的证据，不包含凭据、不发现�
 独立性评估方可以导入 `createIndependentReviewIndependenceAssessment`、`verifyIndependentReviewIndependenceAssessment` 和 `assertIndependentOpinionSignerEligible`。门禁把声明的身份、组织、实际控制、付款方、职责、冲突与回避绑定到一个精确委托。通过只表示基于声明记录具备资格；SDK 不认证主体、不外部核验股权控制，也不签发意见。
 
 复核负责人可以导入 `recalculateIndependentReviewStatistics`、`createIndependentReviewRecalculation` 和 `verifyIndependentReviewRecalculation`。CT-618 在记录精确一致、容差内或超容差结果前，会检查精确委托、独立性门禁、有效复核方分享、交付完整性、样本账、统计配置和结果覆盖。`consistent` 记录不是意见或性能结论，偏差也会被保留而不是隐藏。
+
+监督复核负责人可以导入 `compareIndependentReviewRunEnvironment`、`createIndependentReviewSupervisedReexecution` 和 `verifyIndependentReviewSupervisedReexecution`。CT-619 把后续运行和完整监督时间窗绑定到精确历史交付包与复算记录，再针对站点、协议、工作负载、方法、计算、软件和网络派生 `same`、`changed` 或 `unknown`。记录始终保持 `historical_state_reproduced: false`，不会把环境相似自动转化为性能结论。
 
 证据目录消费方可以导入 `queryEvidenceRecords`、`getEvidenceQueryRecord`、`createEvidenceQueryStatus` 和 `buildEvidenceQueryRequest`。记录一旦包含租户、主体、存储、端点、凭据或联系字段就默认拒绝。SDK 不执行网络访问，也不定义生产服务器；私有查询只能由单独的实现完成认证与授权。
 

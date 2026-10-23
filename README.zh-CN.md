@@ -28,6 +28,7 @@ CT-AIComm 是 CloudTelecom 面向 AI 训练与推理通信场景构建的开放�
 - [独立运行复核委托与范围 v1](docs/review/engagement-and-scope-v1.zh-CN.md)
 - [独立运行复核身份、组织与利益冲突 v1](docs/review/identity-organization-and-conflicts-v1.zh-CN.md)
 - [独立运行复核结构检查与统计复算 v1](docs/review/structure-and-statistical-recalculation-v1.zh-CN.md)
+- [独立运行复核监督重新运行与环境差异 v1](docs/review/supervised-reexecution-and-environment-differences-v1.zh-CN.md)
 - [TTFT 样本 v1 JSON Schema](docs/bench-reproduction/ttft-sample.schema.json)
 - [CT-Bench 复现 CLI](packages/bench-reproduce/)
 - [vLLM Connector 兼容矩阵 v1](docs/connectors/vllm.zh-CN.md)
