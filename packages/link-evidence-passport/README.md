@@ -8,7 +8,9 @@ observation-normalization and quality contract. CT-612 adds immutable sealing,
 exact replacement lineage, expiry, supersession, and revocation. CT-613 adds a
 deterministic comparability gate, field-level differences, and an unranked view.
 CT-614 adds checksum-bound JSON and CSV delivery files, deterministic human
-summaries, and independent offline statistic recomputation.
+summaries, and independent offline statistic recomputation. CT-615 adds
+time-limited sharing, append-only revocation, hash-referenced supplements, and
+buyer-scoped acceptance or rejection without platform evidence mutation.
 
 It exports:
 
@@ -31,6 +33,12 @@ It exports:
 - `createPassportDeliveryPackage()` and `verifyPassportDeliveryPackage()` from
   `delivery.mjs`, plus the directory verifier in
   `scripts/verify-passport-delivery.mjs`.
+- `createPassportShareGrant()`, `createPassportShareRevocation()`, and
+  `projectPassportShare()` from `sharing.mjs`;
+- `createPassportSupplementRequest()`, `createPassportSupplementResponse()`,
+  and their verifiers from `sharing.mjs`;
+- `createPassportBuyerDecision()`, `verifyPassportBuyerDecision()`, and
+  `projectPassportBuyerDecision()` from `sharing.mjs`.
 
 The protected content covers the source and destination sites, direction,
 protocol, workload configuration, exact Evidence Core Scope and Method
@@ -70,6 +78,13 @@ catalog, and regenerate the human summary byte for byte. Successful verification
 does not authenticate a principal or prove export authorization, independent
 review, production performance, or certification.
 
+Sharing binds one named recipient to one exact Passport delivery for no longer
+than the Passport and authorization lifetimes. Expiry and append-only revocation
+fail closed. Supplements carry immutable artifact references only. Buyer
+acceptance or rejection is a separate historical business record: it never
+changes current access, evidence lifecycle, review, freshness, policy,
+performance-claim, or certification status.
+
 Run the synthetic scenario:
 
 ```bash
@@ -79,4 +94,5 @@ node examples/passport/observation-normalization-synthetic.mjs
 node examples/passport/sealing-versioning-synthetic.mjs
 node examples/passport/comparability-gate-synthetic.mjs
 node examples/passport/delivery-package-synthetic.mjs
+node examples/passport/sharing-buyer-acceptance-synthetic.mjs
 ```

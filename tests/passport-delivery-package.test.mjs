@@ -143,7 +143,7 @@ test("publishes strict schema, SDK exports, bilingual guidance, and offline cove
   ]);
   assert.equal(schema.additionalProperties, false);
   assert.equal(schema.properties.record_type.const, "passport_delivery_manifest");
-  assert.equal(publicApi.sdk_version, "0.20.0");
+  assert.equal(publicApi.sdk_version, "0.21.0");
   assert.ok(publicApi.public_contracts.includes("specs/passport/passport-delivery-manifest-v1.schema.json"));
   assert.ok(publicApi.public_tools.includes("scripts/verify-passport-delivery.mjs"));
   for (const exported of [
