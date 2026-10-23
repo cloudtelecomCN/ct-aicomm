@@ -39,6 +39,7 @@
   },
   "contract_tests": [
     "tests/advisor-product-contract.test.mjs",
+    "tests/advisor-requirement-passport.test.mjs",
     "tests/advisor-task-template-registry.test.mjs",
     "tests/agent-protocol-sdk.test.mjs",
     "tests/compliance-audit-package.test.mjs",

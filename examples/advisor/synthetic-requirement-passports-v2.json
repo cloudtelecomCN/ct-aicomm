@@ -1,0 +1,167 @@
+{
+  "schema_version": "2.0.0",
+  "data_origin": "synthetic",
+  "performance_claim_allowed": false,
+  "fixtures": [
+    {
+      "schema_version": "2.0.0",
+      "passport_id": "advisor_passport_11111111-1111-4111-8111-111111111111",
+      "project_id": "advisor_project_11111111-1111-4111-8111-111111111111",
+      "task_template": { "id": "ai-inference-infrastructure-selection/v1", "version": "1.0.0" },
+      "field_set_version": "2.0.0",
+      "state": "frozen",
+      "revision": 2,
+      "fields": [
+        { "field_id": "model.identifier", "status": "provided", "value": "synthetic-llm-70b", "unit": "none", "constraint": "context", "source": { "kind": "synthetic", "confidence": "high", "observed_at": "2026-10-23T00:00:00.000Z", "reference": "fixture://inference-selection/model" } },
+        { "field_id": "traffic.request_rate", "status": "provided", "value": 12, "unit": "requests_per_second", "constraint": "soft", "source": { "kind": "synthetic", "confidence": "medium", "observed_at": "2026-10-23T00:00:00.000Z" } },
+        { "field_id": "traffic.input_tokens", "status": "provided", "value": 2048, "unit": "tokens", "constraint": "context", "source": { "kind": "synthetic", "confidence": "high", "observed_at": "2026-10-23T00:00:00.000Z" } },
+        { "field_id": "traffic.output_tokens", "status": "provided", "value": 256, "unit": "tokens", "constraint": "context", "source": { "kind": "synthetic", "confidence": "high", "observed_at": "2026-10-23T00:00:00.000Z" } },
+        { "field_id": "performance.ttft_target", "status": "provided", "value": 900, "unit": "milliseconds", "constraint": "hard", "source": { "kind": "synthetic", "confidence": "medium", "observed_at": "2026-10-23T00:00:00.000Z" } },
+        { "field_id": "budget.monthly_limit", "status": "provided", "value": 120000, "unit": "cny_per_month", "constraint": "hard", "source": { "kind": "synthetic", "confidence": "high", "observed_at": "2026-10-23T00:00:00.000Z" } },
+        { "field_id": "region.allowed", "status": "provided", "value": ["cn-shanghai", "cn-beijing"], "unit": "none", "constraint": "hard", "source": { "kind": "synthetic", "confidence": "high", "observed_at": "2026-10-23T00:00:00.000Z" } }
+      ],
+      "recorded_by": { "actor_type": "system", "role": "fixture_builder" },
+      "recorded_at": "2026-10-23T00:01:00.000Z",
+      "frozen_at": "2026-10-23T00:02:00.000Z",
+      "content_sha256": "sha256:e4bdd91e9654796fda9ba56f8beb76285eaa76b304fab051e715d3fc3cb4c2b0",
+      "boundaries": { "decision_support_only": true, "execution_authorized": false, "performance_claim_allowed": false }
+    },
+    {
+      "schema_version": "2.0.0",
+      "passport_id": "advisor_passport_22222222-2222-4222-8222-222222222222",
+      "project_id": "advisor_project_22222222-2222-4222-8222-222222222222",
+      "task_template": { "id": "ai-inference-capacity-sizing/v1", "version": "1.0.0" },
+      "field_set_version": "2.0.0",
+      "state": "frozen",
+      "revision": 2,
+      "fields": [
+        { "field_id": "model.identifier", "status": "provided", "value": "synthetic-llm-8b", "unit": "none", "constraint": "context", "source": { "kind": "synthetic", "confidence": "high", "observed_at": "2026-10-23T00:00:00.000Z" } },
+        { "field_id": "traffic.request_rate", "status": "provided", "value": 30, "unit": "requests_per_second", "constraint": "soft", "source": { "kind": "synthetic", "confidence": "medium", "observed_at": "2026-10-23T00:00:00.000Z" } },
+        { "field_id": "traffic.input_tokens", "status": "provided", "value": 1024, "unit": "tokens", "constraint": "context", "source": { "kind": "synthetic", "confidence": "high", "observed_at": "2026-10-23T00:00:00.000Z" } },
+        { "field_id": "traffic.output_tokens", "status": "provided", "value": 128, "unit": "tokens", "constraint": "context", "source": { "kind": "synthetic", "confidence": "high", "observed_at": "2026-10-23T00:00:00.000Z" } },
+        { "field_id": "performance.ttft_target", "status": "provided", "value": 700, "unit": "milliseconds", "constraint": "hard", "source": { "kind": "synthetic", "confidence": "medium", "observed_at": "2026-10-23T00:00:00.000Z" } }
+      ],
+      "recorded_by": { "actor_type": "system", "role": "fixture_builder" },
+      "recorded_at": "2026-10-23T00:03:00.000Z",
+      "frozen_at": "2026-10-23T00:04:00.000Z",
+      "content_sha256": "sha256:44cf16150e18b0b83d9828da03c117aa3bb62928641a0962aca80abe3a941f1c",
+      "boundaries": { "decision_support_only": true, "execution_authorized": false, "performance_claim_allowed": false }
+    },
+    {
+      "schema_version": "2.0.0",
+      "passport_id": "advisor_passport_33333333-3333-4333-8333-333333333333",
+      "project_id": "advisor_project_33333333-3333-4333-8333-333333333333",
+      "task_template": { "id": "gpu-comparison/v1", "version": "1.0.0" },
+      "field_set_version": "2.0.0",
+      "state": "frozen",
+      "revision": 2,
+      "fields": [
+        { "field_id": "gpu.candidates", "status": "provided", "value": ["H100", "H200", "L40S"], "unit": "none", "constraint": "context", "source": { "kind": "synthetic", "confidence": "high", "observed_at": "2026-10-23T00:00:00.000Z" } },
+        { "field_id": "workload.description", "status": "provided", "value": "Synthetic online inference workload", "unit": "none", "constraint": "context", "source": { "kind": "synthetic", "confidence": "high", "observed_at": "2026-10-23T00:00:00.000Z" } },
+        { "field_id": "budget.monthly_limit", "status": "provided", "value": 18000, "unit": "usd_per_month", "constraint": "hard", "source": { "kind": "synthetic", "confidence": "medium", "observed_at": "2026-10-23T00:00:00.000Z" } }
+      ],
+      "recorded_by": { "actor_type": "system", "role": "fixture_builder" },
+      "recorded_at": "2026-10-23T00:05:00.000Z",
+      "frozen_at": "2026-10-23T00:06:00.000Z",
+      "content_sha256": "sha256:920ea189dbb79a59b4a9437ed220fb737eae0702189cff33c31e19eb254e1eb3",
+      "boundaries": { "decision_support_only": true, "execution_authorized": false, "performance_claim_allowed": false }
+    },
+    {
+      "schema_version": "2.0.0",
+      "passport_id": "advisor_passport_44444444-4444-4444-8444-444444444444",
+      "project_id": "advisor_project_44444444-4444-4444-8444-444444444444",
+      "task_template": { "id": "cloud-region-network-comparison/v1", "version": "1.0.0" },
+      "field_set_version": "2.0.0",
+      "state": "frozen",
+      "revision": 2,
+      "fields": [
+        { "field_id": "cloud.candidates", "status": "provided", "value": ["synthetic-cloud-a", "synthetic-cloud-b"], "unit": "none", "constraint": "context", "source": { "kind": "synthetic", "confidence": "high", "observed_at": "2026-10-23T00:00:00.000Z" } },
+        { "field_id": "region.allowed", "status": "provided", "value": ["ap-southeast-synthetic", "ap-east-synthetic"], "unit": "none", "constraint": "hard", "source": { "kind": "synthetic", "confidence": "high", "observed_at": "2026-10-23T00:00:00.000Z" } },
+        { "field_id": "network.latency_target", "status": "provided", "value": 40, "unit": "milliseconds", "constraint": "hard", "source": { "kind": "synthetic", "confidence": "medium", "observed_at": "2026-10-23T00:00:00.000Z" } }
+      ],
+      "recorded_by": { "actor_type": "system", "role": "fixture_builder" },
+      "recorded_at": "2026-10-23T00:07:00.000Z",
+      "frozen_at": "2026-10-23T00:08:00.000Z",
+      "content_sha256": "sha256:66824a217910e300338f88046397e5e1d0d775410402c12cb04bb71c8c87dd2f",
+      "boundaries": { "decision_support_only": true, "execution_authorized": false, "performance_claim_allowed": false }
+    },
+    {
+      "schema_version": "2.0.0",
+      "passport_id": "advisor_passport_55555555-5555-4555-8555-555555555555",
+      "project_id": "advisor_project_55555555-5555-4555-8555-555555555555",
+      "task_template": { "id": "build-rent-cloud-comparison/v1", "version": "1.0.0" },
+      "field_set_version": "2.0.0",
+      "state": "frozen",
+      "revision": 2,
+      "fields": [
+        { "field_id": "deployment.options", "status": "provided", "value": ["build", "rent", "cloud"], "unit": "none", "constraint": "context", "source": { "kind": "synthetic", "confidence": "high", "observed_at": "2026-10-23T00:00:00.000Z" } },
+        { "field_id": "gpu.capacity", "status": "provided", "value": 16, "unit": "gpu_count", "constraint": "hard", "source": { "kind": "synthetic", "confidence": "medium", "observed_at": "2026-10-23T00:00:00.000Z" } },
+        { "field_id": "deployment.term", "status": "provided", "value": 24, "unit": "months", "constraint": "context", "source": { "kind": "synthetic", "confidence": "high", "observed_at": "2026-10-23T00:00:00.000Z" } },
+        { "field_id": "budget.monthly_limit", "status": "provided", "value": 200000, "unit": "cny_per_month", "constraint": "hard", "source": { "kind": "synthetic", "confidence": "medium", "observed_at": "2026-10-23T00:00:00.000Z" } }
+      ],
+      "recorded_by": { "actor_type": "system", "role": "fixture_builder" },
+      "recorded_at": "2026-10-23T00:09:00.000Z",
+      "frozen_at": "2026-10-23T00:10:00.000Z",
+      "content_sha256": "sha256:d7a87341e01ae7eeb92d7be6f1926da8b676f4017242ef4f83fc9eb31f414dc5",
+      "boundaries": { "decision_support_only": true, "execution_authorized": false, "performance_claim_allowed": false }
+    },
+    {
+      "schema_version": "2.0.0",
+      "passport_id": "advisor_passport_66666666-6666-4666-8666-666666666666",
+      "project_id": "advisor_project_66666666-6666-4666-8666-666666666666",
+      "task_template": { "id": "training-infrastructure-selection/v1", "version": "1.0.0" },
+      "field_set_version": "2.0.0",
+      "state": "frozen",
+      "revision": 2,
+      "fields": [
+        { "field_id": "model.parameter_count", "status": "provided", "value": 70000000000, "unit": "parameters", "constraint": "context", "source": { "kind": "synthetic", "confidence": "high", "observed_at": "2026-10-23T00:00:00.000Z" } },
+        { "field_id": "training.scale", "status": "provided", "value": 8, "unit": "gpu_count", "constraint": "hard", "source": { "kind": "synthetic", "confidence": "medium", "observed_at": "2026-10-23T00:00:00.000Z" } },
+        { "field_id": "training.interconnect", "status": "provided", "value": ["RoCEv2", "InfiniBand"], "unit": "none", "constraint": "soft", "source": { "kind": "synthetic", "confidence": "medium", "observed_at": "2026-10-23T00:00:00.000Z" } },
+        { "field_id": "storage.capacity", "status": "provided", "value": 20, "unit": "tebibytes", "constraint": "hard", "source": { "kind": "synthetic", "confidence": "medium", "observed_at": "2026-10-23T00:00:00.000Z" } }
+      ],
+      "recorded_by": { "actor_type": "system", "role": "fixture_builder" },
+      "recorded_at": "2026-10-23T00:11:00.000Z",
+      "frozen_at": "2026-10-23T00:12:00.000Z",
+      "content_sha256": "sha256:5abae45a7f04f7457528e381785b8e77c098a6d605c0fc40ce599a734ca03422",
+      "boundaries": { "decision_support_only": true, "execution_authorized": false, "performance_claim_allowed": false }
+    },
+    {
+      "schema_version": "2.0.0",
+      "passport_id": "advisor_passport_77777777-7777-4777-8777-777777777777",
+      "project_id": "advisor_project_77777777-7777-4777-8777-777777777777",
+      "task_template": { "id": "infrastructure-migration-assessment/v1", "version": "1.0.0" },
+      "field_set_version": "2.0.0",
+      "state": "frozen",
+      "revision": 2,
+      "fields": [
+        { "field_id": "migration.current_state", "status": "provided", "value": "Synthetic on-premises GPU environment", "unit": "none", "constraint": "context", "source": { "kind": "synthetic", "confidence": "high", "observed_at": "2026-10-23T00:00:00.000Z" } },
+        { "field_id": "migration.target_candidates", "status": "provided", "value": ["synthetic-cloud-a", "synthetic-colocation-b"], "unit": "none", "constraint": "context", "source": { "kind": "synthetic", "confidence": "medium", "observed_at": "2026-10-23T00:00:00.000Z" } },
+        { "field_id": "migration.dependencies", "status": "provided", "value": ["model-registry", "private-network", "object-storage"], "unit": "none", "constraint": "hard", "source": { "kind": "synthetic", "confidence": "medium", "observed_at": "2026-10-23T00:00:00.000Z" } }
+      ],
+      "recorded_by": { "actor_type": "system", "role": "fixture_builder" },
+      "recorded_at": "2026-10-23T00:13:00.000Z",
+      "frozen_at": "2026-10-23T00:14:00.000Z",
+      "content_sha256": "sha256:15d0da9a322dea22963c4d1d56cd071ae7fed0e8a267d587704f7a74d0c74104",
+      "boundaries": { "decision_support_only": true, "execution_authorized": false, "performance_claim_allowed": false }
+    },
+    {
+      "schema_version": "2.0.0",
+      "passport_id": "advisor_passport_88888888-8888-4888-8888-888888888888",
+      "project_id": "advisor_project_88888888-8888-4888-8888-888888888888",
+      "task_template": { "id": "data-residency-screening/v1", "version": "1.0.0" },
+      "field_set_version": "2.0.0",
+      "state": "frozen",
+      "revision": 2,
+      "fields": [
+        { "field_id": "data.classes", "status": "provided", "value": ["synthetic-user-content", "synthetic-telemetry"], "unit": "none", "constraint": "context", "source": { "kind": "synthetic", "confidence": "high", "observed_at": "2026-10-23T00:00:00.000Z" } },
+        { "field_id": "region.allowed", "status": "provided", "value": ["cn-shanghai", "cn-beijing"], "unit": "none", "constraint": "hard", "source": { "kind": "synthetic", "confidence": "high", "observed_at": "2026-10-23T00:00:00.000Z" } },
+        { "field_id": "region.excluded", "status": "provided", "value": ["synthetic-outside-boundary"], "unit": "none", "constraint": "hard", "source": { "kind": "synthetic", "confidence": "high", "observed_at": "2026-10-23T00:00:00.000Z" } }
+      ],
+      "recorded_by": { "actor_type": "system", "role": "fixture_builder" },
+      "recorded_at": "2026-10-23T00:15:00.000Z",
+      "frozen_at": "2026-10-23T00:16:00.000Z",
+      "content_sha256": "sha256:5c8db46ad92227155077acb926a2de66d6b747d5425264742613225d237686af",
+      "boundaries": { "decision_support_only": true, "execution_authorized": false, "performance_claim_allowed": false }
+    }
+  ]
+}

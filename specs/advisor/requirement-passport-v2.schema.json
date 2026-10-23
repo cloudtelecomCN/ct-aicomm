@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/advisor/requirement-passport-v2.schema.json",
+  "title": "CT-Advisor Requirement Passport v2",
+  "description": "A versioned, source-aware, non-executing record of workload requirements and constraints.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "passport_id", "project_id", "task_template", "field_set_version", "state", "revision", "fields", "recorded_by", "recorded_at", "frozen_at", "content_sha256", "boundaries"],
+  "properties": {
+    "schema_version": { "const": "2.0.0" },
+    "passport_id": { "type": "string", "pattern": "^advisor_passport_[0-9a-f-]{36}$" },
+    "project_id": { "type": "string", "pattern": "^advisor_project_[0-9a-f-]{36}$" },
+    "task_template": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*/v[1-9][0-9]*$" },
+        "version": { "type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$" }
+      }
+    },
+    "field_set_version": { "const": "2.0.0" },
+    "state": { "enum": ["draft", "frozen"] },
+    "revision": { "type": "integer", "minimum": 1 },
+    "fields": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 100,
+      "items": { "$ref": "#/$defs/requirementField" }
+    },
+    "recorded_by": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["actor_type", "role"],
+      "properties": {
+        "actor_type": { "enum": ["customer", "advisor", "importer", "system"] },
+        "role": { "type": "string", "minLength": 1, "maxLength": 40 }
+      }
+    },
+    "recorded_at": { "type": "string", "format": "date-time", "pattern": "Z$" },
+    "frozen_at": { "type": ["string", "null"], "format": "date-time" },
+    "content_sha256": { "type": ["string", "null"], "pattern": "^sha256:[0-9a-f]{64}$" },
+    "boundaries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decision_support_only", "execution_authorized", "performance_claim_allowed"],
+      "properties": {
+        "decision_support_only": { "const": true },
+        "execution_authorized": { "const": false },
+        "performance_claim_allowed": { "const": false }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "state": { "const": "frozen" } }, "required": ["state"] },
+      "then": {
+        "properties": {
+          "frozen_at": { "type": "string", "format": "date-time", "pattern": "Z$" },
+          "content_sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+        }
+      },
+      "else": {
+        "properties": {
+          "frozen_at": { "type": "null" },
+          "content_sha256": { "type": "null" }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "requirementField": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["field_id", "status", "value", "unit", "constraint", "source"],
+      "properties": {
+        "field_id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*(?:\\.[a-z][a-z0-9_]*)+$" },
+        "status": { "enum": ["provided", "unknown", "not_applicable"] },
+        "value": {
+          "oneOf": [
+            { "type": "string", "minLength": 1, "maxLength": 1000 },
+            { "type": "number" },
+            { "type": "boolean" },
+            { "type": "array", "minItems": 1, "maxItems": 100, "uniqueItems": true, "items": { "type": "string", "minLength": 1, "maxLength": 200 } },
+            { "type": "null" }
+          ]
+        },
+        "unit": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+        "constraint": { "enum": ["hard", "soft", "context"] },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "confidence", "observed_at"],
+          "properties": {
+            "kind": { "enum": ["measured", "vendor_published", "customer_quoted", "customer_declared", "modeled", "inferred", "synthetic", "unknown"] },
+            "confidence": { "enum": ["high", "medium", "low", "unknown"] },
+            "observed_at": { "type": "string", "format": "date-time", "pattern": "Z$" },
+            "reference": { "type": "string", "maxLength": 500 }
+          }
+        }
+      }
+    }
+  }
+}

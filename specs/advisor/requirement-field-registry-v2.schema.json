@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/advisor/requirement-field-registry-v2.schema.json",
+  "title": "CT-Advisor Requirement field registry v2",
+  "description": "Public field, unit, source, and task-template bindings for Requirement Passport 2.0.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "registry_id", "registry_version", "published_at", "units", "source_kinds", "confidence_levels", "fields", "template_profiles"],
+  "properties": {
+    "schema_version": { "const": "2.0.0" },
+    "registry_id": { "const": "ct-advisor-requirement-fields" },
+    "registry_version": { "const": "2.0.0" },
+    "published_at": { "type": "string", "format": "date-time", "pattern": "Z$" },
+    "units": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "symbol", "quantity_zh", "quantity_en"],
+        "properties": {
+          "code": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+          "symbol": { "type": "string", "minLength": 1 },
+          "quantity_zh": { "type": "string", "minLength": 1 },
+          "quantity_en": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "source_kinds": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "uniqueItems": true,
+      "items": { "enum": ["measured", "vendor_published", "customer_quoted", "customer_declared", "modeled", "inferred", "synthetic", "unknown"] }
+    },
+    "confidence_levels": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "uniqueItems": true,
+      "items": { "enum": ["high", "medium", "low", "unknown"] }
+    },
+    "fields": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/fieldDefinition" }
+    },
+    "template_profiles": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/templateProfile" }
+    }
+  },
+  "$defs": {
+    "fieldId": { "type": "string", "pattern": "^[a-z][a-z0-9_]*(?:\\.[a-z][a-z0-9_]*)+$" },
+    "fieldDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["field_id", "category", "label_zh", "label_en", "description_zh", "description_en", "value_type", "allowed_units"],
+      "properties": {
+        "field_id": { "$ref": "#/$defs/fieldId" },
+        "category": { "enum": ["model", "traffic", "performance", "budget", "availability", "gpu", "cloud", "region", "network", "deployment", "training", "storage", "migration", "data", "software", "workload"] },
+        "label_zh": { "type": "string", "minLength": 1 },
+        "label_en": { "type": "string", "minLength": 1 },
+        "description_zh": { "type": "string", "minLength": 8 },
+        "description_en": { "type": "string", "minLength": 8 },
+        "value_type": { "enum": ["string", "number", "integer", "boolean", "string_list"] },
+        "allowed_units": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" }
+        }
+      }
+    },
+    "templateProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["template_id", "template_version", "field_set_version", "required_fields", "optional_fields"],
+      "properties": {
+        "template_id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*/v[1-9][0-9]*$" },
+        "template_version": { "type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$" },
+        "field_set_version": { "const": "2.0.0" },
+        "required_fields": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/fieldId" } },
+        "optional_fields": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/fieldId" } }
+      }
+    }
+  }
+}
