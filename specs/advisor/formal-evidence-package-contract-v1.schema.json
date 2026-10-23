@@ -1,0 +1,174 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/advisor/formal-evidence-package-contract-v1.schema.json",
+  "title": "CT-Advisor GPU Decision & Evidence Package Contract v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "contract_version", "contract_type", "contract_id", "capability_key", "project_id", "locale", "state", "frozen_at", "source_bindings", "package_profile", "manifest_contract", "boundaries", "content_sha256"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "contract_version": { "const": "1.0.0" },
+    "contract_type": { "const": "ct_advisor_gpu_decision_evidence_package_contract" },
+    "contract_id": { "type": "string", "pattern": "^advisor_package_contract_[0-9a-f-]{36}$" },
+    "capability_key": { "const": "gpu_preprocurement_decision_evidence_package" },
+    "project_id": { "type": "string", "pattern": "^advisor_project_[0-9a-f-]{36}$" },
+    "locale": { "enum": ["en", "zh-CN"] },
+    "state": { "const": "contract_frozen" },
+    "frozen_at": { "type": "string", "format": "date-time" },
+    "source_bindings": { "$ref": "#/$defs/sourceBindings" },
+    "package_profile": { "$ref": "#/$defs/packageProfile" },
+    "manifest_contract": { "$ref": "#/$defs/manifestContract" },
+    "boundaries": { "$ref": "#/$defs/boundaries" },
+    "content_sha256": { "$ref": "#/$defs/sha256" }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "sourceBindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["basic_report", "requirement_passport", "constraint_evaluation", "analysis"],
+      "properties": {
+        "basic_report": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["report_id", "content_sha256"],
+          "properties": {
+            "report_id": { "type": "string", "pattern": "^advisor_basic_report_[0-9a-f-]{36}$" },
+            "content_sha256": { "$ref": "#/$defs/sha256" }
+          }
+        },
+        "requirement_passport": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["passport_id", "revision", "content_sha256"],
+          "properties": {
+            "passport_id": { "type": "string", "pattern": "^advisor_passport_[0-9a-f-]{36}$" },
+            "revision": { "type": "integer", "minimum": 1 },
+            "content_sha256": { "$ref": "#/$defs/sha256" }
+          }
+        },
+        "constraint_evaluation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["evaluation_id", "content_sha256"],
+          "properties": {
+            "evaluation_id": { "type": "string", "pattern": "^advisor_constraint_evaluation_[0-9a-f-]{36}$" },
+            "content_sha256": { "$ref": "#/$defs/sha256" }
+          }
+        },
+        "analysis": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["analysis_id", "content_sha256", "method_sha256", "observation_set_sha256"],
+          "properties": {
+            "analysis_id": { "type": "string", "pattern": "^advisor_analysis_[0-9a-f-]{36}$" },
+            "content_sha256": { "$ref": "#/$defs/sha256" },
+            "method_sha256": { "$ref": "#/$defs/sha256" },
+            "observation_set_sha256": { "$ref": "#/$defs/sha256" }
+          }
+        }
+      }
+    },
+    "deliveryItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["item_id", "artifact_key", "title_en", "title_zh", "delivery_kind", "required", "machine_readable_required", "allowed_formats", "owner_task"],
+      "properties": {
+        "item_id": { "type": "string", "pattern": "^D(?:0[1-9]|1[0-3])$" },
+        "artifact_key": { "type": "string", "pattern": "^[a-z][a-z0-9_]+$" },
+        "title_en": { "type": "string", "minLength": 1 },
+        "title_zh": { "type": "string", "minLength": 1 },
+        "delivery_kind": { "enum": ["document", "document_and_data", "dataset", "numbered_document", "aggregate_container", "verification_result", "exit_archive", "documentation"] },
+        "required": { "const": true },
+        "machine_readable_required": { "type": "boolean" },
+        "allowed_formats": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "enum": ["pdf", "docx", "xlsx", "csv", "json", "zip", "manifest", "sha256sums", "txt", "html", "markdown"] } },
+        "owner_task": { "enum": ["CT-667", "CT-668", "CT-673"] }
+      }
+    },
+    "packageProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile_id", "profile_version", "manifest_schema_version", "delivery_items", "compatibility_policy", "profile_sha256"],
+      "properties": {
+        "profile_id": { "const": "ct-advisor-gpu-decision-evidence-package/v1" },
+        "profile_version": { "const": "1.0.0" },
+        "manifest_schema_version": { "const": "1.0.0" },
+        "delivery_items": {
+          "type": "array",
+          "minItems": 13,
+          "maxItems": 13,
+          "prefixItems": [
+            { "allOf": [{ "$ref": "#/$defs/deliveryItem" }, { "properties": { "item_id": { "const": "D01" }, "artifact_key": { "const": "scope_and_responsibility_boundary" } } }] },
+            { "allOf": [{ "$ref": "#/$defs/deliveryItem" }, { "properties": { "item_id": { "const": "D02" }, "artifact_key": { "const": "requirement_passport" } } }] },
+            { "allOf": [{ "$ref": "#/$defs/deliveryItem" }, { "properties": { "item_id": { "const": "D03" }, "artifact_key": { "const": "candidate_and_combination_matrix" } } }] },
+            { "allOf": [{ "$ref": "#/$defs/deliveryItem" }, { "properties": { "item_id": { "const": "D04" }, "artifact_key": { "const": "source_ledger_and_gap_register" } } }] },
+            { "allOf": [{ "$ref": "#/$defs/deliveryItem" }, { "properties": { "item_id": { "const": "D05" }, "artifact_key": { "const": "infrastructure_risk_analysis" } } }] },
+            { "allOf": [{ "$ref": "#/$defs/deliveryItem" }, { "properties": { "item_id": { "const": "D06" }, "artifact_key": { "const": "scenario_pareto_sensitivity_results" } } }] },
+            { "allOf": [{ "$ref": "#/$defs/deliveryItem" }, { "properties": { "item_id": { "const": "D07" }, "artifact_key": { "const": "gpu_decision_report" } } }] },
+            { "allOf": [{ "$ref": "#/$defs/deliveryItem" }, { "properties": { "item_id": { "const": "D08" }, "artifact_key": { "const": "explainable_recommendation" } } }] },
+            { "allOf": [{ "$ref": "#/$defs/deliveryItem" }, { "properties": { "item_id": { "const": "D09" }, "artifact_key": { "const": "decision_and_approval_record" } } }] },
+            { "allOf": [{ "$ref": "#/$defs/deliveryItem" }, { "properties": { "item_id": { "const": "D10" }, "artifact_key": { "const": "evidence_package_container" } } }] },
+            { "allOf": [{ "$ref": "#/$defs/deliveryItem" }, { "properties": { "item_id": { "const": "D11" }, "artifact_key": { "const": "offline_verification_result" } } }] },
+            { "allOf": [{ "$ref": "#/$defs/deliveryItem" }, { "properties": { "item_id": { "const": "D12" }, "artifact_key": { "const": "raw_transformed_data_and_exit_package" } } }] },
+            { "allOf": [{ "$ref": "#/$defs/deliveryItem" }, { "properties": { "item_id": { "const": "D13" }, "artifact_key": { "const": "versioned_product_manual" } } }] }
+          ],
+          "items": false
+        },
+        "compatibility_policy": { "$ref": "#/$defs/compatibilityPolicy" },
+        "profile_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "compatibilityPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policy_id", "schema_version", "profile_version", "versioning", "reader_rule", "unknown_field_policy", "patch_change_policy", "minor_change_policy", "major_change_policy", "migration_policy", "checksum_policy", "archive_digest_policy"],
+      "properties": {
+        "policy_id": { "const": "ct-advisor-evidence-package-strict-semver-v1" },
+        "schema_version": { "const": "1.0.0" },
+        "profile_version": { "const": "1.0.0" },
+        "versioning": { "const": "semantic_versioning" },
+        "reader_rule": { "const": "same_major_and_reader_not_older" },
+        "unknown_field_policy": { "const": "reject" },
+        "patch_change_policy": { "const": "clarification_or_non_structural_fix_only" },
+        "minor_change_policy": { "const": "additive_optional_change_requires_explicit_reader_support" },
+        "major_change_policy": { "const": "required_for_removal_rename_type_or_semantic_break" },
+        "migration_policy": { "const": "never_rewrite_issued_bytes_create_a_new_package_revision" },
+        "checksum_policy": { "const": "sha256_over_exact_delivered_bytes" },
+        "archive_digest_policy": { "const": "archive_digest_is_a_sidecar_and_is_not_self-referenced_by_manifest" }
+      }
+    },
+    "manifestContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["manifest_schema_version", "manifest_file", "checksum_file", "checksum_algorithm", "archive_media_type", "archive_digest_sidecar_required", "container_item_id", "container_self_reference_forbidden"],
+      "properties": {
+        "manifest_schema_version": { "const": "1.0.0" },
+        "manifest_file": { "const": "manifest.json" },
+        "checksum_file": { "const": "SHA256SUMS" },
+        "checksum_algorithm": { "const": "SHA-256" },
+        "archive_media_type": { "const": "application/zip" },
+        "archive_digest_sidecar_required": { "const": true },
+        "container_item_id": { "const": "D10" },
+        "container_self_reference_forbidden": { "const": true }
+      }
+    },
+    "boundaries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contract_only", "formal_package_generated", "entitlement_granted", "formal_report_issued", "human_decision_recorded", "approval_recorded", "offline_package_assembled", "execution_authorized", "certification_issued", "legal_opinion_issued", "performance_claim_allowed"],
+      "properties": {
+        "contract_only": { "const": true },
+        "formal_package_generated": { "const": false },
+        "entitlement_granted": { "const": false },
+        "formal_report_issued": { "const": false },
+        "human_decision_recorded": { "const": false },
+        "approval_recorded": { "const": false },
+        "offline_package_assembled": { "const": false },
+        "execution_authorized": { "const": false },
+        "certification_issued": { "const": false },
+        "legal_opinion_issued": { "const": false },
+        "performance_claim_allowed": { "const": false }
+      }
+    }
+  }
+}

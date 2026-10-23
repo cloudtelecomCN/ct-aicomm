@@ -38,6 +38,7 @@
     "full": "Run every public Node test in the repository."
   },
   "contract_tests": [
+    "tests/advisor-formal-evidence-package-contract.test.mjs",
     "tests/advisor-basic-report.test.mjs",
     "tests/advisor-multi-objective-analysis.test.mjs",
     "tests/advisor-data-gate-constraints.test.mjs",
@@ -79,6 +80,25 @@
     "tests/registry-entry-integrity.test.mjs"
   ],
   "synthetic_scenarios": [
+    {
+      "id": "advisor-formal-evidence-package-contract",
+      "entrypoint": "examples/advisor/formal-evidence-package-contract-synthetic.mjs",
+      "expect": {
+        "equals": {
+          "schema_version": "1.0.0",
+          "contract_type": "ct_advisor_gpu_decision_evidence_package_contract",
+          "state": "contract_frozen",
+          "data_origin": "synthetic",
+          "artifact_count": 13,
+          "capability_key": "gpu_preprocurement_decision_evidence_package",
+          "contract_only": true,
+          "formal_package_generated": false,
+          "entitlement_granted": false,
+          "execution_authorized": false,
+          "performance_claim_allowed": false
+        }
+      }
+    },
     {
       "id": "advisor-basic-report",
       "entrypoint": "examples/advisor/basic-report-synthetic.mjs",
