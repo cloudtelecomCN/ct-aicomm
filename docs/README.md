@@ -5,6 +5,7 @@
 ## Documents
 
 - [Working whitepaper](whitepaper/README.md)
+- [CT-Advisor 2.0 user guide](advisor/user-guide-v2.md)
 - [CT-Advisor 2.0 public product contract](advisor/product-contract-v2.md)
 - [CT-Advisor task template registry v1](advisor/task-template-registry-v1.md)
 - [CT-Advisor Requirement Passport 2.0](advisor/requirement-passport-v2.md)

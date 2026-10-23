@@ -5,6 +5,7 @@
 ## 文档与资源
 
 - [公开工作白皮书](whitepaper/README.zh-CN.md)
+- [CT-Advisor 2.0 产品使用手册](advisor/user-guide-v2.zh-CN.md)
 - [CT-Advisor 2.0 公开产品合同](advisor/product-contract-v2.zh-CN.md)
 - [CT-Advisor 任务模板注册表 v1](advisor/task-template-registry-v1.zh-CN.md)
 - [CT-Advisor Requirement Passport 2.0](advisor/requirement-passport-v2.zh-CN.md)
