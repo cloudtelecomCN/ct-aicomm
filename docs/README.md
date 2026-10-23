@@ -6,6 +6,7 @@
 
 - [Working whitepaper](whitepaper/README.md)
 - [CT-Advisor 2.0 public product contract](advisor/product-contract-v2.md)
+- [CT-Advisor task template registry v1](advisor/task-template-registry-v1.md)
 - [Offline contributor test environment](contributor/test-environment.md)
 - [Release verification and SBOM](release/verification.md)
 - [Project governance and external maintainer process](../GOVERNANCE.md)

@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/advisor/task-template-fixtures-v1.schema.json",
+  "title": "CT-Advisor task template fixtures v1",
+  "description": "Synthetic boundary fixtures for validating template registration, maturity, enablement, and non-execution claims.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "registry_version", "fixtures"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "registry_version": { "const": "1.0.0" },
+    "fixtures": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["schema_version", "fixture_id", "template_id", "data_origin", "performance_claim_allowed", "input_profile", "expected"],
+        "properties": {
+          "schema_version": { "const": "1.0.0" },
+          "fixture_id": { "type": "string", "pattern": "^fixture-[a-z0-9]+(?:-[a-z0-9]+)*-v[1-9][0-9]*$" },
+          "template_id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*/v[1-9][0-9]*$" },
+          "data_origin": { "const": "synthetic" },
+          "performance_claim_allowed": { "const": false },
+          "input_profile": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["profile_id", "declared_fields"],
+            "properties": {
+              "profile_id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+              "declared_fields": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" }
+              }
+            }
+          },
+          "expected": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["maturity", "enabled", "execution_authorized"],
+            "properties": {
+              "maturity": { "enum": ["preview", "beta", "stable"] },
+              "enabled": { "const": true },
+              "execution_authorized": { "const": false }
+            }
+          }
+        }
+      }
+    }
+  }
+}
