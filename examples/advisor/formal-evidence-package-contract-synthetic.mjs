@@ -1,3 +1,5 @@
+import { pathToFileURL } from "node:url";
+
 import {
   buildAdvisorFormalEvidencePackageContract,
   validateAdvisorFormalEvidencePackageContract,
@@ -35,7 +37,7 @@ export function createSyntheticFormalPackageContract(locale = "en") {
   });
 }
 
-if (process.argv[1] && import.meta.url === new URL(`file:///${process.argv[1].replaceAll("\\", "/")}`).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const contract = createSyntheticFormalPackageContract();
   const verification = validateAdvisorFormalEvidencePackageContract(contract);
   console.log(JSON.stringify({
