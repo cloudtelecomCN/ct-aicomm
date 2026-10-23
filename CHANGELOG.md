@@ -26,6 +26,7 @@ All notable public changes to CT-AIComm are recorded in this file. The project f
 - CT-618 immutable structure checklists, independent sample recalculation, exact tolerance coverage, and explainable difference registers bound to an eligible independence gate and active reviewer share.
 - CT-619 immutable supervised later-execution records, complete supervision-window checks, and a derived seven-dimension environment difference register that never claims historical-state reproduction.
 - CT-620 source-derived `consistent`, `deviation`, or `uncertain` opinions with role-separated issuance, append-only appeals, source-bound corrections, terminal withdrawal, and a complete fingerprint-chained history that sales and evidence submitters cannot alter.
+- CT-621 read-only review workspaces, eligibility-gated scope marks that always display institution, date, scope, outcome, and limitations, plus a fixed five-file checksum-bound offline export without customer or source records.
 - Truthful bootstrap governance, a machine-readable role roster, and a public external reviewer or maintainer admission, permission, review, and exit process.
 - CT-556 execution evidence binding v1 with tenant, execution, component-version, and fingerprint locks for policy, Agent, route, trace, and environment evidence.
 - CT-557 data path declaration v1 with stable region, directed-boundary, encryption, processor, JSON/YAML, and authoritative-context validation contracts.

@@ -2,7 +2,7 @@
 
 [English](README.md)
 
-这个零依赖 Node.js 包实现 CT-616“复核委托与范围”契约、CT-617 身份、组织与利益冲突门禁、CT-618 结构检查与统计复算记录、CT-619 监督重新运行记录，以及 CT-620 意见生命周期。CT-616 将委托绑定到一个精确的链路证据护照版本和一个已通过校验和验证的交付清单；CT-617 再把主体、实际控制、付款、职责分离、冲突与回避声明绑定到该精确委托；CT-618 要求有效的复核方分享，独立复算授权样本，应用声明容差策略，并登记每项非精确差异；CT-619 把后续监督运行和派生的七维环境差异登记绑定到精确历史包，但不声称重现了历史状态；CT-620 从已验证来源派生意见发现，并把申诉、更正和撤销保留在指纹链历史中。
+这个零依赖 Node.js 包实现 CT-616“复核委托与范围”契约、CT-617 身份、组织与利益冲突门禁、CT-618 结构检查与统计复算记录、CT-619 监督重新运行记录、CT-620 意见生命周期，以及 CT-621 复核工作区、范围化标识与离线导出。CT-616 将委托绑定到一个精确的链路证据护照版本和一个已通过校验和验证的交付清单；CT-617 再把主体、实际控制、付款、职责分离、冲突与回避声明绑定到该精确委托；CT-618 要求有效的复核方分享，独立复算授权样本，应用声明容差策略，并登记每项非精确差异；CT-619 把后续监督运行和派生的七维环境差异登记绑定到精确历史包，但不声称重现了历史状态；CT-620 从已验证来源派生意见发现，并把申诉、更正和撤销保留在指纹链历史中；CT-621 把这些已验证记录投影为只读工作区，仅允许当前合格意见生成范围化标识，并创建不含来源记录或客户数据的精简校验和导出包。
 
 本包创建不可变且带内容指纹的记录。任一范围字段发生变化时，调用方必须创建新的 `engagement_id`、引用精确的上一项委托并说明变更原因。复用委托标识或创建没有范围变化的替代委托都会失败关闭。
 
@@ -25,9 +25,15 @@
 - `projectIndependentReviewOpinion(input)` 投影当前发现，不覆盖原始意见。
 - `createIndependentReviewOpinionLifecycle(input)` 把意见、完整事件历史和当前投影输出为一个带指纹账本。
 - `verifyIndependentReviewOpinionLifecycle(input)` 重建全部来源与转换，包括每项更正来源。
+- `createIndependentReviewWorkspace(input)` 将精确的已验证复核来源投影为六步骤只读工作区。
+- `verifyIndependentReviewWorkspace(input)` 重建工作区，并拒绝来源、范围或指纹漂移。
+- `createIndependentReviewScopeMark(input)` 仅为无未关闭申诉的已签发或已更正意见创建范围化标识。
+- `verifyIndependentReviewScopeMark(input)` 重现展示的机构、日期、范围、结论和限制。
+- `createIndependentReviewWorkspaceExport(input)` 创建固定五文件、由校验和绑定的工作区包。
+- `verifyIndependentReviewWorkspaceExport(input)` 离线核验包完整性与精确绑定。
 
 ## 信任边界
 
-委托只记录约定，不证明复核方独立性。CT-617 门禁仅基于声明记录。CT-618 记录有限的结构检查与复算工作，CT-619 记录一次后续监督运行和环境差异，CT-620 只签发有边界且由来源派生的复核意见；实现、监督者和签署人身份仍由调用方声明，有效分享记录也不是对身份或导出授权的外部证明。本包不外部核验企业控制关系，不外部证明监督事实，不认证复核方独立性，不声称重现历史状态，不改变护照状态，不裁决 SLA，不形成性能声明，不提供法律结论，也不签发认证。
+委托只记录约定，不证明复核方独立性。CT-617 门禁仅基于声明记录。CT-618 记录有限的结构检查与复算工作，CT-619 记录一次后续监督运行和环境差异，CT-620 只签发有边界且由来源派生的复核意见，CT-621 只暴露只读模型与完整性导出；实现、监督者和签署人身份仍由调用方声明，有效分享记录也不是对身份或导出授权的外部证明。本包不托管租户、不认证用户、不持久化客户数据，不外部核验企业控制关系，不外部证明监督事实，不认证复核方独立性，不声称重现历史状态，不改变护照状态，不裁决 SLA，不形成性能声明，不提供法律结论，也不签发认证。
 
-参见 CT-616 [委托说明](../../docs/review/engagement-and-scope-v1.zh-CN.md)、CT-617 [身份与冲突说明](../../docs/review/identity-organization-and-conflicts-v1.zh-CN.md)、CT-618 [结构检查与统计复算说明](../../docs/review/structure-and-statistical-recalculation-v1.zh-CN.md)、CT-619 [监督重新运行说明](../../docs/review/supervised-reexecution-and-environment-differences-v1.zh-CN.md)、CT-620 [意见生命周期说明](../../docs/review/opinion-appeal-correction-withdrawal-v1.zh-CN.md)及对应合成示例。
+参见 CT-616 [委托说明](../../docs/review/engagement-and-scope-v1.zh-CN.md)、CT-617 [身份与冲突说明](../../docs/review/identity-organization-and-conflicts-v1.zh-CN.md)、CT-618 [结构检查与统计复算说明](../../docs/review/structure-and-statistical-recalculation-v1.zh-CN.md)、CT-619 [监督重新运行说明](../../docs/review/supervised-reexecution-and-environment-differences-v1.zh-CN.md)、CT-620 [意见生命周期说明](../../docs/review/opinion-appeal-correction-withdrawal-v1.zh-CN.md)、CT-621 [工作区、范围化标识与导出说明](../../docs/review/workspace-scope-mark-export-v1.zh-CN.md)及对应合成示例。

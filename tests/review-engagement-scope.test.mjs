@@ -163,7 +163,7 @@ test("publishes strict schema, SDK exports, bilingual guidance, and offline cove
   for (const definition of ["party", "toleranceRule", "purpose", "deliveryAgreement", "scope", "boundary"]) {
     assert.equal(schema.$defs[definition].additionalProperties, false, definition);
   }
-  assert.equal(publicApi.sdk_version, "0.26.0");
+  assert.equal(publicApi.sdk_version, "0.27.0");
   assert.ok(publicApi.public_contracts.includes("specs/review/review-engagement-v1.schema.json"));
   assert.ok(publicApi.public_tools.includes("packages/independent-run-review/index.mjs"));
   assert.ok(publicApi.public_tools.includes("packages/independent-run-review/index.d.ts"));

@@ -1,0 +1,429 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/review/review-workspace-scope-mark-v1.schema.json",
+  "title": "CT-AIComm Independent Run Review workspace and scope mark v1",
+  "oneOf": [
+    { "$ref": "#/$defs/workspace" },
+    { "$ref": "#/$defs/scopeMark" },
+    { "$ref": "#/$defs/exportManifest" }
+  ],
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$"
+    },
+    "semver": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$"
+    },
+    "fingerprint": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "instant": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["object_type", "object_id", "version", "tenant_id", "content_fingerprint"],
+      "properties": {
+        "object_type": { "type": "string", "minLength": 1, "maxLength": 96 },
+        "object_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/semver" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "reviewerOrganization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["organization_id", "display_name"],
+      "properties": {
+        "organization_id": { "$ref": "#/$defs/id" },
+        "display_name": { "type": "string", "minLength": 2, "maxLength": 160 }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "review_level",
+        "intended_use",
+        "purpose_statement",
+        "tolerance_mode",
+        "deliverables",
+        "passport_ref",
+        "delivery_ref"
+      ],
+      "properties": {
+        "review_level": {
+          "enum": ["structure-only", "statistical-recalculation", "supervised-reexecution"]
+        },
+        "intended_use": {
+          "enum": ["buyer-due-diligence", "seller-assurance", "internal-governance", "sla-evidence-preparation", "other"]
+        },
+        "purpose_statement": { "type": "string", "minLength": 3, "maxLength": 500 },
+        "tolerance_mode": { "enum": ["exact", "declared-thresholds"] },
+        "deliverables": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "items": { "type": "string", "minLength": 1, "maxLength": 128 }
+        },
+        "passport_ref": {
+          "allOf": [
+            { "$ref": "#/$defs/reference" },
+            { "properties": { "object_type": { "const": "passport_evidence_version" } } }
+          ]
+        },
+        "delivery_ref": {
+          "allOf": [
+            { "$ref": "#/$defs/reference" },
+            { "properties": { "object_type": { "const": "passport_delivery_manifest" } } }
+          ]
+        }
+      }
+    },
+    "opinionSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "opinion_ref",
+        "original_issued_at",
+        "effective_at",
+        "status",
+        "outcome",
+        "statement",
+        "reason_codes",
+        "finding_fingerprint",
+        "event_count",
+        "appeal_count",
+        "correction_count",
+        "open_appeal_count"
+      ],
+      "properties": {
+        "opinion_ref": {
+          "allOf": [
+            { "$ref": "#/$defs/reference" },
+            { "properties": { "object_type": { "const": "independent_review_opinion" } } }
+          ]
+        },
+        "original_issued_at": { "$ref": "#/$defs/instant" },
+        "effective_at": { "$ref": "#/$defs/instant" },
+        "status": {
+          "enum": ["issued", "under-appeal", "correction-required", "withdrawal-required", "corrected", "withdrawn"]
+        },
+        "outcome": { "enum": ["consistent", "deviation", "uncertain"] },
+        "statement": { "type": "string", "minLength": 3, "maxLength": 1000 },
+        "reason_codes": {
+          "type": "array",
+          "maxItems": 32,
+          "items": { "type": "string", "minLength": 1, "maxLength": 128 }
+        },
+        "finding_fingerprint": { "$ref": "#/$defs/fingerprint" },
+        "event_count": { "type": "integer", "minimum": 0 },
+        "appeal_count": { "type": "integer", "minimum": 0 },
+        "correction_count": { "type": "integer", "minimum": 0 },
+        "open_appeal_count": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "workflowStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["step_id", "state", "source_fingerprint"],
+      "properties": {
+        "step_id": { "enum": ["scope", "independence", "recalculation", "reexecution", "opinion", "scope-mark"] },
+        "state": { "enum": ["complete", "not-required", "attention", "blocked", "withdrawn", "ready"] },
+        "source_fingerprint": {
+          "oneOf": [
+            { "$ref": "#/$defs/fingerprint" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "eligibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["eligible", "state", "blockers"],
+      "properties": {
+        "eligible": { "type": "boolean" },
+        "state": { "enum": ["eligible", "blocked", "withdrawn"] },
+        "blockers": {
+          "type": "array",
+          "maxItems": 8,
+          "items": { "type": "string", "minLength": 1, "maxLength": 128 }
+        }
+      }
+    },
+    "limitations": {
+      "const": [
+        "declared-identity-not-authenticated",
+        "reviewer-independence-not-certified",
+        "export-authorization-not-externally-verified",
+        "historical-state-not-reproduced",
+        "no-performance-guarantee",
+        "no-sla-adjudication",
+        "not-a-legal-conclusion",
+        "not-certification"
+      ]
+    },
+    "workspaceBoundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scope_bound",
+        "read_model_only",
+        "customer_data_persisted",
+        "identity_authenticated",
+        "organization_control_externally_verified",
+        "export_authorization_externally_verified",
+        "reviewer_independence_certified",
+        "historical_state_reproduced",
+        "performance_claim_allowed",
+        "sla_adjudicated",
+        "legal_conclusion_issued",
+        "certification_issued"
+      ],
+      "properties": {
+        "scope_bound": { "const": true },
+        "read_model_only": { "const": true },
+        "customer_data_persisted": { "const": false },
+        "identity_authenticated": { "const": false },
+        "organization_control_externally_verified": { "const": false },
+        "export_authorization_externally_verified": { "const": false },
+        "reviewer_independence_certified": { "const": false },
+        "historical_state_reproduced": { "const": false },
+        "performance_claim_allowed": { "const": false },
+        "sla_adjudicated": { "const": false },
+        "legal_conclusion_issued": { "const": false },
+        "certification_issued": { "const": false }
+      }
+    },
+    "markBoundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scope_bound",
+        "trusted_signature_attached",
+        "identity_authenticated",
+        "organization_control_externally_verified",
+        "export_authorization_externally_verified",
+        "reviewer_independence_certified",
+        "historical_state_reproduced",
+        "performance_claim_allowed",
+        "sla_adjudicated",
+        "legal_conclusion_issued",
+        "certification_issued"
+      ],
+      "properties": {
+        "scope_bound": { "const": true },
+        "trusted_signature_attached": { "const": false },
+        "identity_authenticated": { "const": false },
+        "organization_control_externally_verified": { "const": false },
+        "export_authorization_externally_verified": { "const": false },
+        "reviewer_independence_certified": { "const": false },
+        "historical_state_reproduced": { "const": false },
+        "performance_claim_allowed": { "const": false },
+        "sla_adjudicated": { "const": false },
+        "legal_conclusion_issued": { "const": false },
+        "certification_issued": { "const": false }
+      }
+    },
+    "workspace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "record_type",
+        "workspace_id",
+        "version",
+        "tenant_id",
+        "created_by",
+        "generated_at",
+        "reviewer_organization",
+        "engagement_ref",
+        "independence_assessment_ref",
+        "recalculation_ref",
+        "reexecution_ref",
+        "lifecycle_ref",
+        "scope",
+        "opinion",
+        "workflow_steps",
+        "scope_mark_eligibility",
+        "limitations",
+        "boundary",
+        "content_fingerprint"
+      ],
+      "properties": {
+        "schema_version": { "const": "1.0.0" },
+        "record_type": { "const": "independent_review_workspace_snapshot" },
+        "workspace_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/semver" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "created_by": { "$ref": "#/$defs/id" },
+        "generated_at": { "$ref": "#/$defs/instant" },
+        "reviewer_organization": { "$ref": "#/$defs/reviewerOrganization" },
+        "engagement_ref": { "$ref": "#/$defs/reference" },
+        "independence_assessment_ref": { "$ref": "#/$defs/reference" },
+        "recalculation_ref": { "$ref": "#/$defs/reference" },
+        "reexecution_ref": {
+          "oneOf": [
+            { "$ref": "#/$defs/reference" },
+            { "type": "null" }
+          ]
+        },
+        "lifecycle_ref": { "$ref": "#/$defs/reference" },
+        "scope": { "$ref": "#/$defs/scope" },
+        "opinion": { "$ref": "#/$defs/opinionSummary" },
+        "workflow_steps": {
+          "type": "array",
+          "minItems": 6,
+          "maxItems": 6,
+          "items": { "$ref": "#/$defs/workflowStep" }
+        },
+        "scope_mark_eligibility": { "$ref": "#/$defs/eligibility" },
+        "limitations": { "$ref": "#/$defs/limitations" },
+        "boundary": { "$ref": "#/$defs/workspaceBoundary" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "display": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "institution", "date", "scope", "outcome", "limitation"],
+      "properties": {
+        "label": { "const": "Scope-bound independent review opinion" },
+        "institution": { "type": "string", "minLength": 2, "maxLength": 160 },
+        "date": { "type": "string", "format": "date" },
+        "scope": { "type": "string", "minLength": 3, "maxLength": 500 },
+        "outcome": { "enum": ["consistent", "deviation", "uncertain"] },
+        "limitation": { "type": "string", "minLength": 3, "maxLength": 500 }
+      }
+    },
+    "scopeMark": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "record_type",
+        "mark_id",
+        "version",
+        "tenant_id",
+        "created_by",
+        "issued_at",
+        "workspace_ref",
+        "reviewer_organization",
+        "opinion_date",
+        "scope",
+        "opinion",
+        "limitations",
+        "display",
+        "boundary",
+        "content_fingerprint"
+      ],
+      "properties": {
+        "schema_version": { "const": "1.0.0" },
+        "record_type": { "const": "independent_review_scope_mark" },
+        "mark_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/semver" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "created_by": { "$ref": "#/$defs/id" },
+        "issued_at": { "$ref": "#/$defs/instant" },
+        "workspace_ref": { "$ref": "#/$defs/reference" },
+        "reviewer_organization": { "$ref": "#/$defs/reviewerOrganization" },
+        "opinion_date": { "type": "string", "format": "date" },
+        "scope": { "$ref": "#/$defs/scope" },
+        "opinion": {
+          "allOf": [
+            { "$ref": "#/$defs/opinionSummary" },
+            { "properties": { "status": { "enum": ["issued", "corrected"] }, "open_appeal_count": { "const": 0 } } }
+          ]
+        },
+        "limitations": { "$ref": "#/$defs/limitations" },
+        "display": { "$ref": "#/$defs/display" },
+        "boundary": { "$ref": "#/$defs/markBoundary" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "media_type", "role", "bytes", "sha256"],
+      "properties": {
+        "path": { "enum": ["workspace.json", "scope-mark.json", "README.md"] },
+        "media_type": { "enum": ["application/json", "text/markdown"] },
+        "role": { "enum": ["review-workspace-snapshot", "scope-bound-review-mark", "human-readable-boundary"] },
+        "bytes": { "type": "integer", "minimum": 0 },
+        "sha256": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "exportBoundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "integrity_only",
+        "raw_samples_included",
+        "customer_identifiers_included",
+        "source_records_embedded",
+        "offline_source_reverification",
+        "trusted_signature_attached",
+        "performance_claim_allowed",
+        "sla_adjudicated",
+        "legal_conclusion_issued",
+        "certification_issued"
+      ],
+      "properties": {
+        "integrity_only": { "const": true },
+        "raw_samples_included": { "const": false },
+        "customer_identifiers_included": { "const": false },
+        "source_records_embedded": { "const": false },
+        "offline_source_reverification": { "const": false },
+        "trusted_signature_attached": { "const": false },
+        "performance_claim_allowed": { "const": false },
+        "sla_adjudicated": { "const": false },
+        "legal_conclusion_issued": { "const": false },
+        "certification_issued": { "const": false }
+      }
+    },
+    "exportManifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "record_type",
+        "export_id",
+        "version",
+        "tenant_id",
+        "created_by",
+        "created_at",
+        "workspace_ref",
+        "scope_mark_ref",
+        "artifacts",
+        "boundary",
+        "content_fingerprint"
+      ],
+      "properties": {
+        "schema_version": { "const": "1.0.0" },
+        "record_type": { "const": "independent_review_workspace_export_manifest" },
+        "export_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/semver" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "created_by": { "$ref": "#/$defs/id" },
+        "created_at": { "$ref": "#/$defs/instant" },
+        "workspace_ref": { "$ref": "#/$defs/reference" },
+        "scope_mark_ref": { "$ref": "#/$defs/reference" },
+        "artifacts": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": { "$ref": "#/$defs/artifact" }
+        },
+        "boundary": { "$ref": "#/$defs/exportBoundary" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    }
+  }
+}

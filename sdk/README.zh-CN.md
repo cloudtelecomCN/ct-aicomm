@@ -6,7 +6,7 @@
 import { normalizeNetworkTelemetry, validateControlMessage } from "./sdk/index.mjs";
 ```
 
-SDK 只校验并规范化调用方提供的证据，不包含凭据、不发现私有基础设施、不授权执行、不挂载 eBPF 程序，也不会把合成数据表述为实测数据。版本 `0.26.0` 新增 CT-620 来源派生意见、仅追加申诉、来源绑定更正、终态撤销，以及禁止销售或证据提交人修改发现的角色检查。同时保留 CT-619 后续运行绑定、CT-618 独立样本复算、CT-617 仅基于声明记录的独立性检查、CT-616 不可变复核委托，以及既有 Passport 与 Evidence Core 模块。身份认证、企业控制或导出授权外部核验、监督事实外部证明、复核方独立性认证、历史状态重现、性能结论、排名策略、消息代理投递、私有制品内容访问、法律审批、可信签名、认证签发和生产证据读取能力仍明确排除；当前以源码分发，尚未发布到 npm Registry。
+SDK 只校验并规范化调用方提供的证据，不包含凭据、不发现私有基础设施、不授权执行、不挂载 eBPF 程序，也不会把合成数据表述为实测数据。版本 `0.27.0` 新增 CT-621 只读复核工作区、资格门禁范围化标识和固定五文件完整性导出。同时保留 CT-620 来源派生意见生命周期、CT-619 后续运行绑定、CT-618 独立样本复算、CT-617 仅基于声明记录的独立性检查、CT-616 不可变复核委托，以及既有 Passport 与 Evidence Core 模块。托管租户、客户数据持久化、身份认证、企业控制或导出授权外部核验、监督事实外部证明、复核方独立性认证、历史状态重现、性能结论、排名策略、消息代理投递、私有制品内容访问、法律审批、可信签名、认证签发和生产证据读取能力仍明确排除；当前以源码分发，尚未发布到 npm Registry。
 
 护照集成方可以导入 `createPassportScenarioMethodFreeze`、`createPassportRunPlan`、`startPassportRun`、`createPassportNormalizedObservation`、`createPassportEvidenceVersion`、`createPassportReplacementVersion`、`createPassportVersionTerminalEvent`、`createPassportDeliveryPackage`、`createPassportShareGrant`、`createPassportSupplementRequest`、`createPassportSupplementResponse`、`createPassportBuyerDecision` 及相应验证器和投影器。契约冻结精确站点对、方向、协议、工作负载、方法、运行和规范观测。每个新封存版本都把独立复核和策略状态重置，并根据自身封存时间推导新鲜度截止时间，不继承前序版本的复核或新鲜度。分享记录不是 bearer 凭据、导出授权、独立复核或认证；买方决定与当前访问和平台证据状态始终分离。运行一旦开始，任何变更仍要求使用新的 `run_id`；SDK 不执行基准测试，也不认证结果。
 
@@ -19,6 +19,8 @@ SDK 只校验并规范化调用方提供的证据，不包含凭据、不发现�
 监督复核负责人可以导入 `compareIndependentReviewRunEnvironment`、`createIndependentReviewSupervisedReexecution` 和 `verifyIndependentReviewSupervisedReexecution`。CT-619 把后续运行和完整监督时间窗绑定到精确历史交付包与复算记录，再针对站点、协议、工作负载、方法、计算、软件和网络派生 `same`、`changed` 或 `unknown`。记录始终保持 `historical_state_reproduced: false`，不会把环境相似自动转化为性能结论。
 
 合格意见签署人可以导入 `createIndependentReviewOpinion`、`createIndependentReviewOpinionEvent`、`createIndependentReviewOpinionLifecycle` 及配套投影器和验证器。CT-620 从已验证的 CT-618/619 来源派生 `consistent`、`deviation` 或 `uncertain`。申诉本身不改变发现；只有 CT-617 中的精确意见签署人能处理、更正或撤销，全部历史发现都保留在指纹链中。
+
+复核工作区集成方可以导入 `createIndependentReviewWorkspace`、`createIndependentReviewScopeMark`、`createIndependentReviewWorkspaceExport` 及相应验证器。CT-621 将精确的已验证生命周期呈现为六步骤只读模型，仅允许无未关闭申诉的已签发或已更正意见生成标识，并始终显示机构、日期、范围、结论和限制。由校验和绑定的导出只验证包完整性，不包含客户数据或来源复核记录，也不是认证。
 
 证据目录消费方可以导入 `queryEvidenceRecords`、`getEvidenceQueryRecord`、`createEvidenceQueryStatus` 和 `buildEvidenceQueryRequest`。记录一旦包含租户、主体、存储、端点、凭据或联系字段就默认拒绝。SDK 不执行网络访问，也不定义生产服务器；私有查询只能由单独的实现完成认证与授权。
 

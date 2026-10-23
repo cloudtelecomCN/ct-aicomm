@@ -34,6 +34,7 @@
 - [Independent Run Review structure and statistical recalculation v1](review/structure-and-statistical-recalculation-v1.md)
 - [Independent Run Review supervised re-execution and environment differences v1](review/supervised-reexecution-and-environment-differences-v1.md)
 - [Independent Run Review opinion, appeal, correction, and withdrawal v1](review/opinion-appeal-correction-withdrawal-v1.md)
+- [Independent Run Review workspace, scope mark, and export v1](review/workspace-scope-mark-export-v1.md)
 - [CT-Bench reproduction and evidence contract](bench-reproduction/README.md)
 - [CT-DataPlane Agent threat model](security/agent-threat-model.md)
 - [CT-DataPlane Agent operations runbook](agent/operations.md)

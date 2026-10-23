@@ -245,7 +245,7 @@ test("publishes strict schemas, SDK exports, bilingual guidance, and the offline
   assert.equal(versionSchema.properties.record_type.const, "passport_evidence_version");
   assert.equal(eventSchema.additionalProperties, false);
   assert.equal(eventSchema.properties.record_type.const, "passport_version_terminal_event");
-  assert.equal(publicApi.sdk_version, "0.26.0");
+  assert.equal(publicApi.sdk_version, "0.27.0");
   for (const contract of [
     "specs/passport/evidence-version-v1.schema.json",
     "specs/passport/version-terminal-event-v1.schema.json"

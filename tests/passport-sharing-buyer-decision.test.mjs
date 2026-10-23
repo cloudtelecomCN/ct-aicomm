@@ -245,7 +245,7 @@ test("publishes strict schema, SDK exports, bilingual guidance, and offline cove
   for (const name of ["shareGrant", "shareRevocation", "supplementRequest", "supplementResponse", "buyerDecision"]) {
     assert.equal(schema.$defs[name].additionalProperties, false, name);
   }
-  assert.equal(publicApi.sdk_version, "0.26.0");
+  assert.equal(publicApi.sdk_version, "0.27.0");
   assert.ok(publicApi.public_contracts.includes("specs/passport/passport-sharing-v1.schema.json"));
   assert.ok(publicApi.public_tools.includes("packages/link-evidence-passport/sharing.mjs"));
   assert.ok(publicApi.public_tools.includes("packages/link-evidence-passport/sharing.d.ts"));

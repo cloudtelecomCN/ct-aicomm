@@ -66,6 +66,7 @@
     "tests/review-structure-recalculation.test.mjs",
     "tests/review-supervised-reexecution.test.mjs",
     "tests/review-opinion-lifecycle.test.mjs",
+    "tests/review-workspace-scope-mark.test.mjs",
     "tests/registry-entry-integrity.test.mjs"
   ],
   "synthetic_scenarios": [
@@ -582,6 +583,36 @@
           "corrected_finding_outcome": "deviation",
           "principal_authentication_verified": false,
           "reviewer_independence_certified": false,
+          "performance_claim_allowed": false,
+          "certification_issued": false,
+          "external_network_used": false
+        }
+      }
+    },
+    {
+      "id": "independent-review-workspace-scope-mark",
+      "entrypoint": "examples/review/workspace-scope-mark-synthetic.mjs",
+      "expect": {
+        "equals": {
+          "schema_version": "1.0.0",
+          "data_origin": "synthetic",
+          "workspace_read_model_only": true,
+          "workflow_step_count": 6,
+          "active_scope_mark_eligible": true,
+          "institution_visible": true,
+          "opinion_date_visible": true,
+          "scope_visible": true,
+          "limitation_visible": true,
+          "withdrawn_scope_mark_blocked": true,
+          "withdrawn_state_visible": true,
+          "export_file_count": 5,
+          "export_checksums_verified": true,
+          "exact_scope_binding_verified": true,
+          "raw_samples_included": false,
+          "customer_identifiers_included": false,
+          "source_records_embedded": false,
+          "offline_source_reverification": false,
+          "trusted_signature_attached": false,
           "performance_claim_allowed": false,
           "certification_issued": false,
           "external_network_used": false
