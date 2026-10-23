@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0.0",
+  "formula_version": "1.0.0",
+  "input_sha256": "sha256:9b403f2d0d8b97c6dd547671fc515082a11a062005b189a28484fbf7a31e2f70",
+  "calculation_sha256": "sha256:86884a9ca64ca1fc081d60a87df5b00cdd24327c170b5d1b7b252ec92a8704ea",
+  "status": "complete",
+  "expected_metrics": {
+    "weight_memory_gib": { "min": 143.423676491, "max": 143.423676491, "unit": "gibibytes" },
+    "kv_cache_memory_gib": { "min": 128, "max": 128, "unit": "gibibytes" },
+    "recommended_gpu_count": { "min": 5, "max": 5, "unit": "gpu_count" },
+    "planned_gpu_utilization_ratio": { "min": 0.6144, "max": 0.6144, "unit": "ratio" },
+    "instance_count": { "min": 1, "max": 1, "unit": "instance_count" },
+    "monthly_total_cost": { "min": 77274, "max": 77274, "unit": "currency_per_month" },
+    "monthly_total_tokens": { "min": 26910720000, "max": 26910720000, "unit": "tokens_per_month" },
+    "blended_cost_per_million_tokens": { "min": 2.871, "max": 2.871, "unit": "currency_per_million_tokens" }
+  },
+  "boundaries": {
+    "fixture_data_class": "synthetic",
+    "estimate_only": true,
+    "performance_claim_allowed": false,
+    "inventory_claim_allowed": false,
+    "execution_authorized": false
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0.0",
+  "model": {
+    "parameter_count": { "status": "provided", "value": { "min": 70000000000, "max": 70000000000 }, "unit": "parameters", "source_refs": ["synthetic://model/parameter-count"] },
+    "weight_bytes_per_parameter": { "status": "provided", "value": { "min": 2, "max": 2 }, "unit": "bytes_per_parameter", "source_refs": ["synthetic://model/precision"] },
+    "weight_overhead_ratio": { "status": "provided", "value": { "min": 0.1, "max": 0.1 }, "unit": "ratio", "source_refs": ["synthetic://assumption/weight-overhead"] }
+  },
+  "workload": {
+    "active_context_tokens_per_request": { "status": "provided", "value": { "min": 4096, "max": 4096 }, "unit": "tokens", "source_refs": ["synthetic://workload/context"] },
+    "concurrent_requests": { "status": "provided", "value": { "min": 64, "max": 64 }, "unit": "count", "source_refs": ["synthetic://workload/concurrency"] },
+    "request_rate": { "status": "provided", "value": { "min": 8, "max": 8 }, "unit": "requests_per_second", "source_refs": ["synthetic://workload/request-rate"] },
+    "input_tokens_per_request": { "status": "provided", "value": { "min": 1024, "max": 1024 }, "unit": "tokens", "source_refs": ["synthetic://workload/input-tokens"] },
+    "output_tokens_per_request": { "status": "provided", "value": { "min": 256, "max": 256 }, "unit": "tokens", "source_refs": ["synthetic://workload/output-tokens"] }
+  },
+  "candidate": {
+    "gpu_memory_per_device_gib": { "status": "provided", "value": { "min": 80, "max": 80 }, "unit": "gibibytes", "source_refs": ["synthetic://candidate/gpu-memory"] },
+    "memory_utilization_ratio": { "status": "provided", "value": { "min": 0.9, "max": 0.9 }, "unit": "ratio", "source_refs": ["synthetic://assumption/memory-utilization"] },
+    "runtime_reserved_memory_per_gpu_gib": { "status": "provided", "value": { "min": 4, "max": 4 }, "unit": "gibibytes", "source_refs": ["synthetic://assumption/runtime-reserve"] },
+    "kv_cache_bytes_per_token_per_request": { "status": "provided", "value": { "min": 524288, "max": 524288 }, "unit": "bytes_per_token", "source_refs": ["synthetic://candidate/kv-cache"] },
+    "output_tokens_per_second_per_gpu": { "status": "provided", "value": { "min": 800, "max": 800 }, "unit": "tokens_per_second", "source_refs": ["synthetic://candidate/throughput"] },
+    "capacity_headroom_ratio": { "status": "provided", "value": { "min": 0.2, "max": 0.2 }, "unit": "ratio", "source_refs": ["synthetic://assumption/headroom"] }
+  },
+  "cost_model": {
+    "currency": "CNY",
+    "gpus_per_instance": { "status": "provided", "value": { "min": 8, "max": 8 }, "unit": "gpu_count", "source_refs": ["synthetic://price/instance-shape"] },
+    "instance_price_per_hour": { "status": "provided", "value": { "min": 100, "max": 100 }, "unit": "currency_per_hour", "source_refs": ["synthetic://price/instance-hour"] },
+    "billed_hours_per_month": { "status": "provided", "value": { "min": 730, "max": 730 }, "unit": "hours", "source_refs": ["synthetic://assumption/month-hours"] },
+    "network_egress_gib_per_month": { "status": "provided", "value": { "min": 10000, "max": 10000 }, "unit": "gibibytes", "source_refs": ["synthetic://workload/egress"] },
+    "network_price_per_gib": { "status": "provided", "value": { "min": 0.5, "max": 0.5 }, "unit": "currency_per_gibibyte", "source_refs": ["synthetic://price/network-egress"] },
+    "storage_cost_per_month": { "status": "provided", "value": { "min": 2000, "max": 2000 }, "unit": "currency_per_month", "source_refs": ["synthetic://price/storage"] },
+    "support_cost_per_month": { "status": "provided", "value": { "min": 1000, "max": 1000 }, "unit": "currency_per_month", "source_refs": ["synthetic://price/support"] },
+    "other_cost_per_month": { "status": "not_applicable", "value": null, "unit": "currency_per_month", "source_refs": ["synthetic://assumption/no-other-cost"] },
+    "discount_ratio": { "status": "provided", "value": { "min": 0.1, "max": 0.1 }, "unit": "ratio", "source_refs": ["synthetic://price/discount"] },
+    "tax_ratio": { "status": "provided", "value": { "min": 0.06, "max": 0.06 }, "unit": "ratio", "source_refs": ["synthetic://price/tax"] }
+  }
+}

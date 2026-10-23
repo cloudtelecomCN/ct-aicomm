@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/advisor/sizing-cost-input-v1.schema.json",
+  "title": "CT-Advisor Sizing and Cost Input v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "model", "workload", "candidate", "cost_model"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["parameter_count", "weight_bytes_per_parameter", "weight_overhead_ratio"],
+      "properties": {
+        "parameter_count": { "$ref": "#/$defs/estimate" },
+        "weight_bytes_per_parameter": { "$ref": "#/$defs/estimate" },
+        "weight_overhead_ratio": { "$ref": "#/$defs/estimate" }
+      }
+    },
+    "workload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["active_context_tokens_per_request", "concurrent_requests", "request_rate", "input_tokens_per_request", "output_tokens_per_request"],
+      "properties": {
+        "active_context_tokens_per_request": { "$ref": "#/$defs/estimate" },
+        "concurrent_requests": { "$ref": "#/$defs/estimate" },
+        "request_rate": { "$ref": "#/$defs/estimate" },
+        "input_tokens_per_request": { "$ref": "#/$defs/estimate" },
+        "output_tokens_per_request": { "$ref": "#/$defs/estimate" }
+      }
+    },
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["gpu_memory_per_device_gib", "memory_utilization_ratio", "runtime_reserved_memory_per_gpu_gib", "kv_cache_bytes_per_token_per_request", "output_tokens_per_second_per_gpu", "capacity_headroom_ratio"],
+      "properties": {
+        "gpu_memory_per_device_gib": { "$ref": "#/$defs/estimate" },
+        "memory_utilization_ratio": { "$ref": "#/$defs/estimate" },
+        "runtime_reserved_memory_per_gpu_gib": { "$ref": "#/$defs/estimate" },
+        "kv_cache_bytes_per_token_per_request": { "$ref": "#/$defs/estimate" },
+        "output_tokens_per_second_per_gpu": { "$ref": "#/$defs/estimate" },
+        "capacity_headroom_ratio": { "$ref": "#/$defs/estimate" }
+      }
+    },
+    "cost_model": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["currency", "gpus_per_instance", "instance_price_per_hour", "billed_hours_per_month", "network_egress_gib_per_month", "network_price_per_gib", "storage_cost_per_month", "support_cost_per_month", "other_cost_per_month", "discount_ratio", "tax_ratio"],
+          "properties": {
+            "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+            "gpus_per_instance": { "$ref": "#/$defs/estimate" },
+            "instance_price_per_hour": { "$ref": "#/$defs/estimate" },
+            "billed_hours_per_month": { "$ref": "#/$defs/estimate" },
+            "network_egress_gib_per_month": { "$ref": "#/$defs/estimate" },
+            "network_price_per_gib": { "$ref": "#/$defs/estimate" },
+            "storage_cost_per_month": { "$ref": "#/$defs/estimate" },
+            "support_cost_per_month": { "$ref": "#/$defs/estimate" },
+            "other_cost_per_month": { "$ref": "#/$defs/estimate" },
+            "discount_ratio": { "$ref": "#/$defs/estimate" },
+            "tax_ratio": { "$ref": "#/$defs/estimate" }
+          }
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "range": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["min", "max"],
+      "properties": {
+        "min": { "type": "number" },
+        "max": { "type": "number" }
+      }
+    },
+    "estimate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "value", "unit", "source_refs"],
+      "properties": {
+        "status": { "type": "string", "enum": ["provided", "unknown", "not_applicable"] },
+        "value": { "oneOf": [{ "$ref": "#/$defs/range" }, { "type": "null" }] },
+        "unit": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+        "source_refs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 20,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1, "maxLength": 500 }
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "provided" } }, "required": ["status"] },
+          "then": { "properties": { "value": { "$ref": "#/$defs/range" } } },
+          "else": { "properties": { "value": { "type": "null" } } }
+        }
+      ]
+    }
+  }
+}
