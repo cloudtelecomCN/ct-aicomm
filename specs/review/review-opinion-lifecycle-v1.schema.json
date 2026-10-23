@@ -1,0 +1,325 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/review/review-opinion-lifecycle-v1.schema.json",
+  "title": "CT-AIComm independent review opinion lifecycle v1",
+  "description": "A closed CT-620 ledger containing one source-derived opinion plus append-only appeal, correction, and withdrawal history. Conformance does not authenticate principals, certify independence, establish performance, adjudicate an SLA, or issue certification.",
+  "$ref": "#/$defs/lifecycle",
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$"
+    },
+    "semver": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$"
+    },
+    "fingerprint": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "instant": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["object_type", "object_id", "version", "tenant_id", "content_fingerprint"],
+      "properties": {
+        "object_type": { "$ref": "#/$defs/id" },
+        "object_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/semver" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "statisticFinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["finding_id", "source_type", "source_id", "outcome", "source_result", "explanation"],
+      "properties": {
+        "finding_id": { "$ref": "#/$defs/id" },
+        "source_type": { "const": "recalculation-statistic" },
+        "source_id": { "$ref": "#/$defs/id" },
+        "outcome": { "enum": ["consistent", "deviation"] },
+        "source_result": { "enum": ["exact", "within-tolerance", "outside-tolerance"] },
+        "explanation": { "type": "string", "minLength": 1, "maxLength": 2000 }
+      }
+    },
+    "environmentFinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["finding_id", "source_type", "source_id", "outcome", "source_result", "explanation"],
+      "properties": {
+        "finding_id": { "$ref": "#/$defs/id" },
+        "source_type": { "const": "environment-dimension" },
+        "source_id": { "$ref": "#/$defs/id" },
+        "outcome": { "enum": ["consistent", "uncertain"] },
+        "source_result": { "enum": ["same", "changed", "unknown"] },
+        "explanation": { "type": "string", "minLength": 1, "maxLength": 2000 }
+      }
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "outcome", "basis", "statement", "reason_codes", "source_recalculation_fingerprint",
+        "source_reexecution_fingerprint", "statistic_findings", "environment_findings",
+        "historical_state_reproduced", "performance_conclusion_issued", "finding_fingerprint"
+      ],
+      "properties": {
+        "outcome": { "enum": ["consistent", "deviation", "uncertain"] },
+        "basis": { "enum": ["statistical-recalculation", "recalculation-and-later-execution"] },
+        "statement": { "type": "string", "minLength": 1, "maxLength": 2000 },
+        "reason_codes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "outside-declared-tolerance",
+              "later-execution-environment-changed",
+              "later-execution-environment-unknown",
+              "within-declared-tolerance"
+            ]
+          }
+        },
+        "source_recalculation_fingerprint": { "$ref": "#/$defs/fingerprint" },
+        "source_reexecution_fingerprint": {
+          "oneOf": [{ "$ref": "#/$defs/fingerprint" }, { "type": "null" }]
+        },
+        "statistic_findings": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1024,
+          "items": { "$ref": "#/$defs/statisticFinding" }
+        },
+        "environment_findings": {
+          "type": "array",
+          "maxItems": 7,
+          "items": { "$ref": "#/$defs/environmentFinding" }
+        },
+        "historical_state_reproduced": { "const": false },
+        "performance_conclusion_issued": { "const": false },
+        "finding_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "opinionBoundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "opinion_issued", "finding_derived_from_verified_sources", "append_only_lifecycle_required",
+        "submitter_may_modify_finding", "sales_may_modify_finding", "independence_basis",
+        "principal_authentication_verified", "organization_control_externally_verified",
+        "export_authorization_externally_verified", "reviewer_independence_certified",
+        "historical_state_reproduced", "passport_status_mutated", "performance_claim_allowed",
+        "sla_adjudicated", "certification_issued"
+      ],
+      "properties": {
+        "opinion_issued": { "const": true },
+        "finding_derived_from_verified_sources": { "const": true },
+        "append_only_lifecycle_required": { "const": true },
+        "submitter_may_modify_finding": { "const": false },
+        "sales_may_modify_finding": { "const": false },
+        "independence_basis": { "const": "declared-records-only" },
+        "principal_authentication_verified": { "const": false },
+        "organization_control_externally_verified": { "const": false },
+        "export_authorization_externally_verified": { "const": false },
+        "reviewer_independence_certified": { "const": false },
+        "historical_state_reproduced": { "const": false },
+        "passport_status_mutated": { "const": false },
+        "performance_claim_allowed": { "const": false },
+        "sla_adjudicated": { "const": false },
+        "certification_issued": { "const": false }
+      }
+    },
+    "opinion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version", "record_type", "opinion_id", "version", "tenant_id", "created_by",
+        "issued_at", "engagement_ref", "independence_assessment_ref", "recalculation_ref",
+        "reexecution_ref", "signer", "finding", "boundary", "content_fingerprint"
+      ],
+      "properties": {
+        "schema_version": { "const": "1.0.0" },
+        "record_type": { "const": "independent_review_opinion" },
+        "opinion_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/semver" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "created_by": { "$ref": "#/$defs/id" },
+        "issued_at": { "$ref": "#/$defs/instant" },
+        "engagement_ref": { "$ref": "#/$defs/reference" },
+        "independence_assessment_ref": { "$ref": "#/$defs/reference" },
+        "recalculation_ref": { "$ref": "#/$defs/reference" },
+        "reexecution_ref": {
+          "oneOf": [{ "$ref": "#/$defs/reference" }, { "type": "null" }]
+        },
+        "signer": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["subject_id", "organization_id", "role"],
+          "properties": {
+            "subject_id": { "$ref": "#/$defs/id" },
+            "organization_id": { "$ref": "#/$defs/id" },
+            "role": { "const": "opinion-signer" }
+          }
+        },
+        "finding": { "$ref": "#/$defs/finding" },
+        "boundary": { "$ref": "#/$defs/opinionBoundary" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subject_id", "organization_id", "role"],
+      "properties": {
+        "subject_id": { "$ref": "#/$defs/id" },
+        "organization_id": { "$ref": "#/$defs/id" },
+        "role": { "enum": ["commissioner", "evidence-submitter", "sales", "opinion-signer"] }
+      }
+    },
+    "replacement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["recalculation_ref", "reexecution_ref", "finding"],
+      "properties": {
+        "recalculation_ref": { "$ref": "#/$defs/reference" },
+        "reexecution_ref": {
+          "oneOf": [{ "$ref": "#/$defs/reference" }, { "type": "null" }]
+        },
+        "finding": { "$ref": "#/$defs/finding" }
+      }
+    },
+    "eventBoundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "append_only", "prior_opinion_retained", "finding_modified", "submitter_may_modify_finding",
+        "sales_may_modify_finding", "performance_claim_allowed", "certification_issued"
+      ],
+      "properties": {
+        "append_only": { "const": true },
+        "prior_opinion_retained": { "const": true },
+        "finding_modified": { "type": "boolean" },
+        "submitter_may_modify_finding": { "const": false },
+        "sales_may_modify_finding": { "const": false },
+        "performance_claim_allowed": { "const": false },
+        "certification_issued": { "const": false }
+      }
+    },
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version", "record_type", "event_id", "version", "tenant_id", "opinion_ref",
+        "sequence", "event_type", "occurred_at", "actor", "reason", "appeal_id",
+        "requested_remedy", "resolution", "replacement", "previous_event_fingerprint",
+        "boundary", "content_fingerprint"
+      ],
+      "properties": {
+        "schema_version": { "const": "1.0.0" },
+        "record_type": { "const": "independent_review_opinion_event" },
+        "event_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/semver" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "opinion_ref": { "$ref": "#/$defs/reference" },
+        "sequence": { "type": "integer", "minimum": 1 },
+        "event_type": { "enum": ["appeal-filed", "appeal-resolved", "correction-issued", "withdrawal-issued"] },
+        "occurred_at": { "$ref": "#/$defs/instant" },
+        "actor": { "$ref": "#/$defs/actor" },
+        "reason": { "type": "string", "minLength": 8, "maxLength": 2000 },
+        "appeal_id": { "oneOf": [{ "$ref": "#/$defs/id" }, { "type": "null" }] },
+        "requested_remedy": { "enum": ["uphold", "correct", "withdraw", null] },
+        "resolution": { "enum": ["upheld", "correction-required", "withdrawal-required", null] },
+        "replacement": { "oneOf": [{ "$ref": "#/$defs/replacement" }, { "type": "null" }] },
+        "previous_event_fingerprint": { "oneOf": [{ "$ref": "#/$defs/fingerprint" }, { "type": "null" }] },
+        "boundary": { "$ref": "#/$defs/eventBoundary" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "appealProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "appeal_id", "status", "requested_remedy", "disputed_finding_fingerprint",
+        "filed_event_id", "resolution", "resolved_event_id", "remedy_event_id"
+      ],
+      "properties": {
+        "appeal_id": { "$ref": "#/$defs/id" },
+        "status": { "enum": ["open", "remedy-required", "closed"] },
+        "requested_remedy": { "enum": ["uphold", "correct", "withdraw"] },
+        "disputed_finding_fingerprint": { "$ref": "#/$defs/fingerprint" },
+        "filed_event_id": { "$ref": "#/$defs/id" },
+        "resolution": { "enum": ["upheld", "correction-required", "withdrawal-required", null] },
+        "resolved_event_id": { "oneOf": [{ "$ref": "#/$defs/id" }, { "type": "null" }] },
+        "remedy_event_id": { "oneOf": [{ "$ref": "#/$defs/id" }, { "type": "null" }] }
+      }
+    },
+    "projection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "opinion_ref", "status", "current_finding", "current_sources", "event_count",
+        "correction_count", "appeal_count", "open_appeal_count", "appeals",
+        "last_event_fingerprint", "withdrawn_at", "history_complete", "original_opinion_retained"
+      ],
+      "properties": {
+        "opinion_ref": { "$ref": "#/$defs/reference" },
+        "status": { "enum": ["issued", "under-appeal", "correction-required", "withdrawal-required", "corrected", "withdrawn"] },
+        "current_finding": { "$ref": "#/$defs/finding" },
+        "current_sources": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["recalculation_ref", "reexecution_ref"],
+          "properties": {
+            "recalculation_ref": { "$ref": "#/$defs/reference" },
+            "reexecution_ref": { "oneOf": [{ "$ref": "#/$defs/reference" }, { "type": "null" }] }
+          }
+        },
+        "event_count": { "type": "integer", "minimum": 0 },
+        "correction_count": { "type": "integer", "minimum": 0 },
+        "appeal_count": { "type": "integer", "minimum": 0 },
+        "open_appeal_count": { "type": "integer", "minimum": 0 },
+        "appeals": { "type": "array", "maxItems": 1024, "items": { "$ref": "#/$defs/appealProjection" } },
+        "last_event_fingerprint": { "oneOf": [{ "$ref": "#/$defs/fingerprint" }, { "type": "null" }] },
+        "withdrawn_at": { "oneOf": [{ "$ref": "#/$defs/instant" }, { "type": "null" }] },
+        "history_complete": { "const": true },
+        "original_opinion_retained": { "const": true }
+      }
+    },
+    "lifecycleBoundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "complete_append_only_history", "original_opinion_retained", "appeals_do_not_modify_findings",
+        "only_eligible_signer_may_correct_or_withdraw", "performance_claim_allowed", "certification_issued"
+      ],
+      "properties": {
+        "complete_append_only_history": { "const": true },
+        "original_opinion_retained": { "const": true },
+        "appeals_do_not_modify_findings": { "const": true },
+        "only_eligible_signer_may_correct_or_withdraw": { "const": true },
+        "performance_claim_allowed": { "const": false },
+        "certification_issued": { "const": false }
+      }
+    },
+    "lifecycle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "record_type", "opinion", "events", "projection", "boundary", "content_fingerprint"],
+      "properties": {
+        "schema_version": { "const": "1.0.0" },
+        "record_type": { "const": "independent_review_opinion_lifecycle" },
+        "opinion": { "$ref": "#/$defs/opinion" },
+        "events": { "type": "array", "maxItems": 1024, "items": { "$ref": "#/$defs/event" } },
+        "projection": { "$ref": "#/$defs/projection" },
+        "boundary": { "$ref": "#/$defs/lifecycleBoundary" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    }
+  }
+}

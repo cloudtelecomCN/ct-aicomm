@@ -44,6 +44,8 @@ The record preserves the later run fingerprint, artifact-manifest fingerprint, s
 
 CT-619 records supervision but does not externally attest the supervisor, authenticate the named principal, verify organization control, verify export authorization, or certify reviewer independence. It does not issue an opinion, mutate Passport status, establish a performance claim, adjudicate an SLA, or issue certification.
 
+[CT-620](./opinion-appeal-correction-withdrawal-v1.md) adds a separately fingerprinted, source-derived opinion plus append-only appeal, correction, and withdrawal history. It does not expand the CT-619 trust boundary.
+
 All checked-in examples are synthetic. Their purpose is to exercise binding and failure behavior without credentials, customer data, private infrastructure, or external network access.
 
 ## Run offline

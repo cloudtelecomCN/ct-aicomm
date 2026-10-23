@@ -216,7 +216,7 @@ test("publishes strict schema, SDK exports, bilingual guidance, and offline cove
   ]);
   assert.equal(schema.$defs.reexecutionRecord.additionalProperties, false);
   assert.equal(schema.$defs.reexecutionRecord.properties.record_type.const, "independent_review_supervised_reexecution");
-  assert.equal(publicApi.sdk_version, "0.25.0");
+  assert.equal(publicApi.sdk_version, "0.26.0");
   assert.ok(publicApi.public_contracts.includes("specs/review/review-supervised-reexecution-v1.schema.json"));
   for (const tool of [
     "packages/independent-run-review/reexecution.mjs",

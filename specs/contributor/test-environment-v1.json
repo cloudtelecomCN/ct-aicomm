@@ -65,6 +65,7 @@
     "tests/review-independence-conflicts.test.mjs",
     "tests/review-structure-recalculation.test.mjs",
     "tests/review-supervised-reexecution.test.mjs",
+    "tests/review-opinion-lifecycle.test.mjs",
     "tests/registry-entry-integrity.test.mjs"
   ],
   "synthetic_scenarios": [
@@ -555,6 +556,32 @@
           "principal_authentication_verified": false,
           "export_authorization_externally_verified": false,
           "opinion_issued": false,
+          "performance_claim_allowed": false,
+          "certification_issued": false,
+          "external_network_used": false
+        }
+      }
+    },
+    {
+      "id": "independent-review-opinion-lifecycle",
+      "entrypoint": "examples/review/opinion-lifecycle-synthetic.mjs",
+      "expect": {
+        "equals": {
+          "schema_version": "1.0.0",
+          "data_origin": "synthetic",
+          "consistent_outcome": "consistent",
+          "deviation_outcome": "deviation",
+          "uncertain_outcome": "uncertain",
+          "appeal_count": 2,
+          "correction_count": 1,
+          "lifecycle_status": "withdrawn",
+          "complete_history": true,
+          "original_opinion_retained": true,
+          "submitter_modified_finding": false,
+          "sales_modified_finding": false,
+          "corrected_finding_outcome": "deviation",
+          "principal_authentication_verified": false,
+          "reviewer_independence_certified": false,
           "performance_claim_allowed": false,
           "certification_issued": false,
           "external_network_used": false

@@ -396,7 +396,7 @@ test("publishes strict schemas, bilingual guidance, SDK exports, and an offline 
     assert.match(document, /synthetic|合成/iu);
     assert.match(document, /certification|认证/iu);
   }
-  assert.equal(publicApi.sdk_version, "0.25.0");
+  assert.equal(publicApi.sdk_version, "0.26.0");
   for (const contract of [
     "specs/passport/scenario-method-freeze-v1.schema.json",
     "specs/passport/run-freeze-binding-v1.schema.json"

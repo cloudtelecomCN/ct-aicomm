@@ -135,7 +135,7 @@ test("publishes strict schema, SDK exports, bilingual guidance, and offline cove
   ]);
   assert.equal(schema.additionalProperties, false);
   assert.equal(schema.properties.record_type.const, "passport_comparison");
-  assert.equal(publicApi.sdk_version, "0.25.0");
+  assert.equal(publicApi.sdk_version, "0.26.0");
   assert.ok(publicApi.public_contracts.includes("specs/passport/passport-comparison-v1.schema.json"));
   for (const exported of [
     "PASSPORT_COMPARISON_VERSION",

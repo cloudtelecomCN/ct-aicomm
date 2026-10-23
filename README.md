@@ -29,6 +29,7 @@ CT-AIComm is CloudTelecom's open, evidence-first operating system initiative for
 - [Independent Run Review identity, organization, and conflicts v1](docs/review/identity-organization-and-conflicts-v1.md)
 - [Independent Run Review structure and statistical recalculation v1](docs/review/structure-and-statistical-recalculation-v1.md)
 - [Independent Run Review supervised re-execution and environment differences v1](docs/review/supervised-reexecution-and-environment-differences-v1.md)
+- [Independent Run Review opinion, appeal, correction, and withdrawal v1](docs/review/opinion-appeal-correction-withdrawal-v1.md)
 - [TTFT sample v1 JSON Schema](docs/bench-reproduction/ttft-sample.schema.json)
 - [CT-Bench reproduction CLI](packages/bench-reproduce/)
 - [vLLM connector compatibility v1](docs/connectors/vllm.md)
