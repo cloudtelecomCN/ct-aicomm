@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/advisor/multi-objective-analysis-v1.schema.json",
+  "title": "CT-Advisor Multi-objective Analysis Result v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "analysis_id", "project_id", "method", "constraint_evaluation", "generated_at", "input_sha256", "observation_set_sha256", "metric_coverage", "normalization", "pareto", "scenarios", "decision_support", "summary", "boundaries", "content_sha256"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "analysis_id": { "type": "string", "pattern": "^advisor_analysis_[0-9a-f-]{36}$" },
+    "project_id": { "type": "string", "pattern": "^advisor_project_[0-9a-f-]{36}$" },
+    "method": {
+      "type": "object", "additionalProperties": false,
+      "required": ["method_id", "method_version", "method_sha256"],
+      "properties": { "method_id": { "const": "ct-advisor-multi-objective-analysis" }, "method_version": { "const": "1.0.0" }, "method_sha256": { "$ref": "#/$defs/sha256" } }
+    },
+    "constraint_evaluation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["evaluation_id", "content_sha256", "input_sha256", "readiness_status"],
+      "properties": {
+        "evaluation_id": { "type": "string", "pattern": "^advisor_constraint_evaluation_[0-9a-f-]{36}$" },
+        "content_sha256": { "$ref": "#/$defs/sha256" },
+        "input_sha256": { "$ref": "#/$defs/sha256" },
+        "readiness_status": { "enum": ["ready", "ready_with_gaps"] }
+      }
+    },
+    "generated_at": { "type": "string", "format": "date-time", "pattern": "Z$" },
+    "input_sha256": { "$ref": "#/$defs/sha256" },
+    "observation_set_sha256": { "$ref": "#/$defs/sha256" },
+    "metric_coverage": {
+      "type": "object", "additionalProperties": false,
+      "required": ["metric_count", "eligible_candidate_count", "complete_candidate_count", "incomplete_candidate_count", "candidates"],
+      "properties": {
+        "metric_count": { "const": 10 },
+        "eligible_candidate_count": { "type": "integer", "minimum": 2, "maximum": 500 },
+        "complete_candidate_count": { "type": "integer", "minimum": 0, "maximum": 500 },
+        "incomplete_candidate_count": { "type": "integer", "minimum": 0, "maximum": 500 },
+        "candidates": { "type": "array", "minItems": 2, "maxItems": 500, "items": { "$ref": "#/$defs/candidateCoverage" } }
+      }
+    },
+    "normalization": { "type": "array", "minItems": 10, "maxItems": 10, "items": { "$ref": "#/$defs/normalization" } },
+    "pareto": { "$ref": "#/$defs/pareto" },
+    "scenarios": { "type": "array", "minItems": 4, "maxItems": 4, "items": { "$ref": "#/$defs/scenario" } },
+    "decision_support": { "$ref": "#/$defs/decisionSupport" },
+    "summary": { "$ref": "#/$defs/summary" },
+    "boundaries": { "$ref": "#/$defs/boundaries" },
+    "content_sha256": { "$ref": "#/$defs/sha256" }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "candidateId": { "type": "string", "pattern": "^advisor_combination_[0-9a-f-]{36}$" },
+    "candidateCoverage": {
+      "type": "object", "additionalProperties": false,
+      "required": ["combination_id", "combination_key", "display_name", "status", "unknown_metric_ids"],
+      "properties": {
+        "combination_id": { "$ref": "#/$defs/candidateId" }, "combination_key": { "type": "string" }, "display_name": { "type": "string" },
+        "status": { "enum": ["complete", "incomplete"] }, "unknown_metric_ids": { "type": "array", "uniqueItems": true, "items": { "type": "string" } }
+      }
+    },
+    "normalization": {
+      "type": "object", "additionalProperties": false,
+      "required": ["metric_id", "direction", "unit", "observed_minimum", "observed_maximum"],
+      "properties": {
+        "metric_id": { "type": "string" }, "direction": { "enum": ["minimize", "maximize"] }, "unit": { "type": "string" },
+        "observed_minimum": { "type": ["number", "null"] }, "observed_maximum": { "type": ["number", "null"] }
+      }
+    },
+    "pareto": {
+      "type": "object", "additionalProperties": false, "required": ["frontier_candidate_ids", "dominated_candidates"],
+      "properties": {
+        "frontier_candidate_ids": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/candidateId" } },
+        "dominated_candidates": { "type": "array", "items": { "type": "object", "additionalProperties": false, "required": ["combination_id", "dominated_by"], "properties": { "combination_id": { "$ref": "#/$defs/candidateId" }, "dominated_by": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "$ref": "#/$defs/candidateId" } } } } }
+      }
+    },
+    "weight": { "type": "object", "additionalProperties": false, "required": ["metric_id", "weight_basis_points"], "properties": { "metric_id": { "type": "string" }, "weight_basis_points": { "type": "integer", "minimum": 0, "maximum": 10000 } } },
+    "contribution": { "type": "object", "additionalProperties": false, "required": ["metric_id", "normalized_value", "weight_basis_points", "weighted_contribution"], "properties": { "metric_id": { "type": "string" }, "normalized_value": { "type": "number", "minimum": 0, "maximum": 1 }, "weight_basis_points": { "type": "integer" }, "weighted_contribution": { "type": "number", "minimum": 0, "maximum": 1 } } },
+    "ranking": { "type": "object", "additionalProperties": false, "required": ["rank", "combination_id", "combination_key", "score", "pareto_frontier", "contributions"], "properties": { "rank": { "type": "integer", "minimum": 1 }, "combination_id": { "$ref": "#/$defs/candidateId" }, "combination_key": { "type": "string" }, "score": { "type": "number", "minimum": 0, "maximum": 1 }, "pareto_frontier": { "type": "boolean" }, "contributions": { "type": "array", "minItems": 10, "maxItems": 10, "items": { "$ref": "#/$defs/contribution" } } } },
+    "recommendation": { "type": "object", "additionalProperties": false, "required": ["status", "primary_candidate_id", "alternative_candidate_ids"], "properties": { "status": { "enum": ["read_only", "tie", "insufficient_data"] }, "primary_candidate_id": { "anyOf": [{ "$ref": "#/$defs/candidateId" }, { "type": "null" }] }, "alternative_candidate_ids": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/candidateId" } } } },
+    "stabilityRange": { "type": "object", "additionalProperties": false, "required": ["metric_id", "tested_weight_basis_points", "retained_leader_min_basis_points", "retained_leader_max_basis_points", "baseline_leader_retained_for_all_tested_weights"], "properties": { "metric_id": { "type": "string" }, "tested_weight_basis_points": { "type": "array", "minItems": 2, "maxItems": 3, "items": { "type": "integer", "minimum": 0, "maximum": 10000 } }, "retained_leader_min_basis_points": { "type": ["integer", "null"], "minimum": 0, "maximum": 10000 }, "retained_leader_max_basis_points": { "type": ["integer", "null"], "minimum": 0, "maximum": 10000 }, "baseline_leader_retained_for_all_tested_weights": { "type": "boolean" } } },
+    "sensitivity": { "type": "object", "additionalProperties": false, "required": ["status", "delta_basis_points", "variant_count", "leader_change_count", "stability_ranges"], "properties": { "status": { "enum": ["stable", "sensitive", "indeterminate"] }, "delta_basis_points": { "const": 1000 }, "variant_count": { "type": "integer", "minimum": 0 }, "leader_change_count": { "type": "integer", "minimum": 0 }, "stability_ranges": { "type": "array", "maxItems": 10, "items": { "$ref": "#/$defs/stabilityRange" } } } },
+    "scenario": { "type": "object", "additionalProperties": false, "required": ["scenario_id", "status", "weights", "rankings", "recommendation", "sensitivity"], "properties": { "scenario_id": { "enum": ["cost_first", "performance_first", "balanced", "compliance_first"] }, "status": { "enum": ["ranked", "insufficient_data"] }, "weights": { "type": "array", "minItems": 10, "maxItems": 10, "items": { "$ref": "#/$defs/weight" } }, "rankings": { "type": "array", "maxItems": 500, "items": { "$ref": "#/$defs/ranking" } }, "recommendation": { "$ref": "#/$defs/recommendation" }, "sensitivity": { "$ref": "#/$defs/sensitivity" } } },
+    "excluded": { "type": "object", "additionalProperties": false, "required": ["combination_id", "status", "reason_codes"], "properties": { "combination_id": { "$ref": "#/$defs/candidateId" }, "status": { "enum": ["excluded", "indeterminate"] }, "reason_codes": { "type": "array", "items": { "type": "string" } } } },
+    "unknown": { "type": "object", "additionalProperties": false, "required": ["combination_id", "metric_ids"], "properties": { "combination_id": { "$ref": "#/$defs/candidateId" }, "metric_ids": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string" } } } },
+    "decisionSupport": { "type": "object", "additionalProperties": false, "required": ["primary_scenario_id", "status", "primary_candidate_id", "alternative_candidate_ids", "exclusions", "unknowns"], "properties": { "primary_scenario_id": { "const": "balanced" }, "status": { "enum": ["read_only", "tie", "insufficient_data"] }, "primary_candidate_id": { "anyOf": [{ "$ref": "#/$defs/candidateId" }, { "type": "null" }] }, "alternative_candidate_ids": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/candidateId" } }, "exclusions": { "type": "array", "items": { "$ref": "#/$defs/excluded" } }, "unknowns": { "type": "array", "items": { "$ref": "#/$defs/unknown" } } } },
+    "summary": { "type": "object", "additionalProperties": false, "required": ["eligible_candidate_count", "complete_candidate_count", "incomplete_candidate_count", "pareto_frontier_count", "ranked_scenario_count", "stable_scenario_count", "status"], "properties": { "eligible_candidate_count": { "type": "integer", "minimum": 2 }, "complete_candidate_count": { "type": "integer", "minimum": 0 }, "incomplete_candidate_count": { "type": "integer", "minimum": 0 }, "pareto_frontier_count": { "type": "integer", "minimum": 0 }, "ranked_scenario_count": { "type": "integer", "minimum": 0, "maximum": 4 }, "stable_scenario_count": { "type": "integer", "minimum": 0, "maximum": 4 }, "status": { "enum": ["complete", "partial"] } } },
+    "boundaries": {
+      "type": "object", "additionalProperties": false,
+      "required": ["hard_constraints_precede_scoring", "eligible_candidates_only", "same_frozen_input_across_scenarios", "unknowns_imputed", "recommendation_read_only", "human_decision_recorded", "execution_authorized", "performance_claim_allowed", "global_optimum_claimed", "paid_capability_required"],
+      "properties": {
+        "hard_constraints_precede_scoring": { "const": true }, "eligible_candidates_only": { "const": true }, "same_frozen_input_across_scenarios": { "const": true },
+        "unknowns_imputed": { "const": false }, "recommendation_read_only": { "const": true }, "human_decision_recorded": { "const": false },
+        "execution_authorized": { "const": false }, "performance_claim_allowed": { "const": false }, "global_optimum_claimed": { "const": false }, "paid_capability_required": { "const": false }
+      }
+    }
+  }
+}

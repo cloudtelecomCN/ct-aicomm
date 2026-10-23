@@ -6,6 +6,7 @@ All notable public changes to CT-AIComm are recorded in this file. The project f
 
 ### Added
 
+- Publish the deterministic CT-Advisor multi-objective analysis method with four frozen scenarios, direction-aware normalization, Pareto and sensitivity calculations, explicit unknown handling, fixed synthetic fingerprints, and read-only non-execution recommendations.
 - Publish the deterministic CT-Advisor Data Gate and hard-constraint rules, schemas, reference implementation, fixed fingerprints, and bilingual boundary documentation. Unknown or unmapped hard constraints fail closed, excluded candidates retain explicit reasons, and the gate cannot score, rank, recommend, impute, or authorize execution.
 - CT-656 CT-Advisor 2.0 public product contract with a frozen free-access matrix, maturity vocabulary, one explicit paid-package key, strict JSON Schema, bilingual documentation, and no private pricing or entitlement data.
 - CT-657 versioned CT-Advisor task template registry with explicit maturity and enablement states, free-access and non-execution boundaries, strict public Schemas, and one synthetic fixture per template.

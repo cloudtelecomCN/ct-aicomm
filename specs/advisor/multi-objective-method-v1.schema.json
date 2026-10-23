@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/advisor/multi-objective-method-v1.schema.json",
+  "title": "CT-Advisor Multi-objective Analysis Method v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "method_id", "method_version", "score_precision", "metrics", "scenarios", "sensitivity", "boundaries"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "method_id": { "const": "ct-advisor-multi-objective-analysis" },
+    "method_version": { "const": "1.0.0" },
+    "score_precision": { "const": 9 },
+    "metrics": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["metric_id", "objective_group", "direction", "unit", "minimum", "maximum"],
+        "properties": {
+          "metric_id": { "enum": ["monthly_cost", "estimated_ttft", "estimated_throughput", "network_latency", "network_bandwidth", "network_packet_loss", "delivery_lead_time", "compliance_coverage", "evidence_confidence", "risk_score"] },
+          "objective_group": { "enum": ["cost", "performance", "network", "delivery", "compliance", "evidence", "risk"] },
+          "direction": { "enum": ["minimize", "maximize"] },
+          "unit": { "enum": ["cny_per_month", "milliseconds", "tokens_per_second", "gigabits_per_second", "percent", "days", "ratio"] },
+          "minimum": { "type": "number" },
+          "maximum": { "type": "number", "exclusiveMinimum": 0 }
+        }
+      }
+    },
+    "scenarios": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["scenario_id", "weights"],
+        "properties": {
+          "scenario_id": { "enum": ["cost_first", "performance_first", "balanced", "compliance_first"] },
+          "weights": {
+            "type": "array",
+            "minItems": 10,
+            "maxItems": 10,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["metric_id", "weight_basis_points"],
+              "properties": {
+                "metric_id": { "type": "string" },
+                "weight_basis_points": { "type": "integer", "minimum": 1, "maximum": 10000 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "sensitivity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "delta_basis_points"],
+      "properties": {
+        "mode": { "const": "one_at_a_time_weight_delta" },
+        "delta_basis_points": { "const": 1000 }
+      }
+    },
+    "boundaries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["data_gate_required", "same_frozen_input_across_scenarios", "unknowns_imputed", "recommendation_read_only", "human_decision_recorded", "execution_authorized", "performance_claim_allowed", "global_optimum_claimed", "paid_capability_required"],
+      "properties": {
+        "data_gate_required": { "const": true },
+        "same_frozen_input_across_scenarios": { "const": true },
+        "unknowns_imputed": { "const": false },
+        "recommendation_read_only": { "const": true },
+        "human_decision_recorded": { "const": false },
+        "execution_authorized": { "const": false },
+        "performance_claim_allowed": { "const": false },
+        "global_optimum_claimed": { "const": false },
+        "paid_capability_required": { "const": false }
+      }
+    }
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0.0",
+  "method_id": "ct-advisor-multi-objective-analysis",
+  "method_version": "1.0.0",
+  "score_precision": 9,
+  "metrics": [
+    { "metric_id": "monthly_cost", "objective_group": "cost", "direction": "minimize", "unit": "cny_per_month", "minimum": 0, "maximum": 1000000000000 },
+    { "metric_id": "estimated_ttft", "objective_group": "performance", "direction": "minimize", "unit": "milliseconds", "minimum": 0, "maximum": 86400000 },
+    { "metric_id": "estimated_throughput", "objective_group": "performance", "direction": "maximize", "unit": "tokens_per_second", "minimum": 0, "maximum": 1000000000000 },
+    { "metric_id": "network_latency", "objective_group": "network", "direction": "minimize", "unit": "milliseconds", "minimum": 0, "maximum": 86400000 },
+    { "metric_id": "network_bandwidth", "objective_group": "network", "direction": "maximize", "unit": "gigabits_per_second", "minimum": 0, "maximum": 1000000 },
+    { "metric_id": "network_packet_loss", "objective_group": "network", "direction": "minimize", "unit": "percent", "minimum": 0, "maximum": 100 },
+    { "metric_id": "delivery_lead_time", "objective_group": "delivery", "direction": "minimize", "unit": "days", "minimum": 0, "maximum": 36500 },
+    { "metric_id": "compliance_coverage", "objective_group": "compliance", "direction": "maximize", "unit": "ratio", "minimum": 0, "maximum": 1 },
+    { "metric_id": "evidence_confidence", "objective_group": "evidence", "direction": "maximize", "unit": "ratio", "minimum": 0, "maximum": 1 },
+    { "metric_id": "risk_score", "objective_group": "risk", "direction": "minimize", "unit": "ratio", "minimum": 0, "maximum": 1 }
+  ],
+  "scenarios": [
+    {
+      "scenario_id": "cost_first",
+      "weights": [
+        { "metric_id": "monthly_cost", "weight_basis_points": 4500 },
+        { "metric_id": "estimated_ttft", "weight_basis_points": 500 },
+        { "metric_id": "estimated_throughput", "weight_basis_points": 300 },
+        { "metric_id": "network_latency", "weight_basis_points": 300 },
+        { "metric_id": "network_bandwidth", "weight_basis_points": 200 },
+        { "metric_id": "network_packet_loss", "weight_basis_points": 200 },
+        { "metric_id": "delivery_lead_time", "weight_basis_points": 1500 },
+        { "metric_id": "compliance_coverage", "weight_basis_points": 800 },
+        { "metric_id": "evidence_confidence", "weight_basis_points": 700 },
+        { "metric_id": "risk_score", "weight_basis_points": 1000 }
+      ]
+    },
+    {
+      "scenario_id": "performance_first",
+      "weights": [
+        { "metric_id": "monthly_cost", "weight_basis_points": 1000 },
+        { "metric_id": "estimated_ttft", "weight_basis_points": 2200 },
+        { "metric_id": "estimated_throughput", "weight_basis_points": 2200 },
+        { "metric_id": "network_latency", "weight_basis_points": 1500 },
+        { "metric_id": "network_bandwidth", "weight_basis_points": 1100 },
+        { "metric_id": "network_packet_loss", "weight_basis_points": 500 },
+        { "metric_id": "delivery_lead_time", "weight_basis_points": 300 },
+        { "metric_id": "compliance_coverage", "weight_basis_points": 400 },
+        { "metric_id": "evidence_confidence", "weight_basis_points": 400 },
+        { "metric_id": "risk_score", "weight_basis_points": 400 }
+      ]
+    },
+    {
+      "scenario_id": "balanced",
+      "weights": [
+        { "metric_id": "monthly_cost", "weight_basis_points": 1500 },
+        { "metric_id": "estimated_ttft", "weight_basis_points": 1200 },
+        { "metric_id": "estimated_throughput", "weight_basis_points": 1200 },
+        { "metric_id": "network_latency", "weight_basis_points": 1000 },
+        { "metric_id": "network_bandwidth", "weight_basis_points": 800 },
+        { "metric_id": "network_packet_loss", "weight_basis_points": 500 },
+        { "metric_id": "delivery_lead_time", "weight_basis_points": 800 },
+        { "metric_id": "compliance_coverage", "weight_basis_points": 1100 },
+        { "metric_id": "evidence_confidence", "weight_basis_points": 900 },
+        { "metric_id": "risk_score", "weight_basis_points": 1000 }
+      ]
+    },
+    {
+      "scenario_id": "compliance_first",
+      "weights": [
+        { "metric_id": "monthly_cost", "weight_basis_points": 800 },
+        { "metric_id": "estimated_ttft", "weight_basis_points": 400 },
+        { "metric_id": "estimated_throughput", "weight_basis_points": 300 },
+        { "metric_id": "network_latency", "weight_basis_points": 400 },
+        { "metric_id": "network_bandwidth", "weight_basis_points": 300 },
+        { "metric_id": "network_packet_loss", "weight_basis_points": 300 },
+        { "metric_id": "delivery_lead_time", "weight_basis_points": 500 },
+        { "metric_id": "compliance_coverage", "weight_basis_points": 3500 },
+        { "metric_id": "evidence_confidence", "weight_basis_points": 1500 },
+        { "metric_id": "risk_score", "weight_basis_points": 2000 }
+      ]
+    }
+  ],
+  "sensitivity": { "mode": "one_at_a_time_weight_delta", "delta_basis_points": 1000 },
+  "boundaries": {
+    "data_gate_required": true,
+    "same_frozen_input_across_scenarios": true,
+    "unknowns_imputed": false,
+    "recommendation_read_only": true,
+    "human_decision_recorded": false,
+    "execution_authorized": false,
+    "performance_claim_allowed": false,
+    "global_optimum_claimed": false,
+    "paid_capability_required": false
+  }
+}

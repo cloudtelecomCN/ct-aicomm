@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/advisor/multi-objective-analysis-input-v1.schema.json",
+  "title": "CT-Advisor Multi-objective Analysis Input v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "analysis_id", "generated_at", "data_gate_result", "method", "observations"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "analysis_id": { "type": "string", "pattern": "^advisor_analysis_[0-9a-f-]{36}$" },
+    "generated_at": { "type": "string", "format": "date-time", "pattern": "Z$" },
+    "data_gate_result": { "$ref": "data-gate-result-v1.schema.json" },
+    "method": { "$ref": "multi-objective-method-v1.schema.json" },
+    "observations": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 500,
+      "items": { "$ref": "#/$defs/candidateObservations" }
+    }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "confidence", "observed_at", "reference", "content_sha256"],
+      "properties": {
+        "kind": { "enum": ["measured", "vendor", "calculated", "declared", "synthetic", "unknown"] },
+        "confidence": { "enum": ["high", "medium", "low", "unknown"] },
+        "observed_at": { "type": ["string", "null"], "format": "date-time" },
+        "reference": { "type": ["string", "null"], "minLength": 1, "maxLength": 500 },
+        "content_sha256": { "anyOf": [{ "$ref": "#/$defs/sha256" }, { "type": "null" }] }
+      }
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["metric_id", "status", "value", "unit", "source"],
+      "properties": {
+        "metric_id": { "type": "string", "pattern": "^[a-z][a-z0-9_]{2,99}$" },
+        "status": { "enum": ["provided", "unknown"] },
+        "value": { "type": ["number", "null"] },
+        "unit": { "type": "string", "pattern": "^[a-z][a-z0-9_]{1,99}$" },
+        "source": { "$ref": "#/$defs/source" }
+      }
+    },
+    "candidateObservations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["combination_id", "metrics"],
+      "properties": {
+        "combination_id": { "type": "string", "pattern": "^advisor_combination_[0-9a-f-]{36}$" },
+        "metrics": { "type": "array", "minItems": 10, "maxItems": 10, "items": { "$ref": "#/$defs/observation" } }
+      }
+    }
+  }
+}

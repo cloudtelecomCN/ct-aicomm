@@ -38,6 +38,7 @@
     "full": "Run every public Node test in the repository."
   },
   "contract_tests": [
+    "tests/advisor-multi-objective-analysis.test.mjs",
     "tests/advisor-data-gate-constraints.test.mjs",
     "tests/advisor-combination-builder.test.mjs",
     "tests/advisor-product-contract.test.mjs",
@@ -77,6 +78,23 @@
     "tests/registry-entry-integrity.test.mjs"
   ],
   "synthetic_scenarios": [
+    {
+      "id": "advisor-multi-objective-analysis",
+      "entrypoint": "examples/advisor/multi-objective-synthetic.mjs",
+      "expect": {
+        "equals": {
+          "schema_version": "1.0.0",
+          "data_origin": "synthetic",
+          "summary.status": "complete",
+          "summary.ranked_scenario_count": 4,
+          "pareto_frontier_count": 2,
+          "unknowns_imputed": false,
+          "recommendation_read_only": true,
+          "execution_authorized": false,
+          "performance_claim_allowed": false
+        }
+      }
+    },
     {
       "id": "public-evidence-contract",
       "entrypoint": "examples/sdk/validate-public-evidence.mjs",

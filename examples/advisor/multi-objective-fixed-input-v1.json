@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0.0",
+  "analysis_id": "advisor_analysis_33333333-3333-4333-8333-333333333333",
+  "generated_at": "2026-10-23T12:20:00.000Z",
+  "data_gate_fixture": {
+    "requirement_registry": "requirement-field-registry-v2.json",
+    "requirement_passports": "synthetic-requirement-passports-v2.json",
+    "resource_catalog": "synthetic-resource-catalog-v1.json",
+    "combination_input": "combination-builder-fixed-input-v1.json",
+    "combination_import": "combination-import-fixed-v1.csv",
+    "ruleset": "data-readiness-rules-v1.json",
+    "evaluation_id": "advisor_constraint_evaluation_11111111-1111-4111-8111-111111111111",
+    "generated_at": "2026-10-23T12:10:00.000Z"
+  },
+  "method": "multi-objective-method-v1.json",
+  "observations": [
+    {
+      "combination_id": "advisor_combination_11111111-1111-4111-8111-111111111111",
+      "metrics": [
+        { "metric_id": "monthly_cost", "status": "provided", "value": 80000, "unit": "cny_per_month", "source": { "kind": "synthetic", "confidence": "high", "observed_at": "2026-10-23T12:15:00.000Z", "reference": "fixture://alpha/monthly-cost", "content_sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" } },
+        { "metric_id": "estimated_ttft", "status": "provided", "value": 900, "unit": "milliseconds", "source": { "kind": "synthetic", "confidence": "medium", "observed_at": "2026-10-23T12:15:00.000Z", "reference": "fixture://alpha/ttft", "content_sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" } },
+        { "metric_id": "estimated_throughput", "status": "provided", "value": 1000, "unit": "tokens_per_second", "source": { "kind": "synthetic", "confidence": "medium", "observed_at": "2026-10-23T12:15:00.000Z", "reference": "fixture://alpha/throughput", "content_sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" } },
+        { "metric_id": "network_latency", "status": "provided", "value": 40, "unit": "milliseconds", "source": { "kind": "synthetic", "confidence": "high", "observed_at": "2026-10-23T12:15:00.000Z", "reference": "fixture://alpha/latency", "content_sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" } },
+        { "metric_id": "network_bandwidth", "status": "provided", "value": 100, "unit": "gigabits_per_second", "source": { "kind": "synthetic", "confidence": "high", "observed_at": "2026-10-23T12:15:00.000Z", "reference": "fixture://alpha/bandwidth", "content_sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" } },
+        { "metric_id": "network_packet_loss", "status": "provided", "value": 0.1, "unit": "percent", "source": { "kind": "synthetic", "confidence": "high", "observed_at": "2026-10-23T12:15:00.000Z", "reference": "fixture://alpha/packet-loss", "content_sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" } },
+        { "metric_id": "delivery_lead_time", "status": "provided", "value": 7, "unit": "days", "source": { "kind": "synthetic", "confidence": "medium", "observed_at": "2026-10-23T12:15:00.000Z", "reference": "fixture://alpha/delivery", "content_sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" } },
+        { "metric_id": "compliance_coverage", "status": "provided", "value": 0.7, "unit": "ratio", "source": { "kind": "synthetic", "confidence": "low", "observed_at": "2026-10-23T12:15:00.000Z", "reference": "fixture://alpha/compliance", "content_sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" } },
+        { "metric_id": "evidence_confidence", "status": "provided", "value": 0.8, "unit": "ratio", "source": { "kind": "synthetic", "confidence": "medium", "observed_at": "2026-10-23T12:15:00.000Z", "reference": "fixture://alpha/evidence", "content_sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" } },
+        { "metric_id": "risk_score", "status": "provided", "value": 0.35, "unit": "ratio", "source": { "kind": "synthetic", "confidence": "low", "observed_at": "2026-10-23T12:15:00.000Z", "reference": "fixture://alpha/risk", "content_sha256": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" } }
+      ]
+    },
+    {
+      "combination_id": "advisor_combination_22222222-2222-4222-8222-222222222222",
+      "metrics": [
+        { "metric_id": "monthly_cost", "status": "provided", "value": 120000, "unit": "cny_per_month", "source": { "kind": "synthetic", "confidence": "high", "observed_at": "2026-10-23T12:15:00.000Z", "reference": "fixture://beta/monthly-cost", "content_sha256": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb" } },
+        { "metric_id": "estimated_ttft", "status": "provided", "value": 600, "unit": "milliseconds", "source": { "kind": "synthetic", "confidence": "medium", "observed_at": "2026-10-23T12:15:00.000Z", "reference": "fixture://beta/ttft", "content_sha256": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb" } },
+        { "metric_id": "estimated_throughput", "status": "provided", "value": 1400, "unit": "tokens_per_second", "source": { "kind": "synthetic", "confidence": "medium", "observed_at": "2026-10-23T12:15:00.000Z", "reference": "fixture://beta/throughput", "content_sha256": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb" } },
+        { "metric_id": "network_latency", "status": "provided", "value": 30, "unit": "milliseconds", "source": { "kind": "synthetic", "confidence": "high", "observed_at": "2026-10-23T12:15:00.000Z", "reference": "fixture://beta/latency", "content_sha256": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb" } },
+        { "metric_id": "network_bandwidth", "status": "provided", "value": 200, "unit": "gigabits_per_second", "source": { "kind": "synthetic", "confidence": "high", "observed_at": "2026-10-23T12:15:00.000Z", "reference": "fixture://beta/bandwidth", "content_sha256": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb" } },
+        { "metric_id": "network_packet_loss", "status": "provided", "value": 0.05, "unit": "percent", "source": { "kind": "synthetic", "confidence": "high", "observed_at": "2026-10-23T12:15:00.000Z", "reference": "fixture://beta/packet-loss", "content_sha256": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb" } },
+        { "metric_id": "delivery_lead_time", "status": "provided", "value": 14, "unit": "days", "source": { "kind": "synthetic", "confidence": "medium", "observed_at": "2026-10-23T12:15:00.000Z", "reference": "fixture://beta/delivery", "content_sha256": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb" } },
+        { "metric_id": "compliance_coverage", "status": "provided", "value": 0.9, "unit": "ratio", "source": { "kind": "synthetic", "confidence": "low", "observed_at": "2026-10-23T12:15:00.000Z", "reference": "fixture://beta/compliance", "content_sha256": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb" } },
+        { "metric_id": "evidence_confidence", "status": "provided", "value": 0.9, "unit": "ratio", "source": { "kind": "synthetic", "confidence": "medium", "observed_at": "2026-10-23T12:15:00.000Z", "reference": "fixture://beta/evidence", "content_sha256": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb" } },
+        { "metric_id": "risk_score", "status": "provided", "value": 0.2, "unit": "ratio", "source": { "kind": "synthetic", "confidence": "low", "observed_at": "2026-10-23T12:15:00.000Z", "reference": "fixture://beta/risk", "content_sha256": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb" } }
+      ]
+    }
+  ]
+}
