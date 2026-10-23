@@ -30,7 +30,7 @@ The assessment and its gate are content-fingerprinted. Any edit changes the fing
 
 `self-declared` means no supporting reference is supplied. `document-reference` requires checksum-bound references, but this package does not fetch those documents, authenticate a person, validate corporate ownership, or decide whether the referenced document is authoritative. Therefore a passing gate is explicitly `declared-records-only`; it is not external verification or certification of reviewer independence.
 
-CT-617 does not authorize restricted evidence access, perform structural checks, recalculate statistics, rerun a workload, issue an opinion, modify a Passport, adjudicate an SLA, make a performance claim, or issue certification. CT-618–620 add separately governed review work and opinion lifecycle records.
+CT-617 does not authorize restricted evidence access, perform structural checks, recalculate statistics, rerun a workload, issue an opinion, modify a Passport, adjudicate an SLA, make a performance claim, or issue certification. CT-618 separately records bounded structure checks and statistical recalculation; CT-619–620 add supervised execution and opinion lifecycle records.
 
 ## Run offline
 

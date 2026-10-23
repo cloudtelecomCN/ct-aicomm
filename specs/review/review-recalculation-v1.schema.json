@@ -1,0 +1,278 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/review/review-recalculation-v1.schema.json",
+  "title": "CT-AIComm independent review structure and statistical recalculation v1",
+  "description": "An immutable CT-618 checklist, recalculation comparison, and difference register bound to one exact engagement, declared-records-only independence gate, active reviewer share, Passport version, and delivery. Conformance does not authenticate a principal, externally verify authorization or independence, rerun a workload, issue an opinion, establish a performance claim, or issue certification.",
+  "$ref": "#/$defs/recalculationRecord",
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-(?:(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+(?:[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
+    },
+    "fingerprint": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "instant": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "numberOrNull": {
+      "type": ["number", "null"]
+    },
+    "reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["object_type", "object_id", "version", "tenant_id", "content_fingerprint"],
+      "properties": {
+        "object_type": {
+          "enum": [
+            "independent_review_engagement",
+            "independent_review_independence_assessment",
+            "passport_share_grant",
+            "passport_evidence_version",
+            "passport_delivery_manifest",
+            "passport_normalized_observation"
+          ]
+        },
+        "object_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/version" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "statisticsProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile_id", "profile_version", "numeric_model", "percentile_method", "sample_order", "unit_catalog"],
+      "properties": {
+        "profile_id": { "const": "ct-passport-statistics-v1" },
+        "profile_version": { "const": "1.0.0" },
+        "numeric_model": { "const": "IEEE-754-binary64-15-significant-digits" },
+        "percentile_method": { "const": "nearest-rank" },
+        "sample_order": { "const": "observation-id-sequence-sample-id" },
+        "unit_catalog": { "const": "ct-passport-observation-unit-rules-v1" }
+      }
+    },
+    "implementation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["implementation_id", "implementation_version", "runtime"],
+      "properties": {
+        "implementation_id": { "$ref": "#/$defs/id" },
+        "implementation_version": { "$ref": "#/$defs/version" },
+        "runtime": { "type": "string", "minLength": 1, "maxLength": 128 }
+      }
+    },
+    "submittedStatistic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["statistic_id", "recalculated_value"],
+      "properties": {
+        "statistic_id": { "$ref": "#/$defs/id" },
+        "recalculated_value": { "$ref": "#/$defs/numberOrNull" }
+      }
+    },
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["check_id", "status"],
+      "properties": {
+        "check_id": {
+          "enum": [
+            "delivery-integrity",
+            "engagement-binding",
+            "independence-gate",
+            "active-review-share",
+            "statistics-profile",
+            "sample-accounting",
+            "result-coverage"
+          ]
+        },
+        "status": { "const": "passed" }
+      }
+    },
+    "structureChecklist": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "checks"],
+      "properties": {
+        "status": { "const": "passed" },
+        "checks": {
+          "type": "array",
+          "minItems": 7,
+          "maxItems": 7,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/check" }
+        }
+      }
+    },
+    "statistic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "statistic_id", "observation_ref", "data_origin", "metric_key", "metric",
+        "aggregation", "normalized_unit", "attempted_samples", "included_samples",
+        "failed_samples", "excluded_samples", "sample_recomputed_value",
+        "independently_recalculated_value", "result", "absolute_delta",
+        "relative_delta_percent", "tolerance_rule_id", "tolerance_comparison",
+        "tolerance_threshold", "explanation"
+      ],
+      "properties": {
+        "statistic_id": { "$ref": "#/$defs/id" },
+        "observation_ref": { "$ref": "#/$defs/reference" },
+        "data_origin": { "enum": ["measured", "synthetic", "inferred", "declared"] },
+        "metric_key": { "type": "string", "minLength": 3, "maxLength": 257 },
+        "metric": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "aggregation": { "enum": ["raw", "count", "mean", "min", "max", "p50", "p95", "p99"] },
+        "normalized_unit": { "type": "string", "minLength": 1, "maxLength": 32 },
+        "attempted_samples": { "type": "integer", "minimum": 1 },
+        "included_samples": { "type": "integer", "minimum": 0 },
+        "failed_samples": { "type": "integer", "minimum": 0 },
+        "excluded_samples": { "type": "integer", "minimum": 0 },
+        "sample_recomputed_value": { "$ref": "#/$defs/numberOrNull" },
+        "independently_recalculated_value": { "$ref": "#/$defs/numberOrNull" },
+        "result": { "enum": ["exact", "within-tolerance", "outside-tolerance"] },
+        "absolute_delta": { "type": "number", "minimum": 0 },
+        "relative_delta_percent": { "type": ["number", "null"], "minimum": 0 },
+        "tolerance_rule_id": { "type": ["string", "null"], "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$" },
+        "tolerance_comparison": { "enum": ["exact", "absolute-delta", "relative-percent"] },
+        "tolerance_threshold": { "type": "number", "minimum": 0 },
+        "explanation": { "type": "string", "minLength": 3, "maxLength": 500 }
+      }
+    },
+    "difference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "difference_id", "statistic_id", "classification", "expected_value",
+        "recalculated_value", "absolute_delta", "relative_delta_percent",
+        "tolerance_rule_id", "explanation"
+      ],
+      "properties": {
+        "difference_id": { "$ref": "#/$defs/id" },
+        "statistic_id": { "$ref": "#/$defs/id" },
+        "classification": { "enum": ["within-tolerance", "outside-tolerance"] },
+        "expected_value": { "$ref": "#/$defs/numberOrNull" },
+        "recalculated_value": { "$ref": "#/$defs/numberOrNull" },
+        "absolute_delta": { "type": "number", "minimum": 0 },
+        "relative_delta_percent": { "type": ["number", "null"], "minimum": 0 },
+        "tolerance_rule_id": { "type": ["string", "null"], "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$" },
+        "explanation": { "type": "string", "minLength": 3, "maxLength": 500 }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "outcome", "statistic_count", "exact_count", "within_tolerance_count",
+        "outside_tolerance_count", "difference_count", "sample_count"
+      ],
+      "properties": {
+        "outcome": { "enum": ["consistent", "deviation"] },
+        "statistic_count": { "type": "integer", "minimum": 1 },
+        "exact_count": { "type": "integer", "minimum": 0 },
+        "within_tolerance_count": { "type": "integer", "minimum": 0 },
+        "outside_tolerance_count": { "type": "integer", "minimum": 0 },
+        "difference_count": { "type": "integer", "minimum": 0 },
+        "sample_count": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "limited_review_work_recorded", "active_share_record_checked",
+        "structure_checks_performed", "statistics_recalculated",
+        "implementation_identity_self_declared", "principal_authentication_verified",
+        "organization_control_externally_verified", "export_authorization_externally_verified",
+        "reviewer_independence_certified", "supervised_reexecution_performed",
+        "opinion_issued", "passport_status_mutated", "performance_claim_allowed",
+        "sla_adjudicated", "certification_issued"
+      ],
+      "properties": {
+        "limited_review_work_recorded": { "const": true },
+        "active_share_record_checked": { "const": true },
+        "structure_checks_performed": { "const": true },
+        "statistics_recalculated": { "const": true },
+        "implementation_identity_self_declared": { "const": true },
+        "principal_authentication_verified": { "const": false },
+        "organization_control_externally_verified": { "const": false },
+        "export_authorization_externally_verified": { "const": false },
+        "reviewer_independence_certified": { "const": false },
+        "supervised_reexecution_performed": { "const": false },
+        "opinion_issued": { "const": false },
+        "passport_status_mutated": { "const": false },
+        "performance_claim_allowed": { "const": false },
+        "sla_adjudicated": { "const": false },
+        "certification_issued": { "const": false }
+      }
+    },
+    "recalculationRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version", "record_type", "recalculation_id", "version", "tenant_id",
+        "created_by", "recalculated_at", "engagement_ref", "independence_assessment_ref",
+        "share_ref", "passport_ref", "delivery_ref", "reviewer", "statistics_profile",
+        "implementation", "submitted_statistics", "structure_checklist", "statistics",
+        "differences", "summary", "boundary", "content_fingerprint"
+      ],
+      "properties": {
+        "schema_version": { "const": "1.0.0" },
+        "record_type": { "const": "independent_review_recalculation" },
+        "recalculation_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/version" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "created_by": { "$ref": "#/$defs/id" },
+        "recalculated_at": { "$ref": "#/$defs/instant" },
+        "engagement_ref": { "$ref": "#/$defs/reference" },
+        "independence_assessment_ref": { "$ref": "#/$defs/reference" },
+        "share_ref": { "$ref": "#/$defs/reference" },
+        "passport_ref": { "$ref": "#/$defs/reference" },
+        "delivery_ref": { "$ref": "#/$defs/reference" },
+        "reviewer": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["subject_id", "organization_id", "role"],
+          "properties": {
+            "subject_id": { "$ref": "#/$defs/id" },
+            "organization_id": { "$ref": "#/$defs/id" },
+            "role": { "const": "review-lead" }
+          }
+        },
+        "statistics_profile": { "$ref": "#/$defs/statisticsProfile" },
+        "implementation": { "$ref": "#/$defs/implementation" },
+        "submitted_statistics": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1024,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/submittedStatistic" }
+        },
+        "structure_checklist": { "$ref": "#/$defs/structureChecklist" },
+        "statistics": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1024,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/statistic" }
+        },
+        "differences": {
+          "type": "array",
+          "maxItems": 1024,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/difference" }
+        },
+        "summary": { "$ref": "#/$defs/summary" },
+        "boundary": { "$ref": "#/$defs/boundary" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    }
+  }
+}

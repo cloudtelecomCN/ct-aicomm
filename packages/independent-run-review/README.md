@@ -2,7 +2,7 @@
 
 [中文](README.zh-CN.md)
 
-This zero-dependency Node.js package implements the CT-616 engagement and scope contract plus the CT-617 identity, organization, and conflict gate. CT-616 binds a commission to one exact Link Evidence Passport version and one checksum-verified delivery manifest. CT-617 binds declared subjects, ultimate control, payment, role separation, conflicts, and recusals to that exact engagement.
+This zero-dependency Node.js package implements the CT-616 engagement and scope contract, the CT-617 identity, organization, and conflict gate, and the CT-618 structure and statistical recalculation record. CT-616 binds a commission to one exact Link Evidence Passport version and one checksum-verified delivery manifest. CT-617 binds declared subjects, ultimate control, payment, role separation, conflicts, and recusals to that exact engagement. CT-618 requires an active reviewer share, independently recalculates the authorized samples, applies the declared tolerance policy, and records every non-exact difference.
 
 The package creates immutable, fingerprinted records. If any scope field changes, the caller must create a new `engagement_id`, reference the exact prior engagement, and explain the change. Reusing an engagement identity or creating a no-op successor fails closed.
 
@@ -14,9 +14,12 @@ The package creates immutable, fingerprinted records. If any scope field changes
 - `createIndependentReviewIndependenceAssessment(input)` creates an immutable, declared-records-only independence gate.
 - `verifyIndependentReviewIndependenceAssessment(input)` recomputes the gate from the exact engagement, organizations, roles, payment, conflicts, and recusals.
 - `assertIndependentOpinionSignerEligible(input)` fails closed when common control, role overlap, contingent payment, or unmanaged conflict prevents later opinion signing.
+- `recalculateIndependentReviewStatistics({ delivery })` independently derives the fixed-profile values from the checksum-verified sample package.
+- `createIndependentReviewRecalculation(input)` creates the seven-check structure result, per-statistic comparison, and immutable difference register.
+- `verifyIndependentReviewRecalculation(input)` rebuilds every derived result from the exact engagement, independence assessment, active share, delivery, and submitted recalculation values.
 
 ## Trust boundary
 
-An engagement records instructions only and does not establish reviewer independence. The CT-617 gate is declared-records-only: it does not authenticate either party, externally verify corporate control, certify reviewer independence, authorize access to restricted evidence, perform recalculation or execution, issue an opinion, mutate Passport status, adjudicate an SLA, make a performance claim, or issue certification. Those responsibilities require later, separately governed records.
+An engagement records instructions only and does not establish reviewer independence. The CT-617 gate is declared-records-only. CT-618 records limited structure and recalculation work, but its implementation identity is self-declared and an active share record is not external proof of authentication or export authorization. The package does not externally verify corporate control, certify reviewer independence, perform supervised reexecution, issue an opinion, mutate Passport status, adjudicate an SLA, make a performance claim, or issue certification.
 
-See the CT-616 [engagement guide](../../docs/review/engagement-and-scope-v1.md), the CT-617 [identity and conflict guide](../../docs/review/identity-organization-and-conflicts-v1.md), and their synthetic examples.
+See the CT-616 [engagement guide](../../docs/review/engagement-and-scope-v1.md), the CT-617 [identity and conflict guide](../../docs/review/identity-organization-and-conflicts-v1.md), the CT-618 [structure and recalculation guide](../../docs/review/structure-and-statistical-recalculation-v1.md), and their synthetic examples.

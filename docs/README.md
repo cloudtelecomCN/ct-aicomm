@@ -30,6 +30,8 @@
 - [Link Evidence Passport delivery package and offline verification v1](passport/delivery-package-and-offline-verification-v1.md)
 - [Link Evidence Passport sharing, revocation, and buyer decision v1](passport/sharing-revocation-and-buyer-decision-v1.md)
 - [Independent Run Review engagement and scope v1](review/engagement-and-scope-v1.md)
+- [Independent Run Review identity, organization, and conflicts v1](review/identity-organization-and-conflicts-v1.md)
+- [Independent Run Review structure and statistical recalculation v1](review/structure-and-statistical-recalculation-v1.md)
 - [CT-Bench reproduction and evidence contract](bench-reproduction/README.md)
 - [CT-DataPlane Agent threat model](security/agent-threat-model.md)
 - [CT-DataPlane Agent operations runbook](agent/operations.md)

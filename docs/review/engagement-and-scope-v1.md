@@ -53,7 +53,7 @@ Any scope change requires a new engagement. The successor must use a different `
 
 ## Trust boundary
 
-A valid engagement means only that a structurally complete, fingerprinted instruction exists. It does not prove identity, organization, conflicts of interest, reviewer independence, evidence access authorization, review performance, an opinion, SLA breach, performance, or certification. [CT-617](./identity-organization-and-conflicts-v1.md) now provides a separate, declared-records-only identity, organization, payment, separation-of-duties, conflict, and recusal gate. CT-618–620 add review work and governed opinions.
+A valid engagement means only that a structurally complete, fingerprinted instruction exists. It does not prove identity, organization, conflicts of interest, reviewer independence, evidence access authorization, review performance, an opinion, SLA breach, performance, or certification. [CT-617](./identity-organization-and-conflicts-v1.md) provides a separate, declared-records-only identity, organization, payment, separation-of-duties, conflict, and recusal gate. [CT-618](./structure-and-statistical-recalculation-v1.md) separately records bounded structure checks and statistical recalculation; CT-619–620 add supervised execution and governed opinion lifecycle records.
 
 ## Offline example
 

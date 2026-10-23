@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "sdk_version": "0.23.0",
+  "sdk_version": "0.24.0",
   "runtime": "Node.js >=22 ESM",
   "entrypoint": "sdk/index.mjs",
   "exports": [
@@ -40,6 +40,9 @@
     "INDEPENDENT_REVIEW_INDEPENDENCE_BLOCKERS",
     "INDEPENDENT_REVIEW_INDEPENDENCE_ERROR_CODES",
     "INDEPENDENT_REVIEW_INDEPENDENCE_VERSION",
+    "INDEPENDENT_REVIEW_RECALCULATION_ERROR_CODES",
+    "INDEPENDENT_REVIEW_RECALCULATION_RESULTS",
+    "INDEPENDENT_REVIEW_RECALCULATION_VERSION",
     "INDEPENDENT_REVIEW_LEVELS",
     "INDEPENDENT_REVIEW_ROLES",
     "INDEPENDENT_REVIEW_TOLERANCE_MODES",
@@ -98,6 +101,7 @@
     "createEvidenceTtlContract",
     "createIndependentReviewEngagement",
     "createIndependentReviewIndependenceAssessment",
+    "createIndependentReviewRecalculation",
     "createPreparePolicyMessage",
     "createPassportEvidenceVersion",
     "createPassportBuyerDecision",
@@ -144,6 +148,7 @@
     "projectPassportShare",
     "queryEvidenceRecords",
     "recordEvidenceExportDelivery",
+    "recalculateIndependentReviewStatistics",
     "replayEvidenceInvalidationEvents",
     "replayEvidenceLifecycle",
     "routeIdentity",
@@ -175,6 +180,7 @@
     "verifyEvidenceTtlContract",
     "verifyIndependentReviewEngagement",
     "verifyIndependentReviewIndependenceAssessment",
+    "verifyIndependentReviewRecalculation",
     "verifyPassportEvidenceVersion",
     "verifyPassportBuyerDecision",
     "verifyPassportComparison",
@@ -232,6 +238,7 @@
     "specs/registry/registry-entry-record-v1.schema.json",
     "specs/review/review-engagement-v1.schema.json",
     "specs/review/review-independence-v1.schema.json",
+    "specs/review/review-recalculation-v1.schema.json",
     "docs/bench-reproduction/ttft-sample.schema.json"
   ],
   "public_tools": [
@@ -278,6 +285,8 @@
     "packages/independent-run-review/index.d.ts",
     "packages/independent-run-review/independence.mjs",
     "packages/independent-run-review/independence.d.ts",
+    "packages/independent-run-review/recalculation.mjs",
+    "packages/independent-run-review/recalculation.d.ts",
     "packages/registry-entry-integrity/index.mjs",
     "packages/registry-entry-integrity/index.d.ts",
     "packages/ttft-collector/cli.mjs",

@@ -304,7 +304,7 @@ test("publishes CT-607 SDK exports, bilingual guidance, and an offline scenario"
     assert.match(document, /TTL/);
     assert.match(document, /certif|认证/iu);
   }
-  assert.equal(publicApi.sdk_version, "0.23.0");
+  assert.equal(publicApi.sdk_version, "0.24.0");
   assert.ok(publicApi.public_contracts.includes("specs/evidence/evidence-status-ttl-contract-v1.schema.json"));
   assert.ok(publicApi.public_contracts.includes("specs/evidence/evidence-invalidation-event-v1.schema.json"));
   assert.ok(publicApi.public_tools.includes("packages/evidence-invalidation/index.mjs"));
