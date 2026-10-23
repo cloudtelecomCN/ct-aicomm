@@ -29,6 +29,7 @@
 - [链路证据护照可比性门禁与版本差异 v1](passport/comparability-gate-and-version-diff-v1.zh-CN.md)
 - [链路证据护照交付包与离线验算 v1](passport/delivery-package-and-offline-verification-v1.zh-CN.md)
 - [链路证据护照分享、撤销与买方决定 v1](passport/sharing-revocation-and-buyer-decision-v1.zh-CN.md)
+- [独立运行复核委托与范围 v1](review/engagement-and-scope-v1.zh-CN.md)
 - [CT-Bench 复现与证据规范](bench-reproduction/README.zh-CN.md)
 - [CT-DataPlane Agent 威胁模型](security/agent-threat-model.zh-CN.md)
 - [CT-DataPlane Agent 安装与运维手册](agent/operations.zh-CN.md)

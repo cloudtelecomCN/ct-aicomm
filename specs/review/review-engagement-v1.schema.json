@@ -1,0 +1,309 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/review/review-engagement-v1.schema.json",
+  "title": "CT-AIComm independent run review engagement v1",
+  "description": "An immutable commission for reviewing one exact Link Evidence Passport version and delivery. Conformance records scope only; it does not authenticate identities, establish reviewer independence, authorize evidence access, perform a review, issue an opinion, adjudicate an SLA, certify performance, or authorize production control.",
+  "$ref": "#/$defs/reviewEngagement",
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-(?:(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+(?:[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
+    },
+    "fingerprint": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "instant": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "referenceBase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["object_type", "object_id", "version", "tenant_id", "content_fingerprint"],
+      "properties": {
+        "object_type": { "type": "string" },
+        "object_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/version" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "passportReference": {
+      "allOf": [
+        { "$ref": "#/$defs/referenceBase" },
+        { "properties": { "object_type": { "const": "passport_evidence_version" } } }
+      ]
+    },
+    "deliveryReference": {
+      "allOf": [
+        { "$ref": "#/$defs/referenceBase" },
+        { "properties": { "object_type": { "const": "passport_delivery_manifest" } } }
+      ]
+    },
+    "engagementReference": {
+      "allOf": [
+        { "$ref": "#/$defs/referenceBase" },
+        { "properties": { "object_type": { "const": "independent_review_engagement" } } }
+      ]
+    },
+    "party": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subject_id", "organization_id"],
+      "properties": {
+        "subject_id": { "$ref": "#/$defs/id" },
+        "organization_id": { "$ref": "#/$defs/id" }
+      }
+    },
+    "toleranceRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rule_id", "metric", "unit", "comparison", "threshold"],
+      "properties": {
+        "rule_id": { "$ref": "#/$defs/id" },
+        "metric": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "unit": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "comparison": { "enum": ["absolute-delta", "relative-percent"] },
+        "threshold": { "type": "number", "minimum": 0, "maximum": 1000000000 }
+      }
+    },
+    "tolerancePolicy": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["mode", "rules"],
+          "properties": {
+            "mode": { "const": "exact" },
+            "rules": { "type": "array", "maxItems": 0 }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["mode", "rules"],
+          "properties": {
+            "mode": { "const": "declared-thresholds" },
+            "rules": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 32,
+              "uniqueItems": true,
+              "items": { "$ref": "#/$defs/toleranceRule" }
+            }
+          }
+        }
+      ]
+    },
+    "purpose": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["intended_use", "statement", "prohibited_uses"],
+      "properties": {
+        "intended_use": {
+          "enum": ["buyer-due-diligence", "seller-assurance", "internal-governance", "sla-evidence-preparation", "other"]
+        },
+        "statement": { "type": "string", "minLength": 3, "maxLength": 500 },
+        "prohibited_uses": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "uniqueItems": true,
+          "items": {
+            "enum": ["certification", "legal-conclusion", "performance-guarantee", "production-control-authorization", "sla-adjudication"]
+          },
+          "allOf": [
+            { "contains": { "const": "certification" } },
+            { "contains": { "const": "legal-conclusion" } },
+            { "contains": { "const": "performance-guarantee" } },
+            { "contains": { "const": "production-control-authorization" } },
+            { "contains": { "const": "sla-adjudication" } }
+          ]
+        }
+      }
+    },
+    "deliveryAgreement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["due_at", "delivery_mode", "deliverable_formats", "language_codes", "deliverables"],
+      "properties": {
+        "due_at": { "$ref": "#/$defs/instant" },
+        "delivery_mode": { "enum": ["offline-package", "reference-only"] },
+        "deliverable_formats": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "uniqueItems": true,
+          "items": { "enum": ["application/json", "text/csv", "text/markdown"] }
+        },
+        "language_codes": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z]{2,3}(?:-[A-Z][a-z]{3})?(?:-[A-Z]{2}|-[0-9]{3})?$" }
+        },
+        "deliverables": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 6,
+          "uniqueItems": true,
+          "items": {
+            "enum": ["scope-record", "structure-checklist", "recalculation-report", "difference-register", "supervised-run-reference", "environment-difference-register"]
+          }
+        }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["passport_ref", "delivery_ref", "review_level", "tolerance_policy", "purpose", "delivery_agreement"],
+      "properties": {
+        "passport_ref": { "$ref": "#/$defs/passportReference" },
+        "delivery_ref": { "$ref": "#/$defs/deliveryReference" },
+        "review_level": { "enum": ["structure-only", "statistical-recalculation", "supervised-reexecution"] },
+        "tolerance_policy": { "$ref": "#/$defs/tolerancePolicy" },
+        "purpose": { "$ref": "#/$defs/purpose" },
+        "delivery_agreement": { "$ref": "#/$defs/deliveryAgreement" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "review_level": { "const": "structure-only" } }, "required": ["review_level"] },
+          "then": {
+            "properties": {
+              "delivery_agreement": {
+                "properties": {
+                  "deliverables": {
+                    "minItems": 2,
+                    "maxItems": 2,
+                    "allOf": [
+                      { "contains": { "const": "scope-record" } },
+                      { "contains": { "const": "structure-checklist" } }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "review_level": { "const": "statistical-recalculation" } }, "required": ["review_level"] },
+          "then": {
+            "properties": {
+              "delivery_agreement": {
+                "properties": {
+                  "deliverables": {
+                    "minItems": 4,
+                    "maxItems": 4,
+                    "allOf": [
+                      { "contains": { "const": "scope-record" } },
+                      { "contains": { "const": "structure-checklist" } },
+                      { "contains": { "const": "recalculation-report" } },
+                      { "contains": { "const": "difference-register" } }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "review_level": { "const": "supervised-reexecution" } }, "required": ["review_level"] },
+          "then": {
+            "properties": {
+              "delivery_agreement": {
+                "properties": {
+                  "deliverables": {
+                    "minItems": 6,
+                    "maxItems": 6,
+                    "allOf": [
+                      { "contains": { "const": "scope-record" } },
+                      { "contains": { "const": "structure-checklist" } },
+                      { "contains": { "const": "recalculation-report" } },
+                      { "contains": { "const": "difference-register" } },
+                      { "contains": { "const": "supervised-run-reference" } },
+                      { "contains": { "const": "environment-difference-register" } }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "engagement_only", "identity_authenticated", "reviewer_independence_verified",
+        "evidence_access_authorized", "review_performed", "opinion_issued",
+        "passport_status_mutated", "performance_claim_allowed", "sla_adjudicated",
+        "certification_issued"
+      ],
+      "properties": {
+        "engagement_only": { "const": true },
+        "identity_authenticated": { "const": false },
+        "reviewer_independence_verified": { "const": false },
+        "evidence_access_authorized": { "const": false },
+        "review_performed": { "const": false },
+        "opinion_issued": { "const": false },
+        "passport_status_mutated": { "const": false },
+        "performance_claim_allowed": { "const": false },
+        "sla_adjudicated": { "const": false },
+        "certification_issued": { "const": false }
+      }
+    },
+    "reviewEngagement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version", "record_type", "engagement_id", "version", "tenant_id",
+        "created_by", "created_at", "commissioning_party", "intended_reviewer_organization_id",
+        "scope", "supersedes_engagement_ref", "scope_change_reason", "boundary",
+        "content_fingerprint"
+      ],
+      "properties": {
+        "schema_version": { "const": "1.0.0" },
+        "record_type": { "const": "independent_review_engagement" },
+        "engagement_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/version" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "created_by": { "$ref": "#/$defs/id" },
+        "created_at": { "$ref": "#/$defs/instant" },
+        "commissioning_party": { "$ref": "#/$defs/party" },
+        "intended_reviewer_organization_id": { "$ref": "#/$defs/id" },
+        "scope": { "$ref": "#/$defs/scope" },
+        "supersedes_engagement_ref": {
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/engagementReference" }
+          ]
+        },
+        "scope_change_reason": {
+          "type": ["string", "null"],
+          "minLength": 3,
+          "maxLength": 500
+        },
+        "boundary": { "$ref": "#/$defs/boundary" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "supersedes_engagement_ref": { "type": "null" } },
+            "required": ["supersedes_engagement_ref"]
+          },
+          "then": { "properties": { "scope_change_reason": { "type": "null" } } },
+          "else": { "properties": { "scope_change_reason": { "type": "string", "minLength": 3 } } }
+        }
+      ]
+    }
+  }
+}

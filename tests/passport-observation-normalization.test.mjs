@@ -363,7 +363,7 @@ test("publishes the schema, SDK surface, bilingual guide, and contributor scenar
   ]);
   assert.equal(schema.additionalProperties, false);
   assert.equal(schema.properties.record_type.const, "passport_normalized_observation");
-  assert.equal(publicApi.sdk_version, "0.21.0");
+  assert.equal(publicApi.sdk_version, "0.22.0");
   assert.ok(publicApi.public_contracts.includes("specs/passport/normalized-observation-v1.schema.json"));
   for (const exported of [
     "PASSPORT_OBSERVATION_VERSION",

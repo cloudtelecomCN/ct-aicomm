@@ -29,6 +29,7 @@
 - [Link Evidence Passport comparability gate and version differences v1](passport/comparability-gate-and-version-diff-v1.md)
 - [Link Evidence Passport delivery package and offline verification v1](passport/delivery-package-and-offline-verification-v1.md)
 - [Link Evidence Passport sharing, revocation, and buyer decision v1](passport/sharing-revocation-and-buyer-decision-v1.md)
+- [Independent Run Review engagement and scope v1](review/engagement-and-scope-v1.md)
 - [CT-Bench reproduction and evidence contract](bench-reproduction/README.md)
 - [CT-DataPlane Agent threat model](security/agent-threat-model.md)
 - [CT-DataPlane Agent operations runbook](agent/operations.md)

@@ -61,6 +61,7 @@
     "tests/passport-sealing-versioning.test.mjs",
     "tests/passport-scenario-method-freeze.test.mjs",
     "tests/public-sdk-boundary.test.mjs",
+    "tests/review-engagement-scope.test.mjs",
     "tests/registry-entry-integrity.test.mjs"
   ],
   "synthetic_scenarios": [
@@ -445,6 +446,33 @@
           "buyer_acceptance_separate": true,
           "identity_authenticated": false,
           "export_authorization_verified": false,
+          "external_network_used": false,
+          "performance_claim_allowed": false,
+          "certification_issued": false
+        }
+      }
+    },
+    {
+      "id": "independent-review-engagement-scope",
+      "entrypoint": "examples/review/engagement-scope-synthetic.mjs",
+      "expect": {
+        "equals": {
+          "schema_version": "1.0.0",
+          "data_origin": "synthetic",
+          "initial_review_level": "statistical-recalculation",
+          "successor_review_level": "supervised-reexecution",
+          "exact_passport_version_bound": true,
+          "exact_delivery_bound": true,
+          "tolerance_policy_explicit": true,
+          "purpose_explicit": true,
+          "delivery_agreement_explicit": true,
+          "scope_change_detected": true,
+          "new_engagement_created": true,
+          "supersession_link_exact": true,
+          "identity_authenticated": false,
+          "reviewer_independence_verified": false,
+          "review_performed": false,
+          "opinion_issued": false,
           "external_network_used": false,
           "performance_claim_allowed": false,
           "certification_issued": false
