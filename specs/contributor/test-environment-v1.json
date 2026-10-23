@@ -38,6 +38,7 @@
     "full": "Run every public Node test in the repository."
   },
   "contract_tests": [
+    "tests/advisor-basic-report.test.mjs",
     "tests/advisor-multi-objective-analysis.test.mjs",
     "tests/advisor-data-gate-constraints.test.mjs",
     "tests/advisor-combination-builder.test.mjs",
@@ -78,6 +79,26 @@
     "tests/registry-entry-integrity.test.mjs"
   ],
   "synthetic_scenarios": [
+    {
+      "id": "advisor-basic-report",
+      "entrypoint": "examples/advisor/basic-report-synthetic.mjs",
+      "expect": {
+        "equals": {
+          "schema_version": "1.0.0",
+          "report_type": "ct_advisor_basic_report",
+          "data_origin": "synthetic",
+          "status": "complete",
+          "candidate_count": 2,
+          "scenario_count": 4,
+          "source_observation_count": 20,
+          "csv_row_count": 224,
+          "base_access": "free",
+          "formal_procurement_evidence": false,
+          "recommendation_read_only": true,
+          "execution_authorized": false
+        }
+      }
+    },
     {
       "id": "advisor-multi-objective-analysis",
       "entrypoint": "examples/advisor/multi-objective-synthetic.mjs",

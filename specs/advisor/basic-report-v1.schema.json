@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/advisor/basic-report-v1.schema.json",
+  "title": "CT-Advisor Basic Report v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "format_version", "report_type", "report_id", "project_id", "locale", "title", "status", "generated_at", "source_bindings", "executive_summary", "methodology", "analysis", "source_ledger", "limitations", "boundaries", "content_sha256"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "format_version": { "const": "1.0.0" },
+    "report_type": { "const": "ct_advisor_basic_report" },
+    "report_id": { "type": "string", "pattern": "^advisor_basic_report_[0-9a-f-]{36}$" },
+    "project_id": { "type": "string", "pattern": "^advisor_project_[0-9a-f-]{36}$" },
+    "locale": { "enum": ["en", "zh-CN"] },
+    "title": { "type": "string", "minLength": 1, "maxLength": 160 },
+    "status": { "enum": ["complete", "partial"] },
+    "generated_at": { "type": "string", "format": "date-time", "pattern": "Z$" },
+    "source_bindings": { "$ref": "#/$defs/sourceBindings" },
+    "executive_summary": { "$ref": "#/$defs/executiveSummary" },
+    "methodology": { "$ref": "#/$defs/methodology" },
+    "analysis": { "$ref": "./multi-objective-analysis-v1.schema.json" },
+    "source_ledger": { "type": "array", "minItems": 2, "maxItems": 500, "items": { "$ref": "#/$defs/candidateObservations" } },
+    "limitations": { "type": "array", "minItems": 5, "maxItems": 10, "items": { "type": "string", "minLength": 1, "maxLength": 500 } },
+    "boundaries": { "$ref": "#/$defs/boundaries" },
+    "content_sha256": { "$ref": "#/$defs/sha256" }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "candidateId": { "type": "string", "pattern": "^advisor_combination_[0-9a-f-]{36}$" },
+    "sourceBindings": {
+      "type": "object", "additionalProperties": false,
+      "required": ["requirement_passport", "constraint_evaluation", "analysis", "method"],
+      "properties": {
+        "requirement_passport": { "type": "object", "additionalProperties": false, "required": ["passport_id", "revision", "content_sha256"], "properties": { "passport_id": { "type": "string" }, "revision": { "type": "integer", "minimum": 1 }, "content_sha256": { "$ref": "#/$defs/sha256" } } },
+        "constraint_evaluation": { "type": "object", "additionalProperties": false, "required": ["evaluation_id", "content_sha256", "input_sha256", "ruleset_sha256"], "properties": { "evaluation_id": { "type": "string" }, "content_sha256": { "$ref": "#/$defs/sha256" }, "input_sha256": { "$ref": "#/$defs/sha256" }, "ruleset_sha256": { "$ref": "#/$defs/sha256" } } },
+        "analysis": { "type": "object", "additionalProperties": false, "required": ["analysis_id", "content_sha256", "input_sha256", "observation_set_sha256"], "properties": { "analysis_id": { "type": "string" }, "content_sha256": { "$ref": "#/$defs/sha256" }, "input_sha256": { "$ref": "#/$defs/sha256" }, "observation_set_sha256": { "$ref": "#/$defs/sha256" } } },
+        "method": { "type": "object", "additionalProperties": false, "required": ["method_id", "method_version", "method_sha256"], "properties": { "method_id": { "const": "ct-advisor-multi-objective-analysis" }, "method_version": { "const": "1.0.0" }, "method_sha256": { "$ref": "#/$defs/sha256" } } }
+      }
+    },
+    "scenarioLeader": {
+      "type": "object", "additionalProperties": false,
+      "required": ["scenario_id", "status", "primary_candidate_id", "primary_candidate_key", "primary_candidate_name", "sensitivity_status"],
+      "properties": {
+        "scenario_id": { "enum": ["cost_first", "performance_first", "balanced", "compliance_first"] },
+        "status": { "enum": ["read_only", "tie", "insufficient_data"] },
+        "primary_candidate_id": { "anyOf": [{ "$ref": "#/$defs/candidateId" }, { "type": "null" }] },
+        "primary_candidate_key": { "type": ["string", "null"] },
+        "primary_candidate_name": { "type": ["string", "null"] },
+        "sensitivity_status": { "enum": ["stable", "sensitive", "indeterminate"] }
+      }
+    },
+    "executiveSummary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["eligible_candidate_count", "complete_candidate_count", "incomplete_candidate_count", "excluded_candidate_count", "pareto_frontier_count", "primary_scenario_id", "recommendation_status", "primary_candidate_id", "primary_candidate_key", "primary_candidate_name", "scenario_leaders"],
+      "properties": {
+        "eligible_candidate_count": { "type": "integer", "minimum": 2 },
+        "complete_candidate_count": { "type": "integer", "minimum": 0 },
+        "incomplete_candidate_count": { "type": "integer", "minimum": 0 },
+        "excluded_candidate_count": { "type": "integer", "minimum": 0 },
+        "pareto_frontier_count": { "type": "integer", "minimum": 0 },
+        "primary_scenario_id": { "const": "balanced" },
+        "recommendation_status": { "enum": ["read_only", "tie", "insufficient_data"] },
+        "primary_candidate_id": { "anyOf": [{ "$ref": "#/$defs/candidateId" }, { "type": "null" }] },
+        "primary_candidate_key": { "type": ["string", "null"] },
+        "primary_candidate_name": { "type": ["string", "null"] },
+        "scenario_leaders": { "type": "array", "minItems": 4, "maxItems": 4, "items": { "$ref": "#/$defs/scenarioLeader" } }
+      }
+    },
+    "methodology": {
+      "type": "object", "additionalProperties": false,
+      "required": ["hard_constraints", "normalization", "score_formula", "tie_policy", "unknown_policy", "pareto_policy", "sensitivity", "sensitivity_delta_basis_points"],
+      "properties": {
+        "hard_constraints": { "const": "evaluated_before_scoring" },
+        "normalization": { "const": "direction_aware_min_max_over_complete_eligible_candidates" },
+        "score_formula": { "const": "sum(normalized_value * weight_basis_points / 10000)" },
+        "tie_policy": { "const": "equal_scores_remain_tied" },
+        "unknown_policy": { "const": "retain_unknown_without_imputation" },
+        "pareto_policy": { "const": "no_worse_on_all_metrics_and_strictly_better_on_at_least_one" },
+        "sensitivity": { "const": "one_at_a_time_weight_delta_with_deterministic_redistribution" },
+        "sensitivity_delta_basis_points": { "const": 1000 }
+      }
+    },
+    "source": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "confidence", "observed_at", "reference", "content_sha256"],
+      "properties": {
+        "kind": { "enum": ["public_catalog", "tenant_private", "user_provided", "derived", "measured", "synthetic", "unknown"] },
+        "confidence": { "enum": ["low", "medium", "high", "unknown"] },
+        "observed_at": { "type": ["string", "null"], "format": "date-time" },
+        "reference": { "type": ["string", "null"] },
+        "content_sha256": { "anyOf": [{ "$ref": "#/$defs/sha256" }, { "type": "null" }] }
+      }
+    },
+    "observation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["metric_id", "status", "value", "unit", "source"],
+      "properties": { "metric_id": { "type": "string" }, "status": { "enum": ["provided", "unknown"] }, "value": { "type": ["number", "null"] }, "unit": { "type": "string" }, "source": { "$ref": "#/$defs/source" } }
+    },
+    "candidateObservations": {
+      "type": "object", "additionalProperties": false,
+      "required": ["combination_id", "metrics"],
+      "properties": { "combination_id": { "$ref": "#/$defs/candidateId" }, "metrics": { "type": "array", "minItems": 10, "maxItems": 10, "items": { "$ref": "#/$defs/observation" } } }
+    },
+    "boundaries": {
+      "type": "object", "additionalProperties": false,
+      "required": ["base_access", "formal_procurement_evidence", "official_report_number_issued", "human_decision_recorded", "independent_review_performed", "certification_issued", "recommendation_read_only", "execution_authorized", "performance_claim_allowed", "global_optimum_claimed", "paid_capability_required"],
+      "properties": {
+        "base_access": { "const": "free" },
+        "formal_procurement_evidence": { "const": false },
+        "official_report_number_issued": { "const": false },
+        "human_decision_recorded": { "const": false },
+        "independent_review_performed": { "const": false },
+        "certification_issued": { "const": false },
+        "recommendation_read_only": { "const": true },
+        "execution_authorized": { "const": false },
+        "performance_claim_allowed": { "const": false },
+        "global_optimum_claimed": { "const": false },
+        "paid_capability_required": { "const": false }
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "report_type": "ct_advisor_basic_report",
+  "report_id": "advisor_basic_report_55555555-5555-4555-8555-555555555555",
+  "analysis_sha256": "sha256:1f7faeeb42c414b04a087f1c06169ba466d31ea023a70169e04390dba6c8cd4c",
+  "observation_set_sha256": "sha256:96f5404ce04c02b942af111e5c5664e1b5e5d7a35850de13821caf84e118050d",
+  "content_sha256": "sha256:e548874f244f2c111ca76d1f6e8094bed559d263a0567c8167837442faf25f38",
+  "json_sha256": "sha256:1f08fa1b41c5b5d9dc19c7369cd509a0cd3ec62d30f4fa59d33eea3ae63be719",
+  "csv_sha256": "sha256:ee7c120d034b53e605b13ada218a95caa8357d7a958f92500a7f18ddc2a701d2",
+  "csv_row_count": 224,
+  "candidate_count": 2,
+  "scenario_count": 4,
+  "source_observation_count": 20,
+  "primary_candidate_id": "advisor_combination_22222222-2222-4222-8222-222222222222"
+}

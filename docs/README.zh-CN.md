@@ -13,6 +13,7 @@
 - [CT-Advisor Combination Builder v1](advisor/combination-builder-v1.zh-CN.md)
 - [CT-Advisor Data Gate 与硬约束 v1](advisor/data-gate-constraints-v1.zh-CN.md)
 - [CT-Advisor 多目标分析 v1](advisor/multi-objective-analysis-v1.zh-CN.md)
+- [CT-Advisor 基础报告 v1](advisor/basic-report-v1.zh-CN.md)
 - [离线贡献者测试环境](contributor/test-environment.zh-CN.md)
 - [版本验证与 SBOM](release/verification.zh-CN.md)
 - [项目治理与外部维护者机制](../GOVERNANCE.zh-CN.md)
