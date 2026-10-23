@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/advisor/data-readiness-rules-v1.schema.json",
+  "title": "CT-Advisor Data Readiness and Hard Constraint Rules v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "ruleset_id", "ruleset_version", "minimum_combination_count", "policy", "mappings", "boundaries"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "ruleset_id": { "const": "ct-advisor-data-readiness-hard-constraints" },
+    "ruleset_version": { "const": "1.0.0" },
+    "minimum_combination_count": { "type": "integer", "minimum": 2, "maximum": 500 },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unknown_hard_value", "unknown_hard_source", "unmapped_hard_field", "unknown_candidate_dimension", "case_matching", "numeric_comparison"],
+      "properties": {
+        "unknown_hard_value": { "const": "block" },
+        "unknown_hard_source": { "const": "block" },
+        "unmapped_hard_field": { "const": "block" },
+        "unknown_candidate_dimension": { "const": "exclude_candidate" },
+        "case_matching": { "const": "ascii_case_insensitive" },
+        "numeric_comparison": { "const": "conservative" }
+      }
+    },
+    "mappings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["rule_id", "field_id", "dimension_ids", "operator", "requirement_units", "dimension_unit"],
+        "properties": {
+          "rule_id": { "type": "string", "pattern": "^hard\\.[a-z][a-z0-9_]*(?:\\.[a-z][a-z0-9_]*)+$" },
+          "field_id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*(?:\\.[a-z][a-z0-9_]*)+$" },
+          "dimension_ids": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" } },
+          "operator": { "enum": ["equals_ci", "one_of_ci", "none_of_ci", "contains_ci", "less_than_or_equal", "greater_than_or_equal"] },
+          "requirement_units": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" } },
+          "dimension_unit": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" }
+        }
+      }
+    },
+    "boundaries": { "$ref": "data-gate-result-v1.schema.json#/$defs/boundaries" }
+  }
+}

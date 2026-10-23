@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0.0",
+  "ruleset_id": "ct-advisor-data-readiness-hard-constraints",
+  "ruleset_version": "1.0.0",
+  "minimum_combination_count": 2,
+  "policy": {
+    "unknown_hard_value": "block",
+    "unknown_hard_source": "block",
+    "unmapped_hard_field": "block",
+    "unknown_candidate_dimension": "exclude_candidate",
+    "case_matching": "ascii_case_insensitive",
+    "numeric_comparison": "conservative"
+  },
+  "mappings": [
+    { "rule_id": "hard.model.precision", "field_id": "model.precision", "dimension_ids": ["precision"], "operator": "equals_ci", "requirement_units": ["none"], "dimension_unit": "none" },
+    { "rule_id": "hard.gpu.candidates", "field_id": "gpu.candidates", "dimension_ids": ["gpu_model"], "operator": "one_of_ci", "requirement_units": ["none"], "dimension_unit": "none" },
+    { "rule_id": "hard.gpu.capacity", "field_id": "gpu.capacity", "dimension_ids": ["gpu_count"], "operator": "greater_than_or_equal", "requirement_units": ["gpu_count"], "dimension_unit": "gpu_count" },
+    { "rule_id": "hard.cloud.candidates", "field_id": "cloud.candidates", "dimension_ids": ["cloud_provider"], "operator": "one_of_ci", "requirement_units": ["none"], "dimension_unit": "none" },
+    { "rule_id": "hard.region.allowed", "field_id": "region.allowed", "dimension_ids": ["region_code", "jurisdiction"], "operator": "one_of_ci", "requirement_units": ["none"], "dimension_unit": "none" },
+    { "rule_id": "hard.region.excluded", "field_id": "region.excluded", "dimension_ids": ["region_code", "jurisdiction"], "operator": "none_of_ci", "requirement_units": ["none"], "dimension_unit": "none" },
+    { "rule_id": "hard.network.latency_target", "field_id": "network.latency_target", "dimension_ids": ["network_latency_ms"], "operator": "less_than_or_equal", "requirement_units": ["milliseconds"], "dimension_unit": "milliseconds" },
+    { "rule_id": "hard.network.bandwidth_floor", "field_id": "network.bandwidth_floor", "dimension_ids": ["network_bandwidth_gbps"], "operator": "greater_than_or_equal", "requirement_units": ["gigabits_per_second"], "dimension_unit": "gigabits_per_second" },
+    { "rule_id": "hard.software.framework", "field_id": "software.framework", "dimension_ids": ["software_components"], "operator": "contains_ci", "requirement_units": ["none"], "dimension_unit": "none" },
+    { "rule_id": "hard.training.scale", "field_id": "training.scale", "dimension_ids": ["gpu_count"], "operator": "greater_than_or_equal", "requirement_units": ["gpu_count"], "dimension_unit": "gpu_count" }
+  ],
+  "boundaries": {
+    "hard_constraints_precede_scoring": true,
+    "scoring_performed": false,
+    "ranking_performed": false,
+    "recommendation_issued": false,
+    "execution_authorized": false,
+    "unknowns_imputed": false
+  }
+}

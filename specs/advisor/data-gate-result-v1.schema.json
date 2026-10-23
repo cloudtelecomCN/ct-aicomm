@@ -1,0 +1,196 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/advisor/data-gate-result-v1.schema.json",
+  "title": "CT-Advisor Data Gate and Hard Constraint Result v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "ruleset_version", "ruleset_sha256", "evaluation_id", "project_id", "passport", "generated_at", "input_sha256", "readiness", "constraint_set", "candidates", "summary", "boundaries", "content_sha256"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "ruleset_version": { "const": "1.0.0" },
+    "ruleset_sha256": { "$ref": "#/$defs/sha256" },
+    "evaluation_id": { "type": "string", "pattern": "^advisor_constraint_evaluation_[0-9a-f-]{36}$" },
+    "project_id": { "type": "string", "pattern": "^advisor_project_[0-9a-f-]{36}$" },
+    "passport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["passport_id", "revision", "content_sha256"],
+      "properties": {
+        "passport_id": { "type": "string", "pattern": "^advisor_passport_[0-9a-f-]{36}$" },
+        "revision": { "type": "integer", "minimum": 1 },
+        "content_sha256": { "type": ["string", "null"], "pattern": "^sha256:[0-9a-f]{64}$" }
+      }
+    },
+    "generated_at": { "type": "string", "format": "date-time", "pattern": "Z$" },
+    "input_sha256": { "$ref": "#/$defs/sha256" },
+    "readiness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "analysis_allowed", "blocking_issue_count", "warning_issue_count", "issues"],
+      "properties": {
+        "status": { "enum": ["ready", "ready_with_gaps", "blocked"] },
+        "analysis_allowed": { "type": "boolean" },
+        "blocking_issue_count": { "type": "integer", "minimum": 0 },
+        "warning_issue_count": { "type": "integer", "minimum": 0 },
+        "issues": { "type": "array", "maxItems": 2000, "items": { "$ref": "#/$defs/issue" } }
+      },
+      "allOf": [
+        { "if": { "properties": { "status": { "const": "blocked" } }, "required": ["status"] }, "then": { "properties": { "analysis_allowed": { "const": false } } }, "else": { "properties": { "analysis_allowed": { "const": true } } } }
+      ]
+    },
+    "constraint_set": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["hard_constraint_count", "constraints"],
+      "properties": {
+        "hard_constraint_count": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "constraints": { "type": "array", "maxItems": 100, "items": { "$ref": "#/$defs/constraint" } }
+      }
+    },
+    "candidates": { "type": "array", "minItems": 1, "maxItems": 500, "items": { "$ref": "#/$defs/candidate" } },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["combination_count", "eligible_count", "excluded_count", "indeterminate_count"],
+      "properties": {
+        "combination_count": { "type": "integer", "minimum": 1, "maximum": 500 },
+        "eligible_count": { "type": "integer", "minimum": 0, "maximum": 500 },
+        "excluded_count": { "type": "integer", "minimum": 0, "maximum": 500 },
+        "indeterminate_count": { "type": "integer", "minimum": 0, "maximum": 500 }
+      }
+    },
+    "boundaries": { "$ref": "#/$defs/boundaries" },
+    "content_sha256": { "$ref": "#/$defs/sha256" }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "value": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "number" },
+        { "type": "boolean" },
+        { "type": "array", "items": { "type": "string" } },
+        { "type": "null" }
+      ]
+    },
+    "issue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "severity", "scope", "message"],
+      "properties": {
+        "code": { "type": "string", "pattern": "^[a-z][a-z0-9_]{2,99}$" },
+        "severity": { "enum": ["blocking", "warning"] },
+        "scope": { "enum": ["passport", "constraint_set", "constraint", "combination_set", "combination"] },
+        "field_id": { "type": "string" },
+        "combination_id": { "type": "string", "pattern": "^advisor_combination_[0-9a-f-]{36}$" },
+        "message": { "type": "string", "minLength": 1, "maxLength": 500 }
+      }
+    },
+    "constraint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["constraint_id", "field_id", "status", "value", "unit", "source", "mapping"],
+      "properties": {
+        "constraint_id": { "type": "string", "pattern": "^hard:[a-z][a-z0-9_]*(?:\\.[a-z][a-z0-9_]*)+$" },
+        "field_id": { "type": "string" },
+        "status": { "enum": ["provided", "unknown", "not_applicable"] },
+        "value": { "$ref": "#/$defs/value" },
+        "unit": { "type": "string" },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "confidence", "observed_at", "reference"],
+          "properties": {
+            "kind": { "type": "string" },
+            "confidence": { "type": "string" },
+            "observed_at": { "type": "string", "format": "date-time" },
+            "reference": { "type": ["string", "null"] }
+          }
+        },
+        "mapping": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "rule_id", "dimension_ids", "operator", "dimension_unit"],
+          "properties": {
+            "status": { "enum": ["mapped", "blocked", "unmapped"] },
+            "rule_id": { "type": ["string", "null"] },
+            "dimension_ids": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+            "operator": { "type": ["string", "null"] },
+            "dimension_unit": { "type": ["string", "null"] }
+          }
+        }
+      }
+    },
+    "evaluation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rule_id", "field_id", "outcome", "code", "expected", "observed", "message"],
+      "properties": {
+        "rule_id": { "type": ["string", "null"] },
+        "field_id": { "type": "string" },
+        "outcome": { "enum": ["pass", "fail", "unknown"] },
+        "code": { "type": "string" },
+        "expected": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["value", "unit", "source_kind", "confidence"],
+          "properties": {
+            "value": { "$ref": "#/$defs/value" },
+            "unit": { "type": "string" },
+            "source_kind": { "type": "string" },
+            "confidence": { "type": "string" }
+          }
+        },
+        "observed": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["dimensions"],
+          "properties": {
+            "dimensions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["dimension_id", "status", "value", "unit"],
+                "properties": {
+                  "dimension_id": { "type": "string" },
+                  "status": { "enum": ["provided", "unknown"] },
+                  "value": { "$ref": "#/$defs/value" },
+                  "unit": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "message": { "type": "string" }
+      }
+    },
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["combination_id", "combination_key", "display_name", "status", "evaluations", "exclusion_codes", "combination_content_sha256"],
+      "properties": {
+        "combination_id": { "type": "string", "pattern": "^advisor_combination_[0-9a-f-]{36}$" },
+        "combination_key": { "type": "string" },
+        "display_name": { "type": "string" },
+        "status": { "enum": ["eligible", "excluded", "indeterminate"] },
+        "evaluations": { "type": "array", "maxItems": 100, "items": { "$ref": "#/$defs/evaluation" } },
+        "exclusion_codes": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+        "combination_content_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "boundaries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["hard_constraints_precede_scoring", "scoring_performed", "ranking_performed", "recommendation_issued", "execution_authorized", "unknowns_imputed"],
+      "properties": {
+        "hard_constraints_precede_scoring": { "const": true },
+        "scoring_performed": { "const": false },
+        "ranking_performed": { "const": false },
+        "recommendation_issued": { "const": false },
+        "execution_authorized": { "const": false },
+        "unknowns_imputed": { "const": false }
+      }
+    }
+  }
+}
