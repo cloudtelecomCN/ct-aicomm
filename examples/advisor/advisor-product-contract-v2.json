@@ -1,0 +1,60 @@
+{
+  "schema_version": "2.0.0",
+  "product": {
+    "id": "ct-advisor",
+    "name": "CT-Advisor",
+    "version": "2.0",
+    "contract_status": "frozen",
+    "category_zh": "AI 基础设施决策工作区",
+    "category_en": "AI infrastructure decision workspace",
+    "delivery_model": "one_product_one_workspace"
+  },
+  "free_capabilities": [
+    { "id": "resource_catalog", "name_zh": "资源目录", "name_en": "Resource catalog", "access": "free" },
+    { "id": "llm_sizing", "name_zh": "LLM 资源 Sizing", "name_en": "LLM infrastructure sizing", "access": "free" },
+    { "id": "public_benchmarks", "name_zh": "公开基准", "name_en": "Public benchmarks", "access": "free" },
+    { "id": "cost_tco_estimation", "name_zh": "成本与 TCO 估算", "name_en": "Cost and TCO estimation", "access": "free" },
+    { "id": "combination_builder", "name_zh": "跨 GPU、云、地域、网络组合比较", "name_en": "Cross-GPU, cloud, region, and network comparison", "access": "free" },
+    { "id": "constraints_and_scenarios", "name_zh": "约束与情景分析", "name_en": "Constraint and scenario analysis", "access": "free" },
+    { "id": "pareto_and_sensitivity", "name_zh": "Pareto 与敏感性分析", "name_en": "Pareto and sensitivity analysis", "access": "free" },
+    { "id": "ordinary_recommendations", "name_zh": "普通建议与解释", "name_en": "Standard recommendations and explanations", "access": "free" },
+    { "id": "basic_exports", "name_zh": "基础 PDF、JSON、CSV 导出", "name_en": "Basic PDF, JSON, and CSV exports", "access": "free" },
+    { "id": "published_task_templates", "name_zh": "全部已发布任务模板", "name_en": "All published task templates", "access": "free" }
+  ],
+  "task_templates": [
+    { "id": "ai-inference-infrastructure-selection/v1", "name_zh": "推理基础设施选型", "name_en": "Inference infrastructure selection", "maturity": "stable", "package_eligible": true, "access": "free" },
+    { "id": "ai-inference-capacity-sizing/v1", "name_zh": "推理容量 Sizing", "name_en": "Inference capacity sizing", "maturity": "stable", "package_eligible": false, "access": "free" },
+    { "id": "gpu-comparison/v1", "name_zh": "GPU 比较", "name_en": "GPU comparison", "maturity": "stable", "package_eligible": false, "access": "free" },
+    { "id": "cloud-region-network-comparison/v1", "name_zh": "云、地域与网络比较", "name_en": "Cloud, region, and network comparison", "maturity": "beta", "package_eligible": false, "access": "free" },
+    { "id": "build-rent-cloud-comparison/v1", "name_zh": "自建、租赁与云比较", "name_en": "Build, rent, and cloud comparison", "maturity": "beta", "package_eligible": false, "access": "free" },
+    { "id": "training-infrastructure-selection/v1", "name_zh": "训练基础设施选型", "name_en": "Training infrastructure selection", "maturity": "preview", "package_eligible": false, "access": "free" },
+    { "id": "infrastructure-migration-assessment/v1", "name_zh": "基础设施迁移评估", "name_en": "Infrastructure migration assessment", "maturity": "preview", "package_eligible": false, "access": "free" },
+    { "id": "data-residency-screening/v1", "name_zh": "数据驻留筛选", "name_en": "Data residency screening", "maturity": "preview", "package_eligible": false, "access": "free" }
+  ],
+  "paid_capability": {
+    "capability_key": "gpu_preprocurement_decision_evidence_package",
+    "name_zh": "GPU 决策与证据包",
+    "name_en": "GPU Decision & Evidence Package",
+    "trigger": "explicit_user_request",
+    "eligible_task_template_ids": ["ai-inference-infrastructure-selection/v1"],
+    "analysis_dimensions": ["gpu", "cloud", "region", "network"],
+    "included_outputs": [
+      "scope_freeze",
+      "source_manifest",
+      "requirement_passport",
+      "candidate_snapshot",
+      "scoring_and_exclusion_record",
+      "decision_record",
+      "numbered_report",
+      "offline_verification_bundle",
+      "named_acceptance_record"
+    ]
+  },
+  "boundaries": [
+    "Comparisons across multiple GPUs, clouds, regions, or networks remain free.",
+    "Payment is requested only after the user explicitly asks to generate the formal package.",
+    "Closing a commercial prompt must preserve the analysis and workspace state.",
+    "Recommendations are decision support, not a guarantee of optimality, certification, or legal advice.",
+    "CT-Advisor 2.0 does not purchase resources, deploy workloads, redirect traffic, or execute scheduling decisions."
+  ]
+}

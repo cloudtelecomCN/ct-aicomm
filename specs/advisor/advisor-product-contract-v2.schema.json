@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/advisor/advisor-product-contract-v2.schema.json",
+  "title": "CT-Advisor 2.0 public product contract",
+  "description": "Public terminology, free-access matrix, task maturity, and the single paid-package boundary. Conformance does not grant an entitlement, quote a price, or authorize infrastructure execution.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "product",
+    "free_capabilities",
+    "task_templates",
+    "paid_capability",
+    "boundaries"
+  ],
+  "properties": {
+    "schema_version": { "const": "2.0.0" },
+    "product": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "version", "contract_status", "category_zh", "category_en", "delivery_model"],
+      "properties": {
+        "id": { "const": "ct-advisor" },
+        "name": { "const": "CT-Advisor" },
+        "version": { "const": "2.0" },
+        "contract_status": { "const": "frozen" },
+        "category_zh": { "const": "AI 基础设施决策工作区" },
+        "category_en": { "const": "AI infrastructure decision workspace" },
+        "delivery_model": { "const": "one_product_one_workspace" }
+      }
+    },
+    "free_capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name_zh", "name_en", "access"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+          "name_zh": { "type": "string", "minLength": 1 },
+          "name_en": { "type": "string", "minLength": 1 },
+          "access": { "const": "free" }
+        }
+      }
+    },
+    "task_templates": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "contains": {
+        "type": "object",
+        "required": ["id", "package_eligible"],
+        "properties": {
+          "id": { "const": "ai-inference-infrastructure-selection/v1" },
+          "package_eligible": { "const": true }
+        }
+      },
+      "minContains": 1,
+      "maxContains": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name_zh", "name_en", "maturity", "package_eligible", "access"],
+        "allOf": [
+          {
+            "if": {
+              "properties": { "package_eligible": { "const": true } },
+              "required": ["package_eligible"]
+            },
+            "then": {
+              "properties": { "id": { "const": "ai-inference-infrastructure-selection/v1" } }
+            }
+          }
+        ],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9-]+/v[1-9][0-9]*$" },
+          "name_zh": { "type": "string", "minLength": 1 },
+          "name_en": { "type": "string", "minLength": 1 },
+          "maturity": { "enum": ["preview", "beta", "stable"] },
+          "package_eligible": { "type": "boolean" },
+          "access": { "const": "free" }
+        }
+      }
+    },
+    "paid_capability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capability_key",
+        "name_zh",
+        "name_en",
+        "trigger",
+        "eligible_task_template_ids",
+        "analysis_dimensions",
+        "included_outputs"
+      ],
+      "properties": {
+        "capability_key": { "const": "gpu_preprocurement_decision_evidence_package" },
+        "name_zh": { "const": "GPU 决策与证据包" },
+        "name_en": { "const": "GPU Decision & Evidence Package" },
+        "trigger": { "const": "explicit_user_request" },
+        "eligible_task_template_ids": {
+          "const": ["ai-inference-infrastructure-selection/v1"]
+        },
+        "analysis_dimensions": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "uniqueItems": true,
+          "items": { "enum": ["gpu", "cloud", "region", "network"] }
+        },
+        "included_outputs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" }
+        }
+      }
+    },
+    "boundaries": {
+      "type": "array",
+      "minItems": 5,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 20 }
+    }
+  }
+}

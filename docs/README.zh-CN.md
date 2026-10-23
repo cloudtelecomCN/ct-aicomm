@@ -5,6 +5,7 @@
 ## 文档与资源
 
 - [公开工作白皮书](whitepaper/README.zh-CN.md)
+- [CT-Advisor 2.0 公开产品合同](advisor/product-contract-v2.zh-CN.md)
 - [离线贡献者测试环境](contributor/test-environment.zh-CN.md)
 - [版本验证与 SBOM](release/verification.zh-CN.md)
 - [项目治理与外部维护者机制](../GOVERNANCE.zh-CN.md)

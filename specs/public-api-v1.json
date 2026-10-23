@@ -224,6 +224,7 @@
     "verifyRegistryEntryRecord"
   ],
   "public_contracts": [
+    "specs/advisor/advisor-product-contract-v2.schema.json",
     "specs/agent/control-protocol-v1.schema.json",
     "specs/agent/network-telemetry-v1.schema.json",
     "specs/compliance/audit-package-manifest-v1.schema.json",
