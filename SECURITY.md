@@ -54,6 +54,21 @@ If a complete fix cannot meet the target, maintainers will document the blocker 
 
 Credentials and signing material are rotated immediately when exposure is credible; they are never committed as a test fixture. A vulnerability fix does not weaken evidence-origin labels, human approval boundaries, fail-static behavior, or release verification.
 
+## Public repository and hosted-product boundary
+
+This public repository contains specifications, schemas, validation tools, offline workflows, public SDK surfaces, documentation, and releasable examples. It does not contain hosted-product credentials, customer or tenant data, private deployment topology, administrator secrets, commercial operations records, or the complete private service implementation.
+
+The hosted CT-AIComm and CT-Advisor security contract follows these public principles:
+
+- tenant scope is derived server-side from an authenticated workspace credential; callers cannot select another organization;
+- owner, admin, operator, and viewer permissions are enforced by the service, with additional separation for formal review workflows;
+- protected report and evidence downloads require authentication, disable caching, and append bounded audit facts without logging credentials, request bodies, query strings, or artifact bytes;
+- workspace bearer credentials are displayed once and retained by the service only as cryptographic digests;
+- project disposition is constrained by retention policy, formal evidence, active commercial state, and legal holds, and blocked requests remain auditable;
+- recommendations and evidence do not authorize automatic infrastructure or network execution.
+
+These statements describe product controls and testable boundaries. They are not an independent penetration-test result, certification, statutory assessment, or guarantee that all security risk has been eliminated. Private implementation details are intentionally omitted; disclose suspected weaknesses through the private reporting channel above.
+
 ## Coordinated disclosure
 
 Keep the report private until a fix or effective mitigation is available. The default disclosure target is within 90 calendar days of a reproducible report. Maintainers and the reporter may agree to a different date when remediation depends on an upstream project or coordinated ecosystem release.
