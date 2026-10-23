@@ -200,7 +200,7 @@ test("publishes a closed schema, bilingual guidance, types, SDK surface, and off
   assert.equal(schema.$defs.workspace.additionalProperties, false);
   assert.equal(schema.$defs.scopeMark.additionalProperties, false);
   assert.equal(schema.$defs.exportManifest.additionalProperties, false);
-  assert.equal(publicApi.sdk_version, "0.27.0");
+  assert.equal(publicApi.sdk_version, "0.28.0");
   assert.ok(publicApi.public_contracts.includes("specs/review/review-workspace-scope-mark-v1.schema.json"));
   assert.ok(publicApi.public_tools.includes("packages/independent-run-review/workspace.mjs"));
   assert.ok(publicApi.public_tools.includes("packages/independent-run-review/workspace.d.ts"));

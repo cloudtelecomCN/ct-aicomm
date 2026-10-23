@@ -38,6 +38,7 @@
     "full": "Run every public Node test in the repository."
   },
   "contract_tests": [
+    "tests/advisor-formal-evidence-package.test.mjs",
     "tests/advisor-formal-evidence-package-contract.test.mjs",
     "tests/advisor-basic-report.test.mjs",
     "tests/advisor-multi-objective-analysis.test.mjs",

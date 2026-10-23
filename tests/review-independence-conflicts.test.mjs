@@ -194,7 +194,7 @@ test("publishes strict schema, SDK exports, bilingual guidance, and offline cove
   for (const definition of ["subject", "organization", "roleAssignment", "paymentDisclosure", "conflict", "recusal", "gate", "boundary"]) {
     assert.equal(schema.$defs[definition].additionalProperties, false, definition);
   }
-  assert.equal(publicApi.sdk_version, "0.27.0");
+  assert.equal(publicApi.sdk_version, "0.28.0");
   assert.ok(publicApi.public_contracts.includes("specs/review/review-independence-v1.schema.json"));
   assert.ok(publicApi.public_tools.includes("packages/independent-run-review/independence.mjs"));
   assert.ok(publicApi.public_tools.includes("packages/independent-run-review/independence.d.ts"));

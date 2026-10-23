@@ -15,6 +15,7 @@
 - [CT-Advisor multi-objective analysis v1](advisor/multi-objective-analysis-v1.md)
 - [CT-Advisor Basic Report v1](advisor/basic-report-v1.md)
 - [CT-Advisor formal evidence package contract v1](advisor/formal-evidence-package-contract-v1.md)
+- [CT-Advisor formal Evidence Package verification v1](advisor/formal-evidence-package-verification-v1.md)
 - [Offline contributor test environment](contributor/test-environment.md)
 - [Release verification and SBOM](release/verification.md)
 - [Project governance and external maintainer process](../GOVERNANCE.md)

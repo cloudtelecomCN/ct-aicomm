@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/advisor/formal-evidence-package-verification-v1.schema.json",
+  "title": "CT-Advisor Evidence Package offline verification result v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "verifier_version", "valid", "integrity_verified", "archive_sha256",
+    "package_id", "contract_id", "package_revision", "locale", "declared_package_state",
+    "revocation_status", "artifact_item_count", "payload_file_count", "exit_archive_file_count",
+    "manifest_sha256", "profile_sha256", "preflight_scope", "context_verified",
+    "authenticity_verified", "issuance_authority_verified", "entitlement_verified",
+    "live_revocation_checked", "execution_authorized", "certification_issued",
+    "legal_opinion_issued", "performance_claim_allowed"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "verifier_version": { "type": "string", "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$" },
+    "valid": { "const": true },
+    "integrity_verified": { "const": true },
+    "archive_sha256": { "$ref": "#/$defs/sha256" },
+    "package_id": { "type": "string", "pattern": "^advisor_evidence_package_[0-9a-f-]{36}$" },
+    "contract_id": { "type": "string", "pattern": "^advisor_package_contract_[0-9a-f-]{36}$" },
+    "package_revision": { "type": "integer", "minimum": 1 },
+    "locale": { "enum": ["en", "zh-CN"] },
+    "declared_package_state": { "enum": ["assembled", "issued", "accepted", "superseded", "revoked"] },
+    "revocation_status": { "enum": ["revoked_as_packaged", "snapshot_only_not_live_checked"] },
+    "artifact_item_count": { "const": 13 },
+    "payload_file_count": { "type": "integer", "minimum": 12 },
+    "exit_archive_file_count": { "type": "integer", "minimum": 3 },
+    "manifest_sha256": { "$ref": "#/$defs/sha256" },
+    "profile_sha256": { "$ref": "#/$defs/sha256" },
+    "preflight_scope": { "const": "payload_files_excluding_D10_D11_manifest_checksums_and_outer_archive" },
+    "context_verified": { "type": "boolean" },
+    "authenticity_verified": { "const": false },
+    "issuance_authority_verified": { "const": false },
+    "entitlement_verified": { "const": false },
+    "live_revocation_checked": { "const": false },
+    "execution_authorized": { "const": false },
+    "certification_issued": { "const": false },
+    "legal_opinion_issued": { "const": false },
+    "performance_claim_allowed": { "const": false }
+  },
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" }
+  }
+}

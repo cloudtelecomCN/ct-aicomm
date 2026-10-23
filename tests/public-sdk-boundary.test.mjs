@@ -63,6 +63,31 @@ test("public API exposes the CT-558 audit package without signing or approval au
   for (const forbidden of ["signAuditPackage", "approveAuditPackage", "issueAuditorCredential"]) assert.equal(Object.hasOwn(sdk, forbidden), false);
 });
 
+test("public API exposes CT-668 Evidence Package verification without commercial issuance authority", async () => {
+  const manifest = JSON.parse(await readFile(new URL("../specs/public-api-v1.json", import.meta.url), "utf8"));
+  for (const contract of [
+    "specs/advisor/formal-evidence-package-contract-v1.schema.json",
+    "specs/advisor/formal-evidence-package-manifest-v1.schema.json",
+    "specs/advisor/formal-evidence-package-verification-v1.schema.json"
+  ]) assert.ok(manifest.public_contracts.includes(contract));
+  for (const tool of [
+    "packages/advisor/deterministic-zip.mjs",
+    "packages/advisor/formal-evidence-package-contract.mjs",
+    "packages/advisor/formal-evidence-package.mjs",
+    "scripts/verify-advisor-evidence-package.mjs"
+  ]) assert.ok(manifest.public_tools.includes(tool));
+  for (const symbol of [
+    "ADVISOR_FORMAL_PACKAGE_VERIFIER_VERSION",
+    "getAdvisorFormalPackageProfile",
+    "validateAdvisorFormalEvidencePackageManifest",
+    "verifyAdvisorFormalEvidencePackage"
+  ]) assert.ok(manifest.exports.includes(symbol));
+  for (const forbidden of ["issueAdvisorFormalPackage", "grantAdvisorEntitlement", "signAdvisorFormalPackage", "readAdvisorCustomerData"]) {
+    assert.equal(manifest.exports.includes(forbidden), false);
+    assert.equal(Object.hasOwn(sdk, forbidden), false);
+  }
+});
+
 test("public API exposes CT-559 evidence gap detection without verifier or certification authority", async () => {
   const manifest = JSON.parse(await readFile(new URL("../specs/public-api-v1.json", import.meta.url), "utf8"));
   assert.ok(manifest.public_contracts.includes("specs/compliance/evidence-gap-assessment-v1.schema.json"));

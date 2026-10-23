@@ -15,6 +15,7 @@
 - [CT-Advisor 多目标分析 v1](advisor/multi-objective-analysis-v1.zh-CN.md)
 - [CT-Advisor 基础报告 v1](advisor/basic-report-v1.zh-CN.md)
 - [CT-Advisor 正式证据包合同 v1](advisor/formal-evidence-package-contract-v1.zh-CN.md)
+- [CT-Advisor 正式证据包离线验证规范 v1](advisor/formal-evidence-package-verification-v1.zh-CN.md)
 - [离线贡献者测试环境](contributor/test-environment.zh-CN.md)
 - [版本验证与 SBOM](release/verification.zh-CN.md)
 - [项目治理与外部维护者机制](../GOVERNANCE.zh-CN.md)

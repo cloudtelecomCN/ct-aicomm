@@ -227,7 +227,7 @@ test("publishes a closed schema, bilingual guidance, types, SDK surface, and off
   assert.equal(schema.$defs.lifecycle.additionalProperties, false);
   assert.equal(schema.$defs.opinion.properties.record_type.const, "independent_review_opinion");
   assert.equal(schema.$defs.event.properties.record_type.const, "independent_review_opinion_event");
-  assert.equal(publicApi.sdk_version, "0.27.0");
+  assert.equal(publicApi.sdk_version, "0.28.0");
   assert.ok(publicApi.public_contracts.includes("specs/review/review-opinion-lifecycle-v1.schema.json"));
   assert.ok(publicApi.public_tools.includes("packages/independent-run-review/opinion.mjs"));
   assert.ok(publicApi.public_tools.includes("packages/independent-run-review/opinion.d.ts"));

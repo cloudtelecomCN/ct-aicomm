@@ -6,6 +6,7 @@ All notable public changes to CT-AIComm are recorded in this file. The project f
 
 ### Added
 
+- CT-668 public, zero-dependency formal Evidence Package verifier and CLI with deterministic ZIP parsing, exact D01-D13 manifest/checksum enforcement, external archive digest verification, nested full-exit verification, tamper/path/symlink rejection, and explicit snapshot-only revocation and non-authority boundaries.
 - Freeze the CT-Advisor GPU Decision & Evidence Package contract: 13 required customer deliverables, strict public contract and forward manifest Schemas, source-bound fingerprints, non-circular archive digests, explicit SemVer compatibility, bilingual documentation, and offline validation boundaries.
 - Publish the free CT-Advisor Basic Report format, complete JSON and long-form CSV projections, browser-local PDF digest binding, fixed synthetic fingerprints, bilingual boundary documentation, and an offline verifier.
 - Publish the deterministic CT-Advisor multi-objective analysis method with four frozen scenarios, direction-aware normalization, Pareto and sensitivity calculations, explicit unknown handling, fixed synthetic fingerprints, and read-only non-execution recommendations.
