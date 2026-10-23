@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.0.0",
+  "registry_id": "ct-advisor-resource-fields",
+  "registry_version": "1.0.0",
+  "published_at": "2026-10-23T00:00:00.000Z",
+  "units": [
+    { "code": "none", "symbol": "-", "quantity_zh": "无量纲", "quantity_en": "dimensionless" },
+    { "code": "gibibytes", "symbol": "GiB", "quantity_zh": "二进制吉字节", "quantity_en": "gibibytes" },
+    { "code": "gpu_count", "symbol": "GPU", "quantity_zh": "GPU 数量", "quantity_en": "GPU count" },
+    { "code": "count", "symbol": "count", "quantity_zh": "数量", "quantity_en": "count" },
+    { "code": "milliseconds", "symbol": "ms", "quantity_zh": "毫秒", "quantity_en": "milliseconds" },
+    { "code": "gigabits_per_second", "symbol": "Gbps", "quantity_zh": "千兆比特每秒", "quantity_en": "gigabits per second" },
+    { "code": "percent", "symbol": "%", "quantity_zh": "百分比", "quantity_en": "percent" },
+    { "code": "currency_per_billing_unit", "symbol": "currency/unit", "quantity_zh": "每计费单位金额", "quantity_en": "currency per billing unit" }
+  ],
+  "source_kinds": ["measured", "vendor_published", "customer_quoted", "customer_declared", "modeled", "inferred", "synthetic", "unknown"],
+  "confidence_levels": ["high", "medium", "low", "unknown"],
+  "authorization_bases": ["public_web", "open_license", "customer_authorized", "contract", "internal_synthetic", "unknown"],
+  "authorization_decisions": ["allowed", "prohibited", "unknown"],
+  "resource_types": ["gpu", "cloud_instance", "region", "network_path", "software_stack", "pricing_offer"],
+  "fields": [
+    { "field_id": "gpu.vendor", "resource_type": "gpu", "label_zh": "GPU 厂商", "label_en": "GPU vendor", "description_zh": "GPU 产品的公开或客户声明厂商。", "description_en": "Published or customer-declared GPU vendor.", "value_type": "string", "allowed_units": ["none"] },
+    { "field_id": "gpu.model", "resource_type": "gpu", "label_zh": "GPU 型号", "label_en": "GPU model", "description_zh": "用于候选识别的 GPU 型号名称。", "description_en": "GPU model name used for candidate identity.", "value_type": "string", "allowed_units": ["none"] },
+    { "field_id": "gpu.memory_capacity", "resource_type": "gpu", "label_zh": "显存容量", "label_en": "Memory capacity", "description_zh": "单个 GPU 的显存容量。", "description_en": "Memory capacity for one GPU device.", "value_type": "number", "allowed_units": ["gibibytes"] },
+    { "field_id": "gpu.supported_precisions", "resource_type": "gpu", "label_zh": "支持精度", "label_en": "Supported precisions", "description_zh": "公开声明或验证过的计算精度集合。", "description_en": "Published or verified compute precision set.", "value_type": "string_list", "allowed_units": ["none"] },
+    { "field_id": "gpu.interconnects", "resource_type": "gpu", "label_zh": "互连类型", "label_en": "Interconnects", "description_zh": "资源支持的 GPU 或主机互连类型。", "description_en": "GPU or host interconnect types supported by the resource.", "value_type": "string_list", "allowed_units": ["none"] },
+
+    { "field_id": "cloud.provider", "resource_type": "cloud_instance", "label_zh": "云厂商", "label_en": "Cloud provider", "description_zh": "实例报价或规格所属的云服务商。", "description_en": "Cloud provider responsible for the instance offer.", "value_type": "string", "allowed_units": ["none"] },
+    { "field_id": "cloud.instance_type", "resource_type": "cloud_instance", "label_zh": "实例规格", "label_en": "Instance type", "description_zh": "供应商定义的实例规格标识。", "description_en": "Provider-defined instance type identifier.", "value_type": "string", "allowed_units": ["none"] },
+    { "field_id": "cloud.gpu_resource_ref", "resource_type": "cloud_instance", "label_zh": "GPU 资源引用", "label_en": "GPU resource reference", "description_zh": "指向目录中 GPU 资源的稳定引用。", "description_en": "Stable reference to a GPU resource in the catalog.", "value_type": "string", "allowed_units": ["none"] },
+    { "field_id": "cloud.gpu_count", "resource_type": "cloud_instance", "label_zh": "GPU 数量", "label_en": "GPU count", "description_zh": "单个实例中可用的 GPU 数量。", "description_en": "Number of GPU devices available in one instance.", "value_type": "integer", "allowed_units": ["gpu_count"] },
+    { "field_id": "cloud.vcpu_count", "resource_type": "cloud_instance", "label_zh": "vCPU 数量", "label_en": "vCPU count", "description_zh": "单个实例中声明的虚拟 CPU 数量。", "description_en": "Declared virtual CPU count for one instance.", "value_type": "integer", "allowed_units": ["count"] },
+    { "field_id": "cloud.host_memory", "resource_type": "cloud_instance", "label_zh": "主机内存", "label_en": "Host memory", "description_zh": "单个实例中声明的主机内存容量。", "description_en": "Declared host memory capacity for one instance.", "value_type": "number", "allowed_units": ["gibibytes"] },
+
+    { "field_id": "region.provider", "resource_type": "region", "label_zh": "地域提供方", "label_en": "Region provider", "description_zh": "定义该地域代码的服务提供方。", "description_en": "Service provider defining the region code.", "value_type": "string", "allowed_units": ["none"] },
+    { "field_id": "region.code", "resource_type": "region", "label_zh": "地域代码", "label_en": "Region code", "description_zh": "提供方公布的稳定地域代码。", "description_en": "Stable region code published by the provider.", "value_type": "string", "allowed_units": ["none"] },
+    { "field_id": "region.country_code", "resource_type": "region", "label_zh": "国家代码", "label_en": "Country code", "description_zh": "地域所在国家或地区的代码。", "description_en": "Country or territory code for the region.", "value_type": "string", "allowed_units": ["none"] },
+    { "field_id": "region.jurisdiction", "resource_type": "region", "label_zh": "司法辖区", "label_en": "Jurisdiction", "description_zh": "供驻留筛选使用的司法辖区标签。", "description_en": "Jurisdiction label used for residency screening.", "value_type": "string", "allowed_units": ["none"] },
+
+    { "field_id": "network.endpoint_a", "resource_type": "network_path", "label_zh": "端点 A", "label_en": "Endpoint A", "description_zh": "网络路径第一个端点的稳定资源引用。", "description_en": "Stable resource reference for the first path endpoint.", "value_type": "string", "allowed_units": ["none"] },
+    { "field_id": "network.endpoint_b", "resource_type": "network_path", "label_zh": "端点 B", "label_en": "Endpoint B", "description_zh": "网络路径第二个端点的稳定资源引用。", "description_en": "Stable resource reference for the second path endpoint.", "value_type": "string", "allowed_units": ["none"] },
+    { "field_id": "network.round_trip_latency", "resource_type": "network_path", "label_zh": "往返时延", "label_en": "Round-trip latency", "description_zh": "按来源方法获得的网络往返时延。", "description_en": "Network round-trip latency obtained by the declared method.", "value_type": "number", "allowed_units": ["milliseconds"] },
+    { "field_id": "network.bandwidth", "resource_type": "network_path", "label_zh": "带宽", "label_en": "Bandwidth", "description_zh": "按来源方法声明或测量的链路带宽。", "description_en": "Link bandwidth declared or measured by the source method.", "value_type": "number", "allowed_units": ["gigabits_per_second"] },
+    { "field_id": "network.packet_loss", "resource_type": "network_path", "label_zh": "丢包率", "label_en": "Packet loss", "description_zh": "按来源窗口测得的网络丢包比例。", "description_en": "Network packet-loss rate for the source observation window.", "value_type": "number", "allowed_units": ["percent"] },
+
+    { "field_id": "software.component", "resource_type": "software_stack", "label_zh": "软件组件", "label_en": "Software component", "description_zh": "软件栈中被跟踪的组件名称。", "description_en": "Name of the component tracked in the software stack.", "value_type": "string", "allowed_units": ["none"] },
+    { "field_id": "software.version", "resource_type": "software_stack", "label_zh": "软件版本", "label_en": "Software version", "description_zh": "组件的精确或客户声明版本。", "description_en": "Exact or customer-declared component version.", "value_type": "string", "allowed_units": ["none"] },
+    { "field_id": "software.compatible_resource_refs", "resource_type": "software_stack", "label_zh": "兼容资源引用", "label_en": "Compatible resource references", "description_zh": "已声明兼容的目录资源引用集合。", "description_en": "Catalog resource references declared as compatible.", "value_type": "string_list", "allowed_units": ["none"] },
+
+    { "field_id": "pricing.target_resource_ref", "resource_type": "pricing_offer", "label_zh": "目标资源引用", "label_en": "Target resource reference", "description_zh": "该价格条目所适用的目录资源引用。", "description_en": "Catalog resource reference covered by the price entry.", "value_type": "string", "allowed_units": ["none"] },
+    { "field_id": "pricing.currency", "resource_type": "pricing_offer", "label_zh": "币种", "label_en": "Currency", "description_zh": "价格金额采用的 ISO 风格币种代码。", "description_en": "ISO-style currency code used by the price amount.", "value_type": "string", "allowed_units": ["none"] },
+    { "field_id": "pricing.amount", "resource_type": "pricing_offer", "label_zh": "金额", "label_en": "Amount", "description_zh": "每个声明计费单位对应的金额。", "description_en": "Amount charged for each declared billing unit.", "value_type": "number", "allowed_units": ["currency_per_billing_unit"] },
+    { "field_id": "pricing.billing_unit", "resource_type": "pricing_offer", "label_zh": "计费单位", "label_en": "Billing unit", "description_zh": "价格金额对应的计费时间或资源单位。", "description_en": "Time or resource billing unit represented by the amount.", "value_type": "string", "allowed_units": ["none"] },
+    { "field_id": "pricing.commitment", "resource_type": "pricing_offer", "label_zh": "承诺类型", "label_en": "Commitment", "description_zh": "按量、预留或合同承诺等价格条件。", "description_en": "On-demand, reserved, or contractual price condition.", "value_type": "string", "allowed_units": ["none"] }
+  ],
+  "resource_profiles": [
+    { "resource_type": "gpu", "field_set_version": "1.0.0", "required_fields": ["gpu.vendor", "gpu.model"], "optional_fields": ["gpu.memory_capacity", "gpu.supported_precisions", "gpu.interconnects"] },
+    { "resource_type": "cloud_instance", "field_set_version": "1.0.0", "required_fields": ["cloud.provider", "cloud.instance_type"], "optional_fields": ["cloud.gpu_resource_ref", "cloud.gpu_count", "cloud.vcpu_count", "cloud.host_memory"] },
+    { "resource_type": "region", "field_set_version": "1.0.0", "required_fields": ["region.provider", "region.code", "region.country_code", "region.jurisdiction"], "optional_fields": [] },
+    { "resource_type": "network_path", "field_set_version": "1.0.0", "required_fields": ["network.endpoint_a", "network.endpoint_b"], "optional_fields": ["network.round_trip_latency", "network.bandwidth", "network.packet_loss"] },
+    { "resource_type": "software_stack", "field_set_version": "1.0.0", "required_fields": ["software.component", "software.version"], "optional_fields": ["software.compatible_resource_refs"] },
+    { "resource_type": "pricing_offer", "field_set_version": "1.0.0", "required_fields": ["pricing.target_resource_ref", "pricing.currency", "pricing.amount", "pricing.billing_unit"], "optional_fields": ["pricing.commitment"] }
+  ]
+}

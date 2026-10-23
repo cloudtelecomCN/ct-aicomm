@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/advisor/resource-catalog-v1.schema.json",
+  "title": "CT-Advisor public resource catalog v1",
+  "description": "A source-bound, validity-bounded catalog for decision support. It does not authorize execution or performance claims.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "catalog_id", "catalog_version", "published_at", "resources", "boundaries"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "catalog_id": { "const": "ct-advisor-public-resource-catalog" },
+    "catalog_version": { "const": "1.0.0" },
+    "published_at": { "type": "string", "format": "date-time", "pattern": "Z$" },
+    "resources": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/resource" } },
+    "boundaries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tenant_private_excluded", "synthetic_data_labeled", "execution_authorized", "performance_claim_allowed"],
+      "properties": {
+        "tenant_private_excluded": { "const": true },
+        "synthetic_data_labeled": { "const": true },
+        "execution_authorized": { "const": false },
+        "performance_claim_allowed": { "const": false }
+      }
+    }
+  },
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "factValue": {
+      "oneOf": [
+        { "type": "string", "minLength": 1, "maxLength": 1000 },
+        { "type": "number" },
+        { "type": "boolean" },
+        { "type": "array", "minItems": 1, "maxItems": 100, "uniqueItems": true, "items": { "type": "string", "minLength": 1, "maxLength": 200 } },
+        { "type": "null" }
+      ]
+    },
+    "fact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["field_id", "status", "value", "unit"],
+      "properties": {
+        "field_id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*(?:\\.[a-z][a-z0-9_]*)+$" },
+        "status": { "enum": ["provided", "unknown", "not_applicable"] },
+        "value": { "$ref": "#/$defs/factValue" },
+        "unit": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" }
+      }
+    },
+    "authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["basis", "analysis_use", "redistribution", "reference"],
+      "properties": {
+        "basis": { "enum": ["public_web", "open_license", "customer_authorized", "contract", "internal_synthetic", "unknown"] },
+        "analysis_use": { "enum": ["allowed", "prohibited", "unknown"] },
+        "redistribution": { "enum": ["allowed", "prohibited", "unknown"] },
+        "reference": { "type": ["string", "null"], "maxLength": 500 }
+      }
+    },
+    "sourceSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "snapshot_id", "data_class", "kind", "confidence", "publisher", "title", "reference_url", "observed_at", "effective_from", "expires_at", "authorization", "summary", "content_sha256"],
+      "properties": {
+        "schema_version": { "const": "1.0.0" },
+        "snapshot_id": { "type": "string", "pattern": "^advisor_source_[0-9a-f-]{36}$" },
+        "data_class": { "enum": ["public", "synthetic"] },
+        "kind": { "enum": ["measured", "vendor_published", "customer_quoted", "customer_declared", "modeled", "inferred", "synthetic", "unknown"] },
+        "confidence": { "enum": ["high", "medium", "low", "unknown"] },
+        "publisher": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "title": { "type": "string", "minLength": 1, "maxLength": 240 },
+        "reference_url": { "type": ["string", "null"], "maxLength": 500 },
+        "observed_at": { "type": "string", "format": "date-time", "pattern": "Z$" },
+        "effective_from": { "type": "string", "format": "date-time", "pattern": "Z$" },
+        "expires_at": { "type": ["string", "null"], "format": "date-time" },
+        "authorization": { "$ref": "#/$defs/authorization" },
+        "summary": { "type": "string", "minLength": 8, "maxLength": 1000 },
+        "content_sha256": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "resource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "resource_id", "resource_type", "canonical_key", "display_name", "lifecycle_status", "visibility", "data_class", "facts", "source_snapshot", "recorded_at", "content_sha256", "boundaries"],
+      "properties": {
+        "schema_version": { "const": "1.0.0" },
+        "resource_id": { "type": "string", "pattern": "^advisor_resource_[0-9a-f-]{36}$" },
+        "resource_type": { "enum": ["gpu", "cloud_instance", "region", "network_path", "software_stack", "pricing_offer"] },
+        "canonical_key": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._:-]{2,159}$" },
+        "display_name": { "type": "string", "minLength": 2, "maxLength": 160 },
+        "lifecycle_status": { "enum": ["active", "deprecated", "unknown"] },
+        "visibility": { "const": "public" },
+        "data_class": { "enum": ["public", "synthetic"] },
+        "facts": { "type": "array", "minItems": 1, "maxItems": 100, "items": { "$ref": "#/$defs/fact" } },
+        "source_snapshot": { "$ref": "#/$defs/sourceSnapshot" },
+        "recorded_at": { "type": "string", "format": "date-time", "pattern": "Z$" },
+        "content_sha256": { "$ref": "#/$defs/digest" },
+        "boundaries": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["decision_support_only", "execution_authorized", "performance_claim_allowed"],
+          "properties": {
+            "decision_support_only": { "const": true },
+            "execution_authorized": { "const": false },
+            "performance_claim_allowed": { "const": false }
+          }
+        }
+      }
+    }
+  }
+}
