@@ -1,0 +1,274 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/review/review-independence-v1.schema.json",
+  "title": "CT-AIComm independent review identity, organization, and conflict assessment v1",
+  "description": "An immutable, declared-records-only independence gate bound to one exact review engagement. Conformance does not authenticate identity, externally verify control, authorize evidence access, perform review work, issue an opinion, or issue certification.",
+  "$ref": "#/$defs/independenceAssessment",
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-(?:(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+(?:[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$"
+    },
+    "fingerprint": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "instant": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "engagementReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["object_type", "object_id", "version", "tenant_id", "content_fingerprint"],
+      "properties": {
+        "object_type": { "const": "independent_review_engagement" },
+        "object_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/version" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "evidenceReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "content_fingerprint"],
+      "properties": {
+        "artifact_id": { "$ref": "#/$defs/id" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subject_id", "organization_id", "identity_basis", "evidence_refs"],
+      "properties": {
+        "subject_id": { "$ref": "#/$defs/id" },
+        "organization_id": { "$ref": "#/$defs/id" },
+        "identity_basis": { "enum": ["self-declared", "document-reference"] },
+        "evidence_refs": {
+          "type": "array",
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/evidenceReference" }
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "identity_basis": { "const": "self-declared" } }, "required": ["identity_basis"] },
+          "then": { "properties": { "evidence_refs": { "maxItems": 0 } } },
+          "else": { "properties": { "evidence_refs": { "minItems": 1 } } }
+        }
+      ]
+    },
+    "organization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["organization_id", "ultimate_controller_id", "control_basis", "evidence_refs"],
+      "properties": {
+        "organization_id": { "$ref": "#/$defs/id" },
+        "ultimate_controller_id": { "$ref": "#/$defs/id" },
+        "control_basis": { "enum": ["self-declared", "document-reference"] },
+        "evidence_refs": {
+          "type": "array",
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/evidenceReference" }
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "control_basis": { "const": "self-declared" } }, "required": ["control_basis"] },
+          "then": { "properties": { "evidence_refs": { "maxItems": 0 } } },
+          "else": { "properties": { "evidence_refs": { "minItems": 1 } } }
+        }
+      ]
+    },
+    "role": {
+      "enum": ["commissioner", "evidence-submitter", "review-lead", "independence-assessor", "opinion-signer"]
+    },
+    "roleAssignment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "subject_id"],
+      "properties": {
+        "role": { "$ref": "#/$defs/role" },
+        "subject_id": { "$ref": "#/$defs/id" }
+      }
+    },
+    "paymentDisclosure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["payer_organization_id", "payee_organization_id", "fee_basis", "outcome_contingent"],
+      "properties": {
+        "payer_organization_id": { "$ref": "#/$defs/id" },
+        "payee_organization_id": { "$ref": "#/$defs/id" },
+        "fee_basis": { "enum": ["fixed-fee", "cost-reimbursement", "pro-bono", "other"] },
+        "outcome_contingent": { "type": "boolean" }
+      }
+    },
+    "conflict": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["conflict_id", "category", "affected_subject_id", "affected_role", "description", "resolution", "recusal_id"],
+      "properties": {
+        "conflict_id": { "$ref": "#/$defs/id" },
+        "category": {
+          "enum": ["common-control", "employment", "ownership", "advisory", "investment", "family", "prior-work", "outcome-contingent-payment", "other"]
+        },
+        "affected_subject_id": { "$ref": "#/$defs/id" },
+        "affected_role": { "$ref": "#/$defs/role" },
+        "description": { "type": "string", "minLength": 3, "maxLength": 500 },
+        "resolution": { "enum": ["unresolved", "recused", "disqualifying"] },
+        "recusal_id": { "type": ["string", "null"], "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "resolution": { "const": "recused" } }, "required": ["resolution"] },
+          "then": { "properties": { "recusal_id": { "$ref": "#/$defs/id" } } },
+          "else": { "properties": { "recusal_id": { "type": "null" } } }
+        }
+      ]
+    },
+    "recusal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["recusal_id", "conflict_id", "subject_id", "role", "replacement_subject_id", "effective_at", "reason"],
+      "properties": {
+        "recusal_id": { "$ref": "#/$defs/id" },
+        "conflict_id": { "$ref": "#/$defs/id" },
+        "subject_id": { "$ref": "#/$defs/id" },
+        "role": { "$ref": "#/$defs/role" },
+        "replacement_subject_id": { "$ref": "#/$defs/id" },
+        "effective_at": { "$ref": "#/$defs/instant" },
+        "reason": { "type": "string", "minLength": 3, "maxLength": 500 }
+      }
+    },
+    "gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "basis", "status", "blocker_codes", "opinion_signer_subject_id",
+        "opinion_signer_organization_id", "duties_separated",
+        "ultimate_control_separated", "payment_independence_satisfied",
+        "all_conflicts_resolved", "recusals_effective",
+        "eligible_to_sign_independent_opinion"
+      ],
+      "properties": {
+        "basis": { "const": "declared-records-only" },
+        "status": { "enum": ["eligible-on-declared-records", "ineligible"] },
+        "blocker_codes": {
+          "type": "array",
+          "maxItems": 5,
+          "uniqueItems": true,
+          "items": {
+            "enum": ["same-ultimate-controller", "subject-role-conflict", "outcome-contingent-payment", "unresolved-conflict", "disqualifying-conflict"]
+          }
+        },
+        "opinion_signer_subject_id": { "$ref": "#/$defs/id" },
+        "opinion_signer_organization_id": { "$ref": "#/$defs/id" },
+        "duties_separated": { "type": "boolean" },
+        "ultimate_control_separated": { "type": "boolean" },
+        "payment_independence_satisfied": { "type": "boolean" },
+        "all_conflicts_resolved": { "type": "boolean" },
+        "recusals_effective": { "type": "boolean" },
+        "eligible_to_sign_independent_opinion": { "type": "boolean" }
+      }
+    },
+    "boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "assessment_only", "declared_records_only", "independence_gate_evaluated",
+        "identity_authenticated", "organization_control_externally_verified",
+        "reviewer_independence_certified", "evidence_access_authorized",
+        "review_performed", "opinion_issued", "passport_status_mutated",
+        "performance_claim_allowed", "sla_adjudicated", "certification_issued"
+      ],
+      "properties": {
+        "assessment_only": { "const": true },
+        "declared_records_only": { "const": true },
+        "independence_gate_evaluated": { "const": true },
+        "identity_authenticated": { "const": false },
+        "organization_control_externally_verified": { "const": false },
+        "reviewer_independence_certified": { "const": false },
+        "evidence_access_authorized": { "const": false },
+        "review_performed": { "const": false },
+        "opinion_issued": { "const": false },
+        "passport_status_mutated": { "const": false },
+        "performance_claim_allowed": { "const": false },
+        "sla_adjudicated": { "const": false },
+        "certification_issued": { "const": false }
+      }
+    },
+    "independenceAssessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version", "record_type", "assessment_id", "version", "tenant_id",
+        "created_by", "assessed_at", "engagement_ref", "subjects", "organizations",
+        "role_assignments", "payment_disclosure", "conflicts", "recusals", "gate",
+        "boundary", "content_fingerprint"
+      ],
+      "properties": {
+        "schema_version": { "const": "1.0.0" },
+        "record_type": { "const": "independent_review_independence_assessment" },
+        "assessment_id": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/version" },
+        "tenant_id": { "$ref": "#/$defs/id" },
+        "created_by": { "$ref": "#/$defs/id" },
+        "assessed_at": { "$ref": "#/$defs/instant" },
+        "engagement_ref": { "$ref": "#/$defs/engagementReference" },
+        "subjects": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/subject" }
+        },
+        "organizations": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 32,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/organization" }
+        },
+        "role_assignments": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/roleAssignment" },
+          "allOf": [
+            { "contains": { "properties": { "role": { "const": "commissioner" } }, "required": ["role"] } },
+            { "contains": { "properties": { "role": { "const": "evidence-submitter" } }, "required": ["role"] } },
+            { "contains": { "properties": { "role": { "const": "review-lead" } }, "required": ["role"] } },
+            { "contains": { "properties": { "role": { "const": "independence-assessor" } }, "required": ["role"] } },
+            { "contains": { "properties": { "role": { "const": "opinion-signer" } }, "required": ["role"] } }
+          ]
+        },
+        "payment_disclosure": { "$ref": "#/$defs/paymentDisclosure" },
+        "conflicts": {
+          "type": "array",
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/conflict" }
+        },
+        "recusals": {
+          "type": "array",
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/recusal" }
+        },
+        "gate": { "$ref": "#/$defs/gate" },
+        "boundary": { "$ref": "#/$defs/boundary" },
+        "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    }
+  }
+}

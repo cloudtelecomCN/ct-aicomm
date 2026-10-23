@@ -22,6 +22,7 @@ All notable public changes to CT-AIComm are recorded in this file. The project f
 - CT-614 checksum-bound Passport delivery packages with JSON, source CSV, deterministic human summaries, fixed statistics algorithms, and a symlink-safe offline verifier that independently recomputes every delivered statistic.
 - CT-615 time-limited Passport sharing, append-only revocation, hash-referenced supplemental evidence, and buyer-scoped acceptance or rejection records that cannot mutate platform evidence status.
 - CT-616 immutable Independent Run Review engagements with exact Passport and delivery bindings, explicit levels, tolerances, purposes, delivery agreements, and mandatory new engagement identities for every scope change.
+- CT-617 immutable, declared-records-only independence assessments for identity, organization control, payment, role separation, conflicts, and recusals, with a fail-closed gate that prevents same-controller opinion signing.
 - Truthful bootstrap governance, a machine-readable role roster, and a public external reviewer or maintainer admission, permission, review, and exit process.
 - CT-556 execution evidence binding v1 with tenant, execution, component-version, and fingerprint locks for policy, Agent, route, trace, and environment evidence.
 - CT-557 data path declaration v1 with stable region, directed-boundary, encryption, processor, JSON/YAML, and authoritative-context validation contracts.

@@ -308,7 +308,7 @@ test("publishes CT-608 SDK exports, bilingual guidance, and an offline synthetic
     assert.match(document, /read-only|只读/iu);
     assert.match(document, /certif|认证/iu);
   }
-  assert.equal(publicApi.sdk_version, "0.22.0");
+  assert.equal(publicApi.sdk_version, "0.23.0");
   for (const contract of [
     "specs/evidence/evidence-query-api-v1.openapi.json",
     "specs/evidence/evidence-query-record-v1.schema.json",

@@ -62,6 +62,7 @@
     "tests/passport-scenario-method-freeze.test.mjs",
     "tests/public-sdk-boundary.test.mjs",
     "tests/review-engagement-scope.test.mjs",
+    "tests/review-independence-conflicts.test.mjs",
     "tests/registry-entry-integrity.test.mjs"
   ],
   "synthetic_scenarios": [
@@ -472,6 +473,29 @@
           "identity_authenticated": false,
           "reviewer_independence_verified": false,
           "review_performed": false,
+          "opinion_issued": false,
+          "external_network_used": false,
+          "performance_claim_allowed": false,
+          "certification_issued": false
+        }
+      }
+    },
+    {
+      "id": "independent-review-identity-conflicts",
+      "entrypoint": "examples/review/identity-conflict-synthetic.mjs",
+      "expect": {
+        "equals": {
+          "schema_version": "1.0.0",
+          "data_origin": "synthetic",
+          "engagement_bound_exactly": true,
+          "eligible_status": "eligible-on-declared-records",
+          "duties_separated": true,
+          "ultimate_control_separated": true,
+          "recusal_effective": true,
+          "same_controller_blocked": true,
+          "blocked_signer_eligible": false,
+          "identity_authenticated": false,
+          "organization_control_externally_verified": false,
           "opinion_issued": false,
           "external_network_used": false,
           "performance_claim_allowed": false,
