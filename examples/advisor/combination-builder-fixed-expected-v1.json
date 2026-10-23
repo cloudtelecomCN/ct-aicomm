@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0.0",
+  "combination_id": "advisor_combination_11111111-1111-4111-8111-111111111111",
+  "status": "comparable",
+  "conflict_count": 0,
+  "resolved_resource_count": 6,
+  "input_sha256": "sha256:55972eee8f4a994e9adc57195133a7422c6abdbd31c01a0f13ccde5c56eebc61",
+  "combination_signature_sha256": "sha256:031a097eaa72c2c43ee8def26c33ac911e3c613c6dad2165053e483e2ed10bca",
+  "content_sha256": "sha256:7849f587f8c1a57e75350ae895751a61ada85b29c003a34ba64aac498312e023",
+  "comparison": {
+    "second_combination_content_sha256": "sha256:0d137fef6ef80b0a50d02b9d670c6ba0133b5c17dbaf88a67bf680976afcf4b2",
+    "status": "comparable",
+    "comparison_sha256": "sha256:e86c22dcefc41930d83cb476a44fdb5a354bda52fc9a29c1e8b37cdb19e1d402"
+  },
+  "boundaries": {
+    "decision_support_only": true,
+    "execution_authorized": false,
+    "constraint_evaluation_performed": false,
+    "ranking_performed": false,
+    "performance_claim_allowed": false
+  }
+}

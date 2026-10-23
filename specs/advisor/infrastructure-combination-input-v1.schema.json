@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/advisor/infrastructure-combination-input-v1.schema.json",
+  "title": "CT-Advisor Infrastructure Combination Input v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "combination_key", "display_name", "resource_refs", "configuration"],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "combination_key": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{2,119}$" },
+    "display_name": { "type": "string", "minLength": 1, "maxLength": 180 },
+    "resource_refs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["gpu", "cloud_instance", "region", "network_path", "software_stacks", "pricing_offers"],
+      "properties": {
+        "gpu": { "$ref": "#/$defs/resourceId" },
+        "cloud_instance": { "$ref": "#/$defs/resourceId" },
+        "region": { "$ref": "#/$defs/resourceId" },
+        "network_path": { "$ref": "#/$defs/resourceId" },
+        "software_stacks": { "$ref": "#/$defs/resourceIdList" },
+        "pricing_offers": { "$ref": "#/$defs/resourceIdList" }
+      }
+    },
+    "configuration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["precision", "topology", "gpu_count", "instance_count", "replica_count"],
+      "properties": {
+        "precision": { "type": "string", "pattern": "^[A-Z0-9][A-Z0-9._-]{1,39}$" },
+        "topology": { "enum": ["single_gpu", "single_node", "multi_node", "cross_region", "hybrid"] },
+        "gpu_count": { "type": "integer", "minimum": 1, "maximum": 100000 },
+        "instance_count": { "type": "integer", "minimum": 1, "maximum": 100000 },
+        "replica_count": { "type": "integer", "minimum": 1, "maximum": 100000 }
+      }
+    }
+  },
+  "$defs": {
+    "resourceId": { "type": "string", "pattern": "^advisor_resource_[0-9a-f-]{36}$" },
+    "resourceIdList": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 20,
+      "items": { "$ref": "#/$defs/resourceId" }
+    }
+  }
+}
