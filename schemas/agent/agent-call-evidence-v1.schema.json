@@ -1,0 +1,207 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cloudtelecom.cn/schemas/agent/agent-call-evidence-v1.json",
+  "title": "CT-AIComm Agent call evidence v1",
+  "description": "A payload-free, credential-free evidence record for an externally executed Agent protocol call.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_type",
+    "evidence_id",
+    "recorded_at",
+    "protocol",
+    "call",
+    "identity",
+    "timing",
+    "outcome",
+    "correlation",
+    "provenance",
+    "boundary",
+    "content_fingerprint"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "record_type": { "const": "agent_call_evidence" },
+    "evidence_id": { "$ref": "#/$defs/id" },
+    "recorded_at": { "type": "string", "format": "date-time" },
+    "protocol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "transport"],
+      "properties": {
+        "name": { "enum": ["mcp", "a2a", "custom"] },
+        "version": { "$ref": "#/$defs/version" },
+        "transport": { "enum": ["stdio", "http", "sse", "websocket", "other"] }
+      }
+    },
+    "call": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["call_id", "operation", "target"],
+      "properties": {
+        "call_id": { "$ref": "#/$defs/id" },
+        "operation": { "$ref": "#/$defs/id" },
+        "target": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "name"],
+          "properties": {
+            "kind": { "enum": ["tool", "agent", "endpoint"] },
+            "name": { "$ref": "#/$defs/id" }
+          }
+        }
+      }
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "actor_ref",
+        "represented_principal_ref",
+        "identity_assurance",
+        "authorization_assurance",
+        "authorization_scopes",
+        "credential_fingerprint"
+      ],
+      "properties": {
+        "actor_ref": { "$ref": "#/$defs/id" },
+        "represented_principal_ref": { "anyOf": [{ "$ref": "#/$defs/id" }, { "type": "null" }] },
+        "identity_assurance": { "$ref": "#/$defs/assurance" },
+        "authorization_assurance": { "$ref": "#/$defs/assurance" },
+        "authorization_scopes": {
+          "type": "array",
+          "maxItems": 64,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/id" }
+        },
+        "credential_fingerprint": { "anyOf": [{ "$ref": "#/$defs/fingerprint" }, { "type": "null" }] }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "identity_assurance": { "const": "external_assertion" } } },
+          "then": { "properties": { "credential_fingerprint": { "$ref": "#/$defs/fingerprint" } } }
+        },
+        {
+          "if": { "properties": { "authorization_assurance": { "const": "external_assertion" } } },
+          "then": { "properties": { "authorization_scopes": { "minItems": 1 } } }
+        }
+      ]
+    },
+    "timing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["started_at", "completed_at", "duration_ms"],
+      "properties": {
+        "started_at": { "type": "string", "format": "date-time" },
+        "completed_at": { "type": "string", "format": "date-time" },
+        "duration_ms": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "outcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "error_code", "request_fingerprint", "response_fingerprint"],
+      "properties": {
+        "status": { "enum": ["succeeded", "failed", "timeout", "cancelled"] },
+        "error_code": { "anyOf": [{ "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{0,79}$" }, { "type": "null" }] },
+        "request_fingerprint": { "$ref": "#/$defs/fingerprint" },
+        "response_fingerprint": { "anyOf": [{ "$ref": "#/$defs/fingerprint" }, { "type": "null" }] }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "succeeded" } } },
+          "then": {
+            "properties": {
+              "error_code": { "type": "null" },
+              "response_fingerprint": { "$ref": "#/$defs/fingerprint" }
+            }
+          },
+          "else": { "properties": { "error_code": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{0,79}$" } } }
+        }
+      ]
+    },
+    "correlation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["trace_id", "span_id", "parent_call_id"],
+      "properties": {
+        "trace_id": { "anyOf": [{ "type": "string", "pattern": "^[a-f0-9]{32}$" }, { "type": "null" }] },
+        "span_id": { "anyOf": [{ "type": "string", "pattern": "^[a-f0-9]{16}$" }, { "type": "null" }] },
+        "parent_call_id": { "anyOf": [{ "$ref": "#/$defs/id" }, { "type": "null" }] }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "trace_id": { "type": "null" },
+            "span_id": { "type": "null" }
+          }
+        },
+        {
+          "properties": {
+            "trace_id": { "type": "string", "pattern": "^[a-f0-9]{32}$" },
+            "span_id": { "type": "string", "pattern": "^[a-f0-9]{16}$" }
+          }
+        }
+      ]
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["data_origin", "source", "runtime", "recorder"],
+      "properties": {
+        "data_origin": { "enum": ["synthetic", "measured"] },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "fingerprint"],
+          "properties": {
+            "kind": { "enum": ["protocol_transcript", "otel_trace", "application_log", "declared"] },
+            "fingerprint": { "$ref": "#/$defs/fingerprint" }
+          }
+        },
+        "runtime": { "$ref": "#/$defs/component" },
+        "recorder": { "$ref": "#/$defs/component" }
+      }
+    },
+    "boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "raw_payload_retained",
+        "credentials_retained",
+        "ct_aicomm_executed_call",
+        "identity_authentication_performed",
+        "authorization_decision_performed",
+        "performance_claim_allowed",
+        "certification_claim_allowed"
+      ],
+      "properties": {
+        "raw_payload_retained": { "const": false },
+        "credentials_retained": { "const": false },
+        "ct_aicomm_executed_call": { "const": false },
+        "identity_authentication_performed": { "const": false },
+        "authorization_decision_performed": { "const": false },
+        "performance_claim_allowed": { "const": false },
+        "certification_claim_allowed": { "const": false }
+      }
+    },
+    "content_fingerprint": { "$ref": "#/$defs/fingerprint" }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$" },
+    "version": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:+-]{0,127}$" },
+    "fingerprint": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "assurance": { "enum": ["not_observed", "declared", "external_assertion"] },
+    "component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "artifact_fingerprint"],
+      "properties": {
+        "name": { "$ref": "#/$defs/id" },
+        "version": { "$ref": "#/$defs/version" },
+        "artifact_fingerprint": { "$ref": "#/$defs/fingerprint" }
+      }
+    }
+  }
+}

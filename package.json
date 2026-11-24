@@ -1,0 +1,16 @@
+{
+  "name": "@cloudtelecom/ct-aicomm-open",
+  "version": "0.2.0-open.1",
+  "private": true,
+  "description": "Public CT-AIComm specifications, integration contracts, conformance tools, and synthetic examples.",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "check:boundary": "node scripts/check-public-boundary.mjs",
+    "verify:example": "node cli/verify-evidence.mjs examples/synthetic/evidence-version.json",
+    "test": "node scripts/check-public-boundary.mjs && node --test"
+  },
+  "license": "Apache-2.0"
+}

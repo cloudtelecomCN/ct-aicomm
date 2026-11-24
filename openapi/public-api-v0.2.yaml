@@ -1,0 +1,73 @@
+openapi: 3.1.0
+info:
+  title: CT-AIComm Public Read-Only API
+  version: 0.2.0-open.1
+  description: Public discovery contract only. Administrative, decision, scoring, execution, tenant, and deployment operations are intentionally excluded.
+servers:
+  - url: https://cloudtelecom.cn
+paths:
+  /api/v1/bench/scenarios:
+    get:
+      operationId: listPublicBenchScenarios
+      summary: List public benchmark scenario descriptions
+      responses:
+        "200":
+          description: Public scenario descriptions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PublicScenario"
+  /api/v1/protocols:
+    get:
+      operationId: listPublicProtocols
+      summary: List public protocol metadata
+      responses:
+        "200":
+          description: Public protocol metadata
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PublicProtocol"
+  /api/v1/protocols/{slug}:
+    get:
+      operationId: getPublicProtocol
+      summary: Read one public protocol record
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: "^[a-z0-9][a-z0-9-]{1,79}$"
+      responses:
+        "200":
+          description: Public protocol record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicProtocol"
+        "404":
+          description: Protocol not found
+components:
+  schemas:
+    PublicScenario:
+      type: object
+      additionalProperties: false
+      required: [slug, title, description]
+      properties:
+        slug: { type: string }
+        title: { type: string }
+        description: { type: string }
+    PublicProtocol:
+      type: object
+      additionalProperties: false
+      required: [slug, name, version, summary]
+      properties:
+        slug: { type: string }
+        name: { type: string }
+        version: { type: string }
+        summary: { type: string }

@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0.0",
+  "policy": "default-deny",
+  "allowed_exact": [
+    ".github/CODEOWNERS",
+    ".gitattributes",
+    ".gitignore",
+    ".nvmrc",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "LICENSE",
+    "LICENSE-DOCUMENTATION.md",
+    "package.json",
+    "PUBLIC_RELEASE_ALLOWLIST.json",
+    "README.md",
+    "README.zh-CN.md",
+    "SECURITY.md",
+    "VERSION"
+  ],
+  "allowed_prefixes": [
+    ".github/workflows/",
+    "adapters/connector-sdk/",
+    "cli/",
+    "docs/",
+    "examples/synthetic/",
+    "openapi/",
+    "schemas/agent/",
+    "schemas/evidence/",
+    "schemas/registry/",
+    "scripts/",
+    "sdk/",
+    "tests/"
+  ],
+  "forbidden_prefixes": [
+    ".private-evidence/",
+    "agent/",
+    "docs/internal/",
+    "evidence/poc/",
+    "migrations/",
+    "packages/advisor/",
+    "packages/agent-control/",
+    "packages/orchestrator/",
+    "worker/"
+  ]
+}
