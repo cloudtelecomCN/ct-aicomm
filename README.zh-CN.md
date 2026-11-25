@@ -73,9 +73,9 @@ npm run verify:example
 | Kubernetes | 将选定的资源和事件字段映射为候选记录或证据记录 | 不包含集群凭据、Controller、准入动作、工作负载部署或调度器修改 |
 | OpenTelemetry | 将获批准的 Metric、Span 或 Log 引用映射到版本化证据字段 | 不包含 Collector 发行版、原始载荷留存或生产遥测管道 |
 | OPA | 将策略标识、版本、输入摘要和决定摘要绑定到决策记录 | 不包含私有策略包、执行服务、审批权或执行授权 |
-| ODAP Gateway / MCP | 使用 Agent 调用证据 Schema 记录 MCP、A2A 或自定义调用元数据 | ODAP Gateway 是具名集成目标，不是本仓库交付的组件；本仓库不执行或授权工具调用 |
+| Co-Sight / MCP | 使用 Co-Sight 事件适配器把采集到的 MCP 工具调用元数据映射为 Agent 调用证据 | 需要事件钩子或导出器提供适配器所需字段；不执行或授权 MCP 工具调用 |
 
-建议从 [Connector 接口](adapters/connector-sdk/README.md)、[Agent 调用证据 Schema](schemas/agent/agent-call-evidence-v1.schema.json)和[产品公开与私有边界](docs/public-boundary.zh-CN.md)开始。
+建议从 [Connector 接口](adapters/connector-sdk/README.md)、[Co-Sight 适配器](adapters/cosight/README.md)、[Agent 调用证据 Schema](schemas/agent/agent-call-evidence-v1.schema.json)和[产品公开与私有边界](docs/public-boundary.zh-CN.md)开始。
 
 ## 公开与私有源码边界
 
