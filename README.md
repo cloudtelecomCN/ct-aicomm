@@ -99,7 +99,8 @@ Potential work is scoped separately from this public repository and is subject t
 - [Evidence object Schema](schemas/evidence/evidence-object-v1.schema.json)
 - [Agent-call evidence Schema](schemas/agent/agent-call-evidence-v1.schema.json)
 - [Registry contribution Schema](schemas/registry/registry-contribution-v2.schema.json)
-- [Connector interface](adapters/connector-sdk/index.mjs)\n- [Co-Sight MCP event adapter](adapters/cosight/README.md)
+- [Connector interface](adapters/connector-sdk/index.mjs)
+- [Co-Sight MCP event adapter](adapters/cosight/README.md)
 - [Security policy](SECURITY.md)
 
 ## Project links
