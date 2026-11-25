@@ -34,6 +34,8 @@ The diagram is a reference integration model, not a statement that this reposito
 
 ## Capabilities
 
+The product guide covers the current website, prerequisites, workflows, and deliverables. [Product and User Guide](docs/product-guide.md) · [中文使用手册](docs/product-guide.zh-CN.md)
+
 ### Included in this public repository
 
 - versioned evidence, Agent-call, and Registry JSON Schemas;

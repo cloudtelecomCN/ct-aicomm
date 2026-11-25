@@ -34,6 +34,8 @@ CT-AIComm
 
 ## 能力清单
 
+产品手册覆盖现有网站功能、使用条件、操作流程和输出。 [中文使用手册](docs/product-guide.zh-CN.md) · [English Product and User Guide](docs/product-guide.md)
+
 ### 本公开仓库已经包含
 
 - 版本化的证据、Agent 调用和 Registry JSON Schema；
