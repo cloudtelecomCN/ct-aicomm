@@ -6,6 +6,8 @@
 
 This plan covers the organizations named in the CT-AIComm ecosystem target list. “Covered” means a defined integration path or evidence mapping target; it does **not** mean a vendor-certified connector, live API integration, customer deployment, or verified compatibility. No vendor credentials, proprietary APIs, customer topology, or production control logic belong in the public repository.
 
+The public [vendor-neutral ingestion mapper](../adapters/vendor-ingestion/README.md) now supplies a strict read-only normalized snapshot contract and a profile entry for every target below. Profiles define accepted input formats and outstanding validation evidence. They do not implement vendor authentication or assert that a vendor emits those formats.
+
 The first commercial integration boundary is read-only discovery and evidence ingestion. Resource provisioning, configuration writes, traffic changes, automatic rollback, billing actions, and compliance certification are out of scope for these adapters.
 
 ## Shared integration tracks

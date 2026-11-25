@@ -28,6 +28,7 @@
     "adapters/eino/",
     "adapters/otel-genai/",
     "adapters/qwen-agent/",
+    "adapters/vendor-ingestion/",
     "adapters/weknora/",
     "cli/",
     "docs/",

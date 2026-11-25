@@ -44,6 +44,7 @@ The product guide covers the current website, prerequisites, workflows, and deli
 - a narrow Connector interface for candidate discovery and metric collection;
 - a shared Agent-call evidence mapper and an OTel GenAI/MCP span bridge contract;
 - framework bridges for AgentScope 2.0 and Dify MCP tool events, plus an explicit Qwen-Agent integration status;
+- a vendor-neutral read-only ingestion mapper and profiles for the named enterprise ecosystem targets;
 - a zero-dependency offline evidence verifier;
 - deterministic synthetic examples and default-deny public-boundary tests;
 - bilingual architecture, integration, security, and contribution documentation.
@@ -83,7 +84,7 @@ The offline verifier checks all nine Evidence Core object types against the publ
 | Dify MCP | Map a correlated Dify tool event and MCP call ID | Requires deployment-side call-ID correlation and explicit MCP configuration; no native Dify plugin or authorization claim |
 | Qwen-Agent | No reusable adapter published | Deferred until a stable, versioned lifecycle/export contract can be verified; do not rely on monkey-patching |
 
-Start with the [shared Agent-call evidence mapper](adapters/agent-call-evidence/README.md), [OTel GenAI/MCP bridge](adapters/otel-genai/index.mjs), [Co-Sight adapter](adapters/cosight/README.md), [AgentScope bridge](adapters/agentscope/README.md), [Dify bridge](adapters/dify/README.md), [Eino bridge](adapters/eino/README.md), [WeKnora bridge](adapters/weknora/README.md), [Qwen-Agent status](adapters/qwen-agent/README.md), [enterprise adapter coverage plan](docs/enterprise-adapter-coverage.md), [Agent-call evidence Schema](schemas/agent/agent-call-evidence-v1.schema.json), and [public/private boundary](docs/public-boundary.md).
+Start with the [shared Agent-call evidence mapper](adapters/agent-call-evidence/README.md), [OTel GenAI/MCP bridge](adapters/otel-genai/index.mjs), [vendor-neutral infrastructure ingestion](adapters/vendor-ingestion/README.md), [Co-Sight adapter](adapters/cosight/README.md), [AgentScope bridge](adapters/agentscope/README.md), [Dify bridge](adapters/dify/README.md), [Eino bridge](adapters/eino/README.md), [WeKnora bridge](adapters/weknora/README.md), [Qwen-Agent status](adapters/qwen-agent/README.md), [enterprise adapter coverage plan](docs/enterprise-adapter-coverage.md), [Agent-call evidence Schema](schemas/agent/agent-call-evidence-v1.schema.json), and [public/private boundary](docs/public-boundary.md).
 
 ## Public and private source boundary
 
@@ -117,6 +118,8 @@ Potential work is scoped separately from this public repository and is subject t
 - [Qwen-Agent adapter status](adapters/qwen-agent/README.md)
 - [Enterprise adapter coverage plan](docs/enterprise-adapter-coverage.md)
 - [Enterprise adapter coverage plan (中文)](docs/enterprise-adapter-coverage.zh-CN.md)
+- [Vendor-neutral infrastructure ingestion](adapters/vendor-ingestion/README.md)
+- [Vendor-neutral infrastructure ingestion (中文)](adapters/vendor-ingestion/README.zh-CN.md)
 - [CloudWeGo Eino bridge contract](adapters/eino/README.md)
 - [CloudWeGo Eino bridge contract (中文)](adapters/eino/README.zh-CN.md)
 - [Tencent WeKnora bridge contract](adapters/weknora/README.md)
