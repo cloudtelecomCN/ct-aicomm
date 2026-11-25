@@ -50,16 +50,16 @@ Catalog access, estimates, analysis, and Basic Reports are free self-service fea
 
 [Open Advisor](https://cloudtelecom.cn/en/advisor/) · [Advisor user guide](https://cloudtelecom.cn/en/advisor/help/) · [Release status](https://cloudtelecom.cn/en/advisor/release-status/)
 
-## Local Evaluation Kit 0.2.1
+## Local Evaluation Kit 0.2.2
 
 1. Download the ZIP, SHA-256 list, Sigstore bundle, and manual from Resource Center. Verify the download before extraction and prepare Node.js 22 or later.
-2. From the kit directory run `.\start.ps1` in Windows PowerShell or `sh start.sh` on Linux. Open the terminal's loopback URL, which defaults to `http://127.0.0.1:43120/`. On headless Linux the service continues running when automatic browser launch is unavailable.
-3. Load the synthetic sample or import data using the bundled schema. Review requirements, combinations, and all ten metrics, then run Data Gate and analysis.
-4. Export project JSON, report JSON or CSV, and the evidence ZIP. Run `node verify-evidence.mjs <evidence-zip-path>` in the kit directory to verify its manifest, file set, and SHA-256 values.
+2. From the kit directory run `powershell -NoProfile -ExecutionPolicy Bypass -File .\start.ps1` on Windows or `sh start.sh` on Linux. Open the terminal's loopback URL, which defaults to `http://127.0.0.1:43120/`.
+3. Review deployment requirements, candidate exclusions, and the conclusion in the bilingual synthetic example.
+4. Download the sample report as JSON or CSV and the sample evidence as a ZIP. Run `node verify-evidence.mjs <evidence-zip-path>` in the kit directory to match the evidence against the built-in sample offline.
 
-The kit binds to loopback and runs without a cloud account or workspace token. Built-in sample data is labeled `synthetic`. Imported data retains its `imported_unverified` status. The kit is intended for offline evaluation.
+The kit binds to loopback and runs offline without a workspace token or cloud account. Use the Advisor workspace to analyze your own deployment.
 
-[Release downloads](https://cloudtelecom.cn/en/resources/) · [Kit manual](https://cloudtelecom.cn/downloads/local-evaluation-kit/v0.2.1/README.md)
+[Current download, verification files, and manual](https://cloudtelecom.cn/en/resources/)
 
 ## Evidence verification and Q&A
 

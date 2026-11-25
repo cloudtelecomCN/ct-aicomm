@@ -50,16 +50,16 @@ CT-AIComm 是面向 AI 的通信与跨域协同操作系统。它将协议选型
 
 [进入 Advisor](https://cloudtelecom.cn/advisor) · [Advisor 详细手册](https://cloudtelecom.cn/advisor/help) · [发布状态](https://cloudtelecom.cn/advisor/release-status)
 
-## 本地评估套件 0.2.1
+## 本地评估套件 0.2.2
 
 1. 在资源中心获取 ZIP、SHA-256、Sigstore bundle 和双语手册。核对完整性后解压，准备 Node.js 22 或更高版本。
-2. Windows 在套件目录运行 `.\start.ps1`，Linux 运行 `sh start.sh`。打开终端显示的地址，默认是 `http://127.0.0.1:43120/`。若 Linux 无桌面启动工具，可手动打开地址，服务会继续运行。
-3. 载入合成样例或按随包 Schema 导入自有数据。核对需求、候选和十项指标，运行 Data Gate 和分析。
-4. 导出项目 JSON、基础报告 JSON/CSV 和证据 ZIP。在套件目录运行 `node verify-evidence.mjs <证据ZIP路径>`，核对清单、文件集合和 SHA-256。
+2. Windows 在套件目录运行 `powershell -NoProfile -ExecutionPolicy Bypass -File .\start.ps1`，Linux 运行 `sh start.sh`。打开终端显示的地址，默认是 `http://127.0.0.1:43120/`。
+3. 查看双语合成样例中的部署需求、候选排除原因和示例结论。
+4. 下载样例 JSON/CSV 报告和证据 ZIP。在套件目录运行 `node verify-evidence.mjs <证据ZIP路径>`，断网对照内置样例校验。
 
-本地套件绑定回环地址，基础流程无需云账号或工作区 Token。内置样本标记为 `synthetic`，导入数据保留 `imported_unverified`。适用范围为离线评估。
+套件仅监听本机回环地址，可以断网使用，无需工作区 Token 或云账号。自有项目的评分和推荐在 Advisor 网页工作区完成。
 
-[下载与验证材料](https://cloudtelecom.cn/resources) · [中文套件手册](https://cloudtelecom.cn/downloads/local-evaluation-kit/v0.2.1/README.zh-CN.md)
+[下载新版、校验材料与中文手册](https://cloudtelecom.cn/resources)
 
 ## 证据验证与问答
 
