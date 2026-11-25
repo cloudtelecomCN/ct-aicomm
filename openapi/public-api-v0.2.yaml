@@ -16,22 +16,46 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/PublicScenario"
+                type: object
+                additionalProperties: false
+                required: [scenarios, count]
+                properties:
+                  scenarios:
+                    type: array
+                    items: { $ref: "#/components/schemas/PublicScenario" }
+                  count: { type: integer, minimum: 0 }
+        "503":
+          description: Bench storage is not configured
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PublicError" }
   /api/v1/protocols:
     get:
       operationId: listPublicProtocols
       summary: List public protocol metadata
+      parameters:
+        - { in: query, name: q, schema: { type: string, maxLength: 80 } }
+        - { in: query, name: category, schema: { type: string, enum: [rpc, transport, rdma, interconnect] } }
+        - { in: query, name: maturity, schema: { type: string, enum: [emerging, established, mature] } }
+        - { in: query, name: trust, schema: { type: string, enum: [community, vendor, lab] } }
       responses:
         "200":
           description: Public protocol metadata
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/PublicProtocol"
+                type: object
+                required: [protocols, count]
+                properties:
+                  protocols:
+                    type: array
+                    items: { $ref: "#/components/schemas/PublicProtocol" }
+                  count: { type: integer, minimum: 0 }
+        "400":
+          description: Unsupported filter
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PublicError" }
   /api/v1/protocols/{slug}:
     get:
       operationId: getPublicProtocol
@@ -42,32 +66,81 @@ paths:
           required: true
           schema:
             type: string
-            pattern: "^[a-z0-9][a-z0-9-]{1,79}$"
+            pattern: "^[a-z0-9-]+$"
       responses:
         "200":
           description: Public protocol record
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PublicProtocol"
+                type: object
+                required: [protocol]
+                properties:
+                  protocol: { $ref: "#/components/schemas/PublicProtocolDetail" }
         "404":
           description: Protocol not found
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PublicError" }
 components:
   schemas:
     PublicScenario:
       type: object
       additionalProperties: false
-      required: [slug, title, description]
-      properties:
-        slug: { type: string }
-        title: { type: string }
-        description: { type: string }
-    PublicProtocol:
-      type: object
-      additionalProperties: false
-      required: [slug, name, version, summary]
+      required: [slug, name, objective, methodology_version, updated_at]
       properties:
         slug: { type: string }
         name: { type: string }
-        version: { type: string }
+        objective: { type: string }
+        methodology_version: { type: string }
+        updated_at: { type: string, format: date-time }
+    PublicProtocol:
+      type: object
+      required: [slug, name, summary, category, maturity, trust_level, updated_at]
+      properties:
+        slug: { type: string }
+        name: { type: string }
         summary: { type: string }
+        category: { type: string }
+        maturity: { type: string, enum: [emerging, established, mature] }
+        trust_level: { type: string, enum: [community, vendor, lab] }
+        updated_at: { type: string, format: date-time }
+    PublicProtocolDetail:
+      allOf:
+        - $ref: "#/components/schemas/PublicProtocol"
+        - type: object
+          required: [versions, scenarios]
+          properties:
+            homepage_url: { type: [string, "null"], format: uri }
+            specification_url: { type: [string, "null"], format: uri }
+            versions:
+              type: array
+              items:
+                type: object
+                properties:
+                  version: { type: string }
+                  release_date: { type: [string, "null"], format: date }
+                  status: { type: string, enum: [current, legacy, draft] }
+                  source_url: { type: [string, "null"], format: uri }
+                  notes: { type: string }
+            scenarios:
+              type: array
+              items:
+                type: object
+                required: [slug, name, description, suitability, evidence_note]
+                properties:
+                  slug: { type: string }
+                  name: { type: string }
+                  description: { type: string }
+                  suitability: { type: string, enum: [candidate, common, specialized] }
+                  evidence_note: { type: string }
+    PublicError:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code: { type: string }
+            message: { type: string }

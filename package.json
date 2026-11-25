@@ -10,7 +10,16 @@
   "scripts": {
     "check:boundary": "node scripts/check-public-boundary.mjs",
     "verify:example": "node cli/verify-evidence.mjs examples/synthetic/evidence-version.json",
-    "test": "node scripts/check-public-boundary.mjs && node --test"
+    "test": "node scripts/check-public-boundary.mjs && node --test",
+    "build:validator": "node scripts/build-evidence-validator.mjs",
+    "check:validator": "node scripts/build-evidence-validator.mjs --check",
+    "test:live-api": "node scripts/check-live-api.mjs"
+  },
+  "devDependencies": {
+    "ajv": "8.17.1",
+    "ajv-formats": "3.0.1",
+    "esbuild": "0.25.12",
+    "yaml": "2.9.1"
   },
   "license": "Apache-2.0"
 }

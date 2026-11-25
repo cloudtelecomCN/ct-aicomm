@@ -59,6 +59,8 @@ npm test
 npm run verify:example
 ```
 
+离线验证器按公开 Schema 校验九类 Evidence Core 对象。对合成 `evidence_version`，还会校验用途边界，并在排除顶层 `content_fingerprint` 后，重算 UTF-8 规范化 JSON 的 SHA-256。规范化会递归排序对象键、保留数组顺序、去除无意义空白。其余对象类型执行 Schema 校验。引用文件、签名、身份和测量声明需要独立验证。
+
 该 Demo 会验证公开白名单、运行合同测试，并校验一份本地合成证据文件。它不会生成网络流量、测量真实性能、推荐生产路由或执行任何变更。
 
 ## 集成方案

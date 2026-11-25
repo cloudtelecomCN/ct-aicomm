@@ -61,6 +61,8 @@ npm run verify:example
 
 The demo validates the public allowlist, runs contract tests, and verifies a local synthetic evidence file. It does not generate network traffic, measure real performance, recommend a production route, or execute a change.
 
+The offline verifier checks all nine Evidence Core object types against the published schema. For a synthetic `evidence_version` it also checks the usage boundary and recomputes the SHA-256 of the UTF-8 canonical JSON, excluding the top-level `content_fingerprint`. Canonical JSON sorts object keys recursively, preserves array order, and omits insignificant whitespace. Other object types receive schema validation. Referenced files, signatures, identity, and measurement claims require separate verification.
+
 ## Integration patterns
 
 | Integration | Public starting point | Boundary |

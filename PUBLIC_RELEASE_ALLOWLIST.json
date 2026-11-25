@@ -11,6 +11,7 @@
     "LICENSE",
     "LICENSE-DOCUMENTATION.md",
     "package.json",
+    "package-lock.json",
     "PUBLIC_RELEASE_ALLOWLIST.json",
     "README.md",
     "README.zh-CN.md",
