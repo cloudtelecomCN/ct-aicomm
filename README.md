@@ -73,9 +73,9 @@ The offline verifier checks all nine Evidence Core object types against the publ
 | Kubernetes | Map selected resource and event fields into candidate or evidence records | No cluster credential, controller, admission action, workload deployment, or scheduler mutation is included |
 | OpenTelemetry | Map approved metric, span, or log references into versioned evidence fields | No Collector distribution, raw payload retention, or production telemetry pipeline is included |
 | OPA | Bind a policy identifier, version, input digest, and decision digest to a decision record | No private policy bundle, enforcement service, approval authority, or execution authorization is included |
-| ODAP Gateway / MCP | Use the Agent-call evidence Schema to record MCP, A2A, or custom call metadata | The ODAP Gateway is a named integration target, not a component shipped by this repository; no tool call is executed or authorized here |
+| Co-Sight / MCP | Use the Co-Sight event adapter to map captured MCP tool-call metadata into Agent-call evidence | Requires an event hook/exporter with the fields documented by the adapter; no MCP tool call is executed or authorized here |
 
-Start with [the Connector interface](adapters/connector-sdk/README.md), [the Agent-call evidence Schema](schemas/agent/agent-call-evidence-v1.schema.json), and [the public/private boundary](docs/public-boundary.md).
+Start with [the Connector interface](adapters/connector-sdk/README.md), [the Co-Sight adapter](adapters/cosight/README.md), [the Agent-call evidence Schema](schemas/agent/agent-call-evidence-v1.schema.json), and [the public/private boundary](docs/public-boundary.md).
 
 ## Public and private source boundary
 
@@ -99,7 +99,7 @@ Potential work is scoped separately from this public repository and is subject t
 - [Evidence object Schema](schemas/evidence/evidence-object-v1.schema.json)
 - [Agent-call evidence Schema](schemas/agent/agent-call-evidence-v1.schema.json)
 - [Registry contribution Schema](schemas/registry/registry-contribution-v2.schema.json)
-- [Connector interface](adapters/connector-sdk/index.mjs)
+- [Connector interface](adapters/connector-sdk/index.mjs)\n- [Co-Sight MCP event adapter](adapters/cosight/README.md)
 - [Security policy](SECURITY.md)
 
 ## Project links
