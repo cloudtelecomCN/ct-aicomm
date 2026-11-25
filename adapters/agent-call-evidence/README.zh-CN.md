@@ -40,3 +40,4 @@ if (!verifyAgentCallEvidenceFingerprint(record)) throw new Error("fingerprint mi
 ```
 
 示例值均为合成数据。指纹只能证明指纹生成后记录未被修改，不能证明来源真实、调用已授权或结果最优。
+

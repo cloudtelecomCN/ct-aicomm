@@ -3,8 +3,10 @@ import { adaptAgentCallEvidence } from "../agent-call-evidence/index.mjs";
 const ATTR = {
   target: "gen_ai.tool.name",
   callId: "gen_ai.tool.call.id",
-  request: "ct_aicomm.tool.arguments",
-  response: "ct_aicomm.tool.result",
+  request: "gen_ai.tool.call.arguments",
+  requestBridge: "ct_aicomm.tool.arguments",
+  response: "gen_ai.tool.call.result",
+  responseBridge: "ct_aicomm.tool.result",
   protocolVersion: "ct_aicomm.mcp.version",
   transport: "ct_aicomm.mcp.transport",
   errorCode: "ct_aicomm.error.code",
@@ -82,13 +84,15 @@ export function adaptOtelGenAiToolSpan({ span, capture, identity } = {}) {
   if (endNs < startNs) throw new TypeError("OTel span end time must not precede start time");
   const traceId = span.traceId;
   const spanId = span.spanId;
-  const args = parsePayload(attributes[ATTR.request], ATTR.request);
+  const requestAttribute = attributes[ATTR.requestBridge] ?? attributes[ATTR.request];
+  const responseAttribute = attributes[ATTR.responseBridge] ?? attributes[ATTR.response];
+  const args = parsePayload(requestAttribute, ATTR.request);
   const event = {
     target_name: requiredString(attributes, ATTR.target),
     request: args,
     source_event_id: `otel:${traceId}:${spanId}`,
   };
-  if (status === "succeeded") event.response = parsePayload(attributes[ATTR.response], ATTR.response);
+  if (status === "succeeded") event.response = parsePayload(responseAttribute, ATTR.response);
   const scopes = attributes[ATTR.scope] === undefined ? [] : (Array.isArray(attributes[ATTR.scope]) ? attributes[ATTR.scope] : [attributes[ATTR.scope]]);
   const identityFromSpan = identity ?? (attributes[ATTR.actor] ? {
     actor_ref: attributes[ATTR.actor],
@@ -118,3 +122,4 @@ export function adaptOtelGenAiToolSpan({ span, capture, identity } = {}) {
 }
 
 export const OTEL_AGENT_CALL_BRIDGE_ATTRIBUTES = Object.freeze({ ...ATTR });
+

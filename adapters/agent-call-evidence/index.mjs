@@ -175,3 +175,4 @@ export function verifyAgentCallEvidenceFingerprint(evidence) {
   const { content_fingerprint: supplied, ...content } = evidence;
   return SHA256.test(supplied) && fingerprintAgentCallValue(content) === supplied;
 }
+

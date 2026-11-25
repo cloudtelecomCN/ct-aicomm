@@ -40,3 +40,4 @@ if (!verifyAgentCallEvidenceFingerprint(record)) throw new Error("fingerprint mi
 ```
 
 All sample values are synthetic. A valid fingerprint proves only that the serialized record has not changed since it was fingerprinted; it does not prove that source data is truthful, a call was authorized, or an outcome was optimal.
+

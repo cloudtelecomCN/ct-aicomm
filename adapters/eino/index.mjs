@@ -12,3 +12,4 @@ export function adaptEinoBridgeEvent({ bridgeEvent, identity } = {}) {
   const { source: _source, capture, ...event } = bridgeEvent;
   return adaptAgentCallEvidence({ event, capture, identity, protocol: "mcp", targetKind: "tool" });
 }
+

@@ -48,3 +48,4 @@ const evidence = adaptEinoBridgeEvent({ bridgeEvent: receivedBridgeEvent });
 ## Integration boundary
 
 This bridge records evidence about an externally executed call. It does not call Eino, invoke an MCP server, verify identity, approve authorization, or certify performance. A native package should only be published after an Eino-specific implementation is built against a pinned supported release and an upstream or customer integration confirms the hook lifecycle and field semantics.
+

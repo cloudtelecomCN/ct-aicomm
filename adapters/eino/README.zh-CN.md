@@ -15,3 +15,4 @@ Eino 侧封装器/导出器须按[共享 Agent 调用桥接合同](../agent-call
 ## 使用与边界
 
 可用 `adaptEinoBridgeEvent({ bridgeEvent })` 将符合英文文档 JSON 格式的事件映射为证据。该适配器不会安装 Eino 回调、导出器或调用 MCP 服务；Go 侧桥接代码由具体部署负责。只有在针对固定 Eino 版本完成实现，并确认钩子生命周期和字段语义后，才能发布原生集成包。
+

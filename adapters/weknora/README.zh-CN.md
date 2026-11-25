@@ -15,3 +15,4 @@ WeKnora 文档说明了 [MCP 客户端/服务端能力](https://github.com/Tence
 ## 使用与边界
 
 英文文档提供了桥接 JSON 外层样例，可用 `adaptWeKnoraBridgeEvent({ bridgeEvent })` 将其映射为证据。该样例是 CT-AIComm 提出的桥接合同，不代表 WeKnora 当前原生输出此 JSON 格式。适配器不会连接 WeKnora，也不会认证用户、判定工作区权限、审批工具调用、执行 MCP 或认证合规。
+

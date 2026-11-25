@@ -13,3 +13,4 @@ export function adaptCoSightToolCall({ toolCall, capture, identity } = {}) {
 }
 
 export { verifyAgentCallEvidenceFingerprint as verifyCoSightEvidenceFingerprint };
+

@@ -46,3 +46,4 @@ if (!verifyCoSightEvidenceFingerprint(evidence)) throw new Error("evidence finge
 ```
 
 Production integrations must replace the example's synthetic origin and placeholder component fingerprints with measured provenance from the exact running artifacts. Use the CT-AIComm Agent Call Evidence Schema as the normative field contract.
+

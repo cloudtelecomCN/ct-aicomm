@@ -42,3 +42,4 @@ Do not export API keys, bearer tokens, raw credentials, or unrestricted prompt/r
 ## Integration boundary
 
 This is not a WeKnora plugin and does not connect to a WeKnora instance. It does not authenticate users, decide workspace permissions, approve tool calls, execute MCP, or certify compliance. A native integration should wait for a versioned upstream event/export contract or a tested deployment-specific exporter sample.
+
