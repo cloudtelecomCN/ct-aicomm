@@ -42,6 +42,7 @@ CT-AIComm
 - 支持 `mcp`、`a2a` 和 `custom` 的 Agent 调用协议证据字段；
 - 只读公共 OpenAPI 合同；
 - 用于候选发现和指标采集的最小 Connector 接口；
+- 共享 Agent 调用证据映射器，以及 OTel GenAI/MCP Span 桥接合同；
 - 零依赖离线证据验证器；
 - 确定性合成样例和默认拒绝公开边界测试；
 - 中英文架构、集成、安全和贡献文档。
@@ -74,8 +75,11 @@ npm run verify:example
 | OpenTelemetry | 将获批准的 Metric、Span 或 Log 引用映射到版本化证据字段 | 不包含 Collector 发行版、原始载荷留存或生产遥测管道 |
 | OPA | 将策略标识、版本、输入摘要和决定摘要绑定到决策记录 | 不包含私有策略包、执行服务、审批权或执行授权 |
 | Co-Sight / MCP | 使用 Co-Sight 事件适配器把采集到的 MCP 工具调用元数据映射为 Agent 调用证据 | 需要事件钩子或导出器提供适配器所需字段；不执行或授权 MCP 工具调用 |
+| OpenTelemetry GenAI / MCP | 使用共享 OTel 桥接合同映射已完成的工具 Span | 需要显式桥接属性，并在内存中取得请求/响应以计算指纹；纯载荷 Span 会被拒绝，不会生成误导性指纹 |
+| CloudWeGo Eino | 从 Eino 回调与 MCP 客户端封装生成约定的桥接事件 | 当前是实验性字段映射；不宣称原生 Eino 插件或上游兼容 |
+| 腾讯 WeKnora | 从获批准的审计/追踪导出器生成约定的桥接事件 | 当前是实验性字段映射；不宣称原生 WeKnora 插件或上游兼容 |
 
-建议从 [Connector 接口](adapters/connector-sdk/README.md)、[Co-Sight 适配器](adapters/cosight/README.md)、[Agent 调用证据 Schema](schemas/agent/agent-call-evidence-v1.schema.json)和[产品公开与私有边界](docs/public-boundary.zh-CN.md)开始。
+建议从[共享 Agent 调用证据映射器](adapters/agent-call-evidence/README.md)、[OTel GenAI/MCP 桥接](adapters/otel-genai/README.md)、[Co-Sight 适配器](adapters/cosight/README.md)、[Eino 桥接](adapters/eino/README.md)、[WeKnora 桥接](adapters/weknora/README.md)、[Agent 调用证据 Schema](schemas/agent/agent-call-evidence-v1.schema.json)和[产品公开与私有边界](docs/public-boundary.zh-CN.md)开始。
 
 ## 公开与私有源码边界
 
@@ -92,6 +96,16 @@ npm run verify:example
 潜在合作与本公开仓库分开确定范围，并须经过书面授权、保密、安全、数据权利和知识产权审查。可从 [CloudTelecom 中文联系页面](https://cloudtelecom.cn/about)或[英文联系页面](https://cloudtelecom.cn/en/about/)开始联系。
 
 ## 公共资源
+
+- [共享 Agent 调用证据映射器](adapters/agent-call-evidence/index.mjs)
+- [共享 Agent 调用证据合同（中文）](adapters/agent-call-evidence/README.zh-CN.md)
+- [OTel GenAI/MCP 桥接合同](adapters/otel-genai/README.md)
+- [OTel GenAI/MCP 桥接合同（中文）](adapters/otel-genai/README.zh-CN.md)
+- [Co-Sight MCP 事件适配器](adapters/cosight/README.md)
+- [CloudWeGo Eino 桥接合同](adapters/eino/README.md)
+- [CloudWeGo Eino 桥接合同（中文）](adapters/eino/README.zh-CN.md)
+- [腾讯 WeKnora 桥接合同](adapters/weknora/README.md)
+- [腾讯 WeKnora 桥接合同（中文）](adapters/weknora/README.zh-CN.md)
 
 - [产品公开与私有边界](docs/public-boundary.zh-CN.md)
 - [公共架构](docs/architecture.zh-CN.md)

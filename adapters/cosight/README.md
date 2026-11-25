@@ -6,7 +6,7 @@ This adapter converts one Co-Sight-style MCP tool-call record into the CT-AIComm
 
 Co-Sight's public task model records tool name, arguments, result, and timestamp. Those fields alone are insufficient for a fully evidenced record. The caller must also supply an observed capture envelope with call ID, MCP version and transport, start and completion timestamps, duration, outcome, source classification, and exact runtime/recorder versions and artifact fingerprints. Until Co-Sight exposes a stable event hook/export format, an integration must obtain these values from a wrapper or exporter; it must not infer missing values.
 
-Identity and authorization default to `not_observed`, with an empty scope list and null principal/credential fingerprint. `external_assertion` is accepted only when the upstream event supplies its credential fingerprint and non-empty scopes. This mapper does not verify that assertion; downstream verification must do so. The stable fallback actor reference `agent:cosight-unverified` is a label, not an authenticated identity.
+Identity and authorization default to `not_observed`, with an empty scope list and null principal/credential fingerprint. `external_assertion` is accepted only when the upstream event supplies its credential fingerprint and non-empty scopes. This mapper does not verify that assertion; downstream verification must do so. The shared fallback actor reference `agent:unobserved` is a label, not an authenticated identity.
 
 ## Privacy and evidence boundaries
 
@@ -46,4 +46,3 @@ if (!verifyCoSightEvidenceFingerprint(evidence)) throw new Error("evidence finge
 ```
 
 Production integrations must replace the example's synthetic origin and placeholder component fingerprints with measured provenance from the exact running artifacts. Use the CT-AIComm Agent Call Evidence Schema as the normative field contract.
-

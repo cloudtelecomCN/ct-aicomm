@@ -42,6 +42,7 @@ The product guide covers the current website, prerequisites, workflows, and deli
 - an Agent-call protocol field supporting `mcp`, `a2a`, and `custom` evidence records;
 - a read-only public OpenAPI contract;
 - a narrow Connector interface for candidate discovery and metric collection;
+- a shared Agent-call evidence mapper and an OTel GenAI/MCP span bridge contract;
 - a zero-dependency offline evidence verifier;
 - deterministic synthetic examples and default-deny public-boundary tests;
 - bilingual architecture, integration, security, and contribution documentation.
@@ -74,8 +75,11 @@ The offline verifier checks all nine Evidence Core object types against the publ
 | OpenTelemetry | Map approved metric, span, or log references into versioned evidence fields | No Collector distribution, raw payload retention, or production telemetry pipeline is included |
 | OPA | Bind a policy identifier, version, input digest, and decision digest to a decision record | No private policy bundle, enforcement service, approval authority, or execution authorization is included |
 | Co-Sight / MCP | Use the Co-Sight event adapter to map captured MCP tool-call metadata into Agent-call evidence | Requires an event hook/exporter with the fields documented by the adapter; no MCP tool call is executed or authorized here |
+| OpenTelemetry GenAI / MCP | Map one completed tool span through the shared OTel bridge contract | Requires explicit bridge attributes and transient request/response payloads; payload-free spans are rejected rather than assigned misleading fingerprints |
+| CloudWeGo Eino | Emit the documented bridge event from Eino callbacks plus the MCP client wrapper | Experimental field map only; no native Eino package or upstream compatibility claim |
+| Tencent WeKnora | Emit the documented bridge event from an approved audit/trace exporter | Experimental field map only; no native WeKnora plugin or upstream compatibility claim |
 
-Start with [the Connector interface](adapters/connector-sdk/README.md), [the Co-Sight adapter](adapters/cosight/README.md), [the Agent-call evidence Schema](schemas/agent/agent-call-evidence-v1.schema.json), and [the public/private boundary](docs/public-boundary.md).
+Start with the [shared Agent-call evidence mapper](adapters/agent-call-evidence/README.md), [OTel GenAI/MCP bridge](adapters/otel-genai/index.mjs), [Co-Sight adapter](adapters/cosight/README.md), [Eino bridge](adapters/eino/README.md), [WeKnora bridge](adapters/weknora/README.md), [Agent-call evidence Schema](schemas/agent/agent-call-evidence-v1.schema.json), and [public/private boundary](docs/public-boundary.md).
 
 ## Public and private source boundary
 
@@ -100,7 +104,14 @@ Potential work is scoped separately from this public repository and is subject t
 - [Agent-call evidence Schema](schemas/agent/agent-call-evidence-v1.schema.json)
 - [Registry contribution Schema](schemas/registry/registry-contribution-v2.schema.json)
 - [Connector interface](adapters/connector-sdk/index.mjs)
+- [Shared Agent-call evidence mapper](adapters/agent-call-evidence/index.mjs)
+- [OTel GenAI/MCP bridge contract](adapters/otel-genai/README.md)
+- [OTel GenAI/MCP bridge contract (中文)](adapters/otel-genai/README.zh-CN.md)
 - [Co-Sight MCP event adapter](adapters/cosight/README.md)
+- [CloudWeGo Eino bridge contract](adapters/eino/README.md)
+- [CloudWeGo Eino bridge contract (中文)](adapters/eino/README.zh-CN.md)
+- [Tencent WeKnora bridge contract](adapters/weknora/README.md)
+- [Tencent WeKnora bridge contract (中文)](adapters/weknora/README.zh-CN.md)
 - [Security policy](SECURITY.md)
 
 ## Project links
