@@ -20,6 +20,7 @@
   ],
   "allowed_prefixes": [
     ".github/workflows/",
+    "adapters/cosight/",
     "adapters/connector-sdk/",
     "cli/",
     "docs/",
