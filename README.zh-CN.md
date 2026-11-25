@@ -83,7 +83,7 @@ npm run verify:example
 | Dify MCP | 映射关联后的 Dify 工具事件和 MCP 调用 ID | 需要部署侧关联调用 ID 并显式提供 MCP 配置；不宣称原生 Dify 插件或授权能力 |
 | Qwen-Agent | 暂无可复用适配器 | 等待验证稳定、版本化的生命周期/导出合同；不依赖 monkey patch |
 
-建议从[共享 Agent 调用证据映射器](adapters/agent-call-evidence/README.md)、[OTel GenAI/MCP 桥接](adapters/otel-genai/README.md)、[Co-Sight 适配器](adapters/cosight/README.md)、[AgentScope 桥接](adapters/agentscope/README.md)、[Dify 桥接](adapters/dify/README.md)、[Eino 桥接](adapters/eino/README.md)、[WeKnora 桥接](adapters/weknora/README.md)、[Qwen-Agent 状态](adapters/qwen-agent/README.md)、[Agent 调用证据 Schema](schemas/agent/agent-call-evidence-v1.schema.json)和[产品公开与私有边界](docs/public-boundary.zh-CN.md)开始。
+建议从[共享 Agent 调用证据映射器](adapters/agent-call-evidence/README.md)、[OTel GenAI/MCP 桥接](adapters/otel-genai/README.md)、[Co-Sight 适配器](adapters/cosight/README.md)、[AgentScope 桥接](adapters/agentscope/README.md)、[Dify 桥接](adapters/dify/README.md)、[Eino 桥接](adapters/eino/README.md)、[WeKnora 桥接](adapters/weknora/README.md)、[Qwen-Agent 状态](adapters/qwen-agent/README.md)、[企业适配覆盖计划](docs/enterprise-adapter-coverage.zh-CN.md)、[Agent 调用证据 Schema](schemas/agent/agent-call-evidence-v1.schema.json)和[产品公开与私有边界](docs/public-boundary.zh-CN.md)开始。
 
 ## 公开与私有源码边界
 
@@ -109,6 +109,8 @@ npm run verify:example
 - [AgentScope 2.0 OTel/MCP 桥](adapters/agentscope/README.md)
 - [Dify MCP 工具证据桥](adapters/dify/README.md)
 - [Qwen-Agent 适配状态](adapters/qwen-agent/README.md)
+- [企业适配覆盖计划](docs/enterprise-adapter-coverage.zh-CN.md)
+- [企业适配覆盖计划（English）](docs/enterprise-adapter-coverage.md)
 - [CloudWeGo Eino 桥接合同](adapters/eino/README.md)
 - [CloudWeGo Eino 桥接合同（中文）](adapters/eino/README.zh-CN.md)
 - [腾讯 WeKnora 桥接合同](adapters/weknora/README.md)
