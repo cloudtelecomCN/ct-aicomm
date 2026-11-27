@@ -9,7 +9,7 @@ function profile(id, organizations, track, acceptedInputs, readiness, nextEviden
     id,
     organizations: Object.freeze(organizations),
     track,
-    kind: track.includes("agent") || track === "mcp-gateway" ? "agent-runtime" : "infrastructure",
+    kind: track === "agent-runtime" || track === "mcp-gateway" ? "agent-runtime" : "infrastructure",
     accepted_inputs: Object.freeze(acceptedInputs),
     readiness,
     read_only: true,
