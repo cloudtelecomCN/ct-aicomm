@@ -42,6 +42,9 @@ The product guide covers the current website, prerequisites, workflows, and deli
 - an Agent-call protocol field supporting `mcp`, `a2a`, and `custom` evidence records;
 - a read-only public OpenAPI contract;
 - a narrow Connector interface for candidate discovery and metric collection;
+- a shared Agent-call evidence mapper and an OTel GenAI/MCP span bridge contract;
+- framework bridges for AgentScope 2.0 and Dify MCP tool events, plus an explicit Qwen-Agent integration status;
+- a vendor-neutral read-only ingestion mapper and profiles for the named enterprise ecosystem targets;
 - a zero-dependency offline evidence verifier;
 - deterministic synthetic examples and default-deny public-boundary tests;
 - bilingual architecture, integration, security, and contribution documentation.
@@ -73,9 +76,15 @@ The offline verifier checks all nine Evidence Core object types against the publ
 | Kubernetes | Map selected resource and event fields into candidate or evidence records | No cluster credential, controller, admission action, workload deployment, or scheduler mutation is included |
 | OpenTelemetry | Map approved metric, span, or log references into versioned evidence fields | No Collector distribution, raw payload retention, or production telemetry pipeline is included |
 | OPA | Bind a policy identifier, version, input digest, and decision digest to a decision record | No private policy bundle, enforcement service, approval authority, or execution authorization is included |
-| ODAP Gateway / MCP | Use the Agent-call evidence Schema to record MCP, A2A, or custom call metadata | The ODAP Gateway is a named integration target, not a component shipped by this repository; no tool call is executed or authorized here |
+| Co-Sight / MCP | Use the Co-Sight event adapter to map captured MCP tool-call metadata into Agent-call evidence | Requires an event hook/exporter with the fields documented by the adapter; no MCP tool call is executed or authorized here |
+| OpenTelemetry GenAI / MCP | Map one completed tool span through the shared OTel bridge contract | Requires explicit bridge attributes and transient request/response payloads; payload-free spans are rejected rather than assigned misleading fingerprints |
+| CloudWeGo Eino | Emit the documented bridge event from Eino callbacks plus the MCP client wrapper | Experimental field map only; no native Eino package or upstream compatibility claim |
+| Tencent WeKnora | Emit the documented bridge event from an approved audit/trace exporter | Experimental field map only; no native WeKnora plugin or upstream compatibility claim |
+| AgentScope 2.0 | Map a completed OTel tool span through the shared GenAI/MCP bridge | Requires verified payload and MCP bridge attributes from the pinned deployment; no claim that AgentScope emits the complete contract natively |
+| Dify MCP | Map a correlated Dify tool event and MCP call ID | Requires deployment-side call-ID correlation and explicit MCP configuration; no native Dify plugin or authorization claim |
+| Qwen-Agent | No reusable adapter published | Deferred until a stable, versioned lifecycle/export contract can be verified; do not rely on monkey-patching |
 
-Start with [the Connector interface](adapters/connector-sdk/README.md), [the Agent-call evidence Schema](schemas/agent/agent-call-evidence-v1.schema.json), and [the public/private boundary](docs/public-boundary.md).
+Start with the [shared Agent-call evidence mapper](adapters/agent-call-evidence/README.md), [OTel GenAI/MCP bridge](adapters/otel-genai/index.mjs), [vendor-neutral infrastructure ingestion](adapters/vendor-ingestion/README.md), [Co-Sight adapter](adapters/cosight/README.md), [AgentScope bridge](adapters/agentscope/README.md), [Dify bridge](adapters/dify/README.md), [Eino bridge](adapters/eino/README.md), [WeKnora bridge](adapters/weknora/README.md), [Qwen-Agent status](adapters/qwen-agent/README.md), [enterprise adapter coverage plan](docs/enterprise-adapter-coverage.md), [Agent-call evidence Schema](schemas/agent/agent-call-evidence-v1.schema.json), and [public/private boundary](docs/public-boundary.md).
 
 ## Public and private source boundary
 
@@ -100,6 +109,21 @@ Potential work is scoped separately from this public repository and is subject t
 - [Agent-call evidence Schema](schemas/agent/agent-call-evidence-v1.schema.json)
 - [Registry contribution Schema](schemas/registry/registry-contribution-v2.schema.json)
 - [Connector interface](adapters/connector-sdk/index.mjs)
+- [Shared Agent-call evidence mapper](adapters/agent-call-evidence/index.mjs)
+- [OTel GenAI/MCP bridge contract](adapters/otel-genai/README.md)
+- [OTel GenAI/MCP bridge contract (中文)](adapters/otel-genai/README.zh-CN.md)
+- [Co-Sight MCP event adapter](adapters/cosight/README.md)
+- [AgentScope 2.0 OTel/MCP bridge](adapters/agentscope/README.md)
+- [Dify MCP tool evidence bridge](adapters/dify/README.md)
+- [Qwen-Agent adapter status](adapters/qwen-agent/README.md)
+- [Enterprise adapter coverage plan](docs/enterprise-adapter-coverage.md)
+- [Enterprise adapter coverage plan (中文)](docs/enterprise-adapter-coverage.zh-CN.md)
+- [Vendor-neutral infrastructure ingestion](adapters/vendor-ingestion/README.md)
+- [Vendor-neutral infrastructure ingestion (中文)](adapters/vendor-ingestion/README.zh-CN.md)
+- [CloudWeGo Eino bridge contract](adapters/eino/README.md)
+- [CloudWeGo Eino bridge contract (中文)](adapters/eino/README.zh-CN.md)
+- [Tencent WeKnora bridge contract](adapters/weknora/README.md)
+- [Tencent WeKnora bridge contract (中文)](adapters/weknora/README.zh-CN.md)
 - [Security policy](SECURITY.md)
 
 ## Project links
@@ -110,3 +134,4 @@ Potential work is scoped separately from this public repository and is subject t
 ## License
 
 Source files are licensed under Apache-2.0. Documentation is licensed under CC BY 4.0 unless a file states otherwise. These licenses apply only to files actually published in this repository and do not grant access to or rights in CT-AIComm Enterprise proprietary components.
+

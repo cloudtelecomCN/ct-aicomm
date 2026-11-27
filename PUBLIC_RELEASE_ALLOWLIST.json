@@ -20,7 +20,16 @@
   ],
   "allowed_prefixes": [
     ".github/workflows/",
+    "adapters/agent-call-evidence/",
+    "adapters/agentscope/",
+    "adapters/cosight/",
     "adapters/connector-sdk/",
+    "adapters/dify/",
+    "adapters/eino/",
+    "adapters/otel-genai/",
+    "adapters/qwen-agent/",
+    "adapters/vendor-ingestion/",
+    "adapters/weknora/",
     "cli/",
     "docs/",
     "examples/synthetic/",
@@ -44,3 +53,4 @@
     "worker/"
   ]
 }
+
